@@ -1,51 +1,66 @@
 import React from 'react';
-import type {FormEvent} from "react";
 import NavbarHome from "../components/NavbarHome";
 import Footer from "../components/Footer";
 import '../index.css';
-
-const sendForm = async (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault()
-
-    const {name, password} = event.target as typeof event.target & {
-        name: {value: string}
-        password: {value: string}
-    }
-
-    console.log(name.value, password.value)
-
-    /*await fetch('/route', {
-        headers: {
-            'Content-Type' : 'application/json'
-        },
-        method: 'POST',
-        body: JSON.stringify({
-            name: name.value,
-            password: password.value
-        })
-    })*/
-}
+import * as Yup from 'yup';
+import {Formik, ErrorMessage, Form, Field} from 'formik';
 
 const InscriptionPage = () => {
+
+    const validationSchema = Yup.object().shape({
+        name: Yup.string()
+            .min(2, "trop petit")
+            .max(25, "trop long!")
+            .required("Ce champ est obligatoire"),
+        email: Yup.string()
+            .email("email invalide")
+            .required("l'email est obligatoire")
+    });
+
+    const initialValues = {
+        name: "",
+        email: "",
+    };
+
+    const handleSubmit = (values: { name: string; email: string; }) => {
+        alert(JSON.stringify(values, null, 2));
+        console.log(values)
+    };
+
     return (
         <div className="wrap">
             <NavbarHome/>
-            <div className="inscription-wrap">
-                <form className="form-inscription" onSubmit={evt =>{sendForm(evt)}}>
-                    <fieldset className={"field-area"}>
-                        <label htmlFor="name">Name:</label>
-                        <input type="text" id={"name"} />
-                    </fieldset>
-                    <fieldset className={"field-area"}>
-                        <label htmlFor={"password"}>Password:</label>
-                        <input type={"password"} id={"password"} />
-                    </fieldset>
-                    <button className={"form-button"} type={"submit"}>Inscription</button>
-                </form>
-            </div>
+            <Formik
+                initialValues={initialValues}
+                validationSchema={validationSchema}
+                onSubmit={(values) => handleSubmit(values)}
+            >
+                <div className="inscription-wrap">
+                    <Form className="form-inscription">
+                        <fieldset className={"field-area"}>
+                            <label htmlFor="name">Name:</label>
+                            <Field name="name" className="form-control" type="text"/>
+                            <ErrorMessage
+                                name="name"
+                                component="small"
+                                className="text-danger"
+                            />
+                        </fieldset>
+                        <fieldset className={"field-area"}>
+                            <label htmlFor={"email"}>Email</label>
+                            <Field name="email" className="form-control" type="email"/>
+                            <ErrorMessage
+                                name="email"
+                                component="small"
+                                className="text-danger"
+                            />
+                        </fieldset>
+                        <button className={"form-button"} type="submit">Inscription</button>
+                    </Form>
+                </div>
+            </Formik>
             <Footer/>
         </div>
-
     )
 }
 
