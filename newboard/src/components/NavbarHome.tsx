@@ -22,6 +22,7 @@ const NavbarHome = () => {
                 </Navbar.Brand>
                 <Navbar.Toggle />
                 <Button onClick={() => navigate("/home")}>Connexion</Button>
+                <Button onClick={() => navigate("/inscription")}>Inscription</Button>
             </Container>
         </Navbar>
     )
