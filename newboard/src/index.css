@@ -5,6 +5,7 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  height: 100%;
 }
 
 code {
@@ -18,10 +19,11 @@ code {
   margin-top: 1rem;
   padding: 1rem;
   background-color: lightskyblue;
-  position: fixed;
   bottom: 0;
   left: 0;
   width: 100%;
+  height:100px;
+  position: fixed;
 }
 
 .font-weight-bold{
@@ -49,14 +51,18 @@ code {
 
 .container-home{
   display: flex;
+  position: relative;
   align-items: center;
   justify-content: center;
-  height: 70vh;
+  height: 100%;
+  padding-top: 5%;
   background: linear-gradient(cornflowerblue, white);
-  }
+}
 
 html, body {
-  height: 100%;
+  margin:0;
+  padding:0;
+  height:100%;
 }
 
 .masthead {
@@ -83,4 +89,23 @@ html, body {
 
 .family-font-first{
   font-family: Impact,sans-serif;
+}
+
+.form-login{
+  display: grid;
+  place-items: center;
+}
+
+.button-form{
+  appearance: none;
+  border: none;
+  color: white;
+  background-color: var(--bs-blue);
+  border-radius: var();
+  box-shadow: var(--bs-btn-active-shadow);
+  width: 100%;
+  padding: 0.5rem 1rem;
+  text-align: center;
+  font-size: 1.2rem;
+  font-weight: bold;
 }

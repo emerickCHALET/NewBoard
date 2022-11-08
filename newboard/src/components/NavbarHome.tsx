@@ -10,7 +10,7 @@ const NavbarHome = () => {
     return (
         <Navbar bg="dark" variant="dark">
             <Container>
-                <Navbar.Brand href="#home" className="family-font-first">
+                <Navbar.Brand href="/" className="family-font-first">
                     <img
                         alt=""
                         src="/postit.png"
@@ -21,7 +21,7 @@ const NavbarHome = () => {
                     New Board
                 </Navbar.Brand>
                 <Navbar.Toggle />
-                <Button onClick={() => navigate("/home")}>Connexion</Button>
+                <Button onClick={() => navigate("/login")}>Connexion</Button>
             </Container>
         </Navbar>
     )
