@@ -5,6 +5,7 @@ import Home from "./components/Home";
 import {BrowserRouter,Routes, Route} from "react-router-dom";
 import HomePage from "./pages/Home";
 import ErrorPage from "./pages/Error";
+import SignInPage from "./pages/SignIn";
 
 const MainPage = () => {
   return (
@@ -24,6 +25,8 @@ export default function App(){
             <Route path="/" element={<MainPage/>}/>
             <Route path="home" element={<HomePage/>}/>
             <Route path="*" element={<ErrorPage/>}/>
+            <Route path="signin" element={<SignInPage/>}/>
+
         </Routes>
         </BrowserRouter>
     );
