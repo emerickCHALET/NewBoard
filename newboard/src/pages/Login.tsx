@@ -2,36 +2,61 @@ import React from 'react';
 import NavbarHome from "../components/NavbarHome";
 import Footer from "../components/Footer";
 import type {FormEvent} from "react";
+import * as Yup from 'yup';
+import {Formik, ErrorMessage, Form, Field} from 'formik';
 
-const sendForm = async (event : FormEvent<HTMLFormElement>) => {
-    event.preventDefault()
-
-    const {email, password} = event.target as typeof event.target & {
-        email: { value: string }
-        password: { value: string }
-    }
-
-    console.log(email.value);
-    console.log(password.value);
-}
 
 const Login = () => {
+
+    const validationSchema = Yup.object().shape({
+        email: Yup.string()
+            .email("Email invalide")
+            .required("L'email est obligatoire"),
+        password: Yup.string()
+            .required("Le mot de passe est obligatoire")
+    });
+
+    const initialValues = {
+        email: "",
+        password: "",
+    };
+
+    const handleSubmit = (values: { email: string; password: string; }) => {
+        alert(JSON.stringify(values, null, 2));
+        console.log(values)
+    };
     return (
         <div className="wrap">
             <NavbarHome/>
-            <div className="container-wrap">
-                <form className="form-wrap" onSubmit={evt => {sendForm(evt)}}>
-                    <fieldset>
-                        <label htmlFor="email">Email:</label>
-                        <input type="email" id="email"/>
-                    </fieldset>
-                    <fieldset>
-                        <label htmlFor="password">Password:</label>
-                        <input type="password" id="password"/>
-                    </fieldset>
-                    <button type="submit" className="form-button">Login</button>
-                </form>
-            </div>
+            <Formik
+                initialValues={initialValues}
+                validationSchema={validationSchema}
+                onSubmit={(values) => handleSubmit(values)}
+            >
+                <div className="container-wrap">
+                    <Form className="form-wrap">
+                        <fieldset className={"field-area"}>
+                            <label htmlFor={"email"}>Email</label>
+                            <Field name="email" className="form-control" type="email"/>
+                            <ErrorMessage
+                                name="email"
+                                component="small"
+                                className="text-danger"
+                            />
+                        </fieldset>
+                        <fieldset className={"field-area"}>
+                            <label htmlFor={"password"}>Password</label>
+                            <Field name="password" className="form-control" type="password"/>
+                            <ErrorMessage
+                                name="password"
+                                component="small"
+                                className="text-danger"
+                            />
+                        </fieldset>
+                        <button type="submit" className="form-button">Login</button>
+                    </Form>
+                </div>
+            </Formik>
             <Footer/>
         </div>
     )
