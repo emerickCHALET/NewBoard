@@ -3,7 +3,7 @@ import NavbarHome from "./components/NavbarHome";
 import Footer from "./components/Footer";
 import Home from "./components/Home";
 import {BrowserRouter,Routes, Route} from "react-router-dom";
-import InscriptionPage from "./pages/Insciption";
+import InscriptionPage from "./pages/Inscription";
 import ErrorPage from "./pages/Error";
 import Login from "./pages/Login";
 
