@@ -1,7 +1,6 @@
 import React from 'react';
 import NavbarHome from "../components/NavbarHome";
 import Footer from "../components/Footer";
-import type {FormEvent} from "react";
 import * as Yup from 'yup';
 import {Formik, ErrorMessage, Form, Field} from 'formik';
 
