@@ -10,7 +10,7 @@ const NavbarHome = () => {
     return (
         <Navbar bg="dark" variant="dark">
             <Container>
-                <Navbar.Brand href="#home" className="family-font-first">
+                <Navbar.Brand href="/" className="family-font-first">
                     <img
                         alt=""
                         src="/postit.png"

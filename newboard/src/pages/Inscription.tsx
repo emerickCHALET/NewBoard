@@ -31,17 +31,17 @@ const InscriptionPage = () => {
         <div className="wrap">
             <NavbarHome/>
             <div className="inscription-wrap">
-            <form className="form-inscription" onSubmit={evt =>{sendForm(evt)}}>
-                <fieldset className={"field-area"}>
-                    <label htmlFor="name">Name:</label>
-                    <input type="text" id={"name"} />
-                </fieldset>
-                <fieldset className={"field-area"}>
-                    <label htmlFor={"password"}>Password:</label>
-                    <input type={"password"} id={"password"} />
-                </fieldset>
-                <button className={"form-button"} type={"submit"}>Inscription</button>
-            </form>
+                <form className="form-inscription" onSubmit={evt =>{sendForm(evt)}}>
+                    <fieldset className={"field-area"}>
+                        <label htmlFor="name">Name:</label>
+                        <input type="text" id={"name"} />
+                    </fieldset>
+                    <fieldset className={"field-area"}>
+                        <label htmlFor={"password"}>Password:</label>
+                        <input type={"password"} id={"password"} />
+                    </fieldset>
+                    <button className={"form-button"} type={"submit"}>Inscription</button>
+                </form>
             </div>
             <Footer/>
         </div>
