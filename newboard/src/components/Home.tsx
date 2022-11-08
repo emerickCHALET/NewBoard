@@ -1,7 +1,9 @@
 import React from 'react';
 import {Button} from "react-bootstrap";
+import {useNavigate} from "react-router-dom";
 
 const Home = () => {
+    const navigate = useNavigate();
     return (
                 <div className="container-home">
                     <div className="inner">
@@ -18,9 +20,7 @@ const Home = () => {
                         <p className="font-home-p font-weight-bold">
                             T’as ton idée ? T’as ton New Board !
                         </p>
-                        <Button>
-                            Rejoignez nous !
-                        </Button>
+                        <Button onClick={() => navigate("/inscription")}>Rejoignez nous !</Button>
                     </div>
                 </div>
     )
