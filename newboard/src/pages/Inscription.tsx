@@ -1,30 +1,36 @@
 import React from 'react';
 import NavbarHome from "../components/NavbarHome";
 import Footer from "../components/Footer";
-import type {FormEvent} from "react";
+import '../index.css';
 import * as Yup from 'yup';
 import {Formik, ErrorMessage, Form, Field} from 'formik';
 
-
-const Login = () => {
+const InscriptionPage = () => {
 
     const validationSchema = Yup.object().shape({
+        name: Yup.string()
+            .min(2, "Trop petit")
+            .max(25, "Trop long!")
+            .required("Ce champ est obligatoire"),
         email: Yup.string()
             .email("Email invalide")
             .required("L'email est obligatoire"),
         password: Yup.string()
+            .min(8, "Le mot de passe doit contenir au moins 8 caractères")
             .required("Le mot de passe est obligatoire")
     });
 
     const initialValues = {
+        name: "",
         email: "",
         password: "",
     };
 
-    const handleSubmit = (values: { email: string; password: string; }) => {
+    const handleSubmit = (values: { name: string; email: string; password: string}) => {
         alert(JSON.stringify(values, null, 2));
         console.log(values)
     };
+
     return (
         <div className="wrap">
             <NavbarHome/>
@@ -35,6 +41,15 @@ const Login = () => {
             >
                 <div className="container-wrap">
                     <Form className="form-wrap">
+                        <fieldset className={"field-area"}>
+                            <label htmlFor="name">Name:</label>
+                            <Field name="name" className="form-control" type="text"/>
+                            <ErrorMessage
+                                name="name"
+                                component="small"
+                                className="text-danger"
+                            />
+                        </fieldset>
                         <fieldset className={"field-area"}>
                             <label htmlFor={"email"}>Email</label>
                             <Field name="email" className="form-control" type="email"/>
@@ -53,7 +68,7 @@ const Login = () => {
                                 className="text-danger"
                             />
                         </fieldset>
-                        <button type="submit" className="form-button">Login</button>
+                        <button className={"form-button"} type="submit">Inscription</button>
                     </Form>
                 </div>
             </Formik>
@@ -62,4 +77,4 @@ const Login = () => {
     )
 }
 
-export default Login;
+export default InscriptionPage;

@@ -20,7 +20,9 @@ const Home = () => {
                         <p className="font-home-p font-weight-bold">
                             T’as ton idée ? T’as ton New Board !
                         </p>
-                        <Button onClick={() => navigate("/inscription")}>Rejoignez nous !</Button>
+                        <Button onClick={() => navigate("/inscription")}>
+                            Rejoignez nous !
+                        </Button>
                     </div>
                 </div>
     )
