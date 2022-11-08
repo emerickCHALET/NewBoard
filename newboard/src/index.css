@@ -150,4 +150,11 @@ input {
     box-shadow: var(--shadow);
     width: 100%;
     margin-top: 20px;
+    transition: 0.3s;
 }
+.form-button:hover{
+    opacity: 80%;
+    transform: translateY(0.20em);
+    box-shadow: none;
+}
+
