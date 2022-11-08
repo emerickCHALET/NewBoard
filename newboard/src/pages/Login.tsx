@@ -17,22 +17,20 @@ const sendForm = async (event : FormEvent<HTMLFormElement>) => {
 
 const Login = () => {
     return (
-        <div className="Main">
+        <div className="wrap">
             <NavbarHome/>
-            <div className="container-home">
-                <div className="form-login">
-                    <form className="wrap" onSubmit={evt => {sendForm(evt)}}>
-                        <fieldset>
-                            <label htmlFor="email">Email:</label>
-                            <input type="email" id="email"/>
-                        </fieldset>
-                        <fieldset>
-                            <label htmlFor="password">Password:</label>
-                            <input type="password" id="password"/>
-                        </fieldset>
-                        <button type="submit" className="button-form">Login</button>
-                    </form>
-                </div>
+            <div className="container-wrap">
+                <form className="form-wrap" onSubmit={evt => {sendForm(evt)}}>
+                    <fieldset>
+                        <label htmlFor="email">Email:</label>
+                        <input type="email" id="email"/>
+                    </fieldset>
+                    <fieldset>
+                        <label htmlFor="password">Password:</label>
+                        <input type="password" id="password"/>
+                    </fieldset>
+                    <button type="submit" className="form-button">Login</button>
+                </form>
             </div>
             <Footer/>
         </div>

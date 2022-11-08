@@ -5,6 +5,7 @@ import Home from "./components/Home";
 import {BrowserRouter,Routes, Route} from "react-router-dom";
 import HomePage from "./pages/Login";
 import ErrorPage from "./pages/Error";
+import InscriptionPage from "./pages/Inscription";
 
 const MainPage = () => {
   return (

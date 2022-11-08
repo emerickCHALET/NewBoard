@@ -117,12 +117,12 @@ body {
     background: var(--background-gradient);
 }
 
-.inscription-wrap {
+.container-wrap {
     display: flex;
     justify-content: center;
 }
 
-.form-inscription {
+.form-wrap {
     width: 40%;
     padding: 20px;
     background-color: white;

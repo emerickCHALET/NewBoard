@@ -35,8 +35,8 @@ const InscriptionPage = () => {
                 validationSchema={validationSchema}
                 onSubmit={(values) => handleSubmit(values)}
             >
-                <div className="inscription-wrap">
-                    <Form className="form-inscription">
+                <div className="container-wrap">
+                    <Form className="form-wrap">
                         <fieldset className={"field-area"}>
                             <label htmlFor="name">Name:</label>
                             <Field name="name" className="form-control" type="text"/>
