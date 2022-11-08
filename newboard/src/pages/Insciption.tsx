@@ -40,7 +40,7 @@ const InscriptionPage = () => {
                     <label htmlFor={"password"}>Password:</label>
                     <input type={"password"} id={"password"} />
                 </fieldset>
-                <button className={"form-button"} type={"submit"}>Login</button>
+                <button className={"form-button"} type={"submit"}>Register</button>
             </form>
             </div>
             <Footer/>
