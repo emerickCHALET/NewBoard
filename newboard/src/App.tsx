@@ -9,8 +9,8 @@ import Login from "./pages/Login";
 
 const MainPage = () => {
   return (
-      <div className="Main">
-        <NavbarHome/>
+      <div className="wrap">
+          <NavbarHome/>
           <Home/>
           <Footer/>
       </div>
