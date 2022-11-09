@@ -6,6 +6,7 @@ import {BrowserRouter,Routes, Route} from "react-router-dom";
 import InscriptionPage from "./pages/Inscription";
 import ErrorPage from "./pages/Error";
 import Login from "./pages/Login";
+import Workspaces from "./pages/Workspaces";
 
 const MainPage = () => {
   return (
@@ -26,6 +27,7 @@ export default function App(){
             <Route path="login" element={<Login/>}/>
             <Route path="*" element={<ErrorPage/>}/>
             <Route path="inscription" element={<InscriptionPage/>}/>
+            <Route path="workspaces" element={<Workspaces/>}/>
         </Routes>
         </BrowserRouter>
     );
