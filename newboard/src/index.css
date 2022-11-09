@@ -164,29 +164,27 @@ input {
 
 .workspace-container{
     display: flex;
-    flex-direction: column;
-    align-items: center;
+    justify-content: center;
 }
 
 .workspace-list{
     display: flex;
-    width: 80%;
     flex-wrap: wrap;
-    justify-content: space-between;
+    width: 80%;
+    gap: 5px;
 }
 
 .workspace-item{
+    text-align: center;
     font-size: 1.5rem;
     font-weight: bold;
-    display: flex;
-    justify-content: center;
     padding: 2rem;
     min-width: 33%;
     width: 33%;
     background-color: white;
     border-radius: var(--radius);
     box-shadow: var(--shadow);
-    margin-bottom: 10px;
+
 }
 
 .workspace-item-add{
