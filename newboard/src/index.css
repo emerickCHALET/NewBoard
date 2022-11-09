@@ -4,7 +4,7 @@
     --background-color: rgb(107, 4, 159);
     --background-gradient: linear-gradient(45deg, rgba(107, 4, 159, 1) 0%, rgba(67, 67, 227, 1) 57%, rgba(0, 212, 255, 1) 100%);
     --background-color-footer: rgb(46, 46, 46);
-    --background-gradient-footer: linear-gradient(45deg, rgba(46, 46, 46, 1) 0%, rgba(25, 23, 23, 1) 52%, rgba(45, 45, 45, 1) 100%);
+    --background-gradient-footer: linear-gradient(45deg, rgba(46, 46, 46, 0.9) 0%, rgba(25, 23, 23, 0.9) 52%, rgba(45, 45, 45, 0.9) 100%);
 }
 
 body {
@@ -17,6 +17,11 @@ body {
 
 code {
     font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
+}
+
+h2{
+    color: white;
+    text-align: center;
 }
 
 .footer {
@@ -157,15 +162,17 @@ input {
 
 /* WORKSPACES */
 
-
+.workspace-container{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
 
 .workspace-list{
     display: flex;
-    flex-direction: row;
+    width: 80%;
     flex-wrap: wrap;
-    justify-content: space-around;
-    align-content: space-around;
-    align-items: center;
+    justify-content: space-between;
 }
 
 .workspace-item{
@@ -174,9 +181,19 @@ input {
     display: flex;
     justify-content: center;
     padding: 2rem;
-    min-width: 30%;
-    width: 25%;
+    min-width: 33%;
+    width: 33%;
     background-color: white;
     border-radius: var(--radius);
     box-shadow: var(--shadow);
+    margin-bottom: 10px;
+}
+
+.workspace-item-add{
+    background-color: dodgerblue;
+    color: white;
+}
+
+.workspace-item-add:hover{
+    cursor: pointer;
 }
