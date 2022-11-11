@@ -7,17 +7,27 @@ import Button from 'react-bootstrap/Button';
 import Modal from "react-bootstrap/Modal";
 import {Formik, ErrorMessage, Form, Field} from 'formik';
 import * as Yup from "yup";
+import Classroom from "../Classes/Classroom";
+import Student from "../Classes/Student";
+import classroom from "../Classes/Classroom";
+
+const myStudent = new Student("Antoine", "Haller", "antoine-haller@outlook.fr");
+
+const myClassroom = new Classroom("L3 Cergy",[myStudent]);
+const myClassroom2 = new Classroom("L3 Paris",[myStudent]);
+const myClassroom3 = new Classroom("M1 Lead Dev",[myStudent]);
 
 
-const myWorkspace = new Workspace("PHP");
-const myWorkspace2 = new Workspace("JavaScript");
+const myWorkspace = new Workspace("PHP", myClassroom.name);
+/*const myWorkspace2 = new Workspace("JavaScript");
 const myWorkspace3 = new Workspace("Flutter");
 const myWorkspace4 = new Workspace("React Native");
 const myWorkspace5 = new Workspace("iOS");
-const myWorkspace6 = new Workspace("Sécurité");
+const myWorkspace6 = new Workspace("Sécurité");*/
 
+let classroomList: Array<Classroom> = [myClassroom, myClassroom2, myClassroom3];
 
-let list: Array<Workspace> = [myWorkspace, myWorkspace2, myWorkspace3, myWorkspace4, myWorkspace5, myWorkspace6];
+let list: Array<Workspace> = [myWorkspace];
 
 
 const WorkspacesPage = () => {
@@ -28,13 +38,14 @@ const WorkspacesPage = () => {
     const handleShow = () => setShow(true);
 
 
-    const handleSubmit = (values: { name: string;}) => {
+    const handleSubmit = (values: { name: string, classroom: string}) => {
         setShow(false);
-        list.push(new Workspace(values.name))
+        list.push(new Workspace(values.name, values.classroom))
     };
 
     const initialValues = {
         name: "",
+        classroom: "selection"
     };
 
     const validationSchema = Yup.object().shape({
@@ -42,6 +53,7 @@ const WorkspacesPage = () => {
             .min(2, "Trop petit")
             .max(25, "Trop long!")
             .required("Ce champ est obligatoire"),
+
     });
 
     return (
@@ -62,7 +74,6 @@ const WorkspacesPage = () => {
                         onSubmit={(values) => handleSubmit(values)}
                     >
                     <Form>
-                        <fieldset className={"field-area"}>
                             <label htmlFor="name">Name:</label>
                             <Field name="name" className="form-control" type="text"/>
                             <ErrorMessage
@@ -70,7 +81,11 @@ const WorkspacesPage = () => {
                                 component="small"
                                 className="text-danger"
                             />
-                        </fieldset>
+                            <label htmlFor={"classroom"}>Classroom :</label>
+                            <Field name={"classroom"} className={"form-control"} component={"select"}>
+                                <option value={"selection"}>Séléctionnez une classe</option>
+                                {classroomList.map((classroom) => { return <option value={classroom.name} key={classroom.name}>{classroom.name}</option>})}
+                            </Field>
                         <Modal.Footer>
                             <Button variant="secondary" onClick={handleClose}>
                                 Fermer
@@ -91,7 +106,7 @@ const WorkspacesPage = () => {
                         <Button className={"workspace-item workspace-item-add"} variant="primary" onClick={() => { handleShow() }}>
                             +
                         </Button>
-                        {list.map((workspace) => { return <div key={workspace.name.toString()} className={"workspace-item"}> {workspace.name} </div>; })}
+                        {list.map((workspace) => { return <div key={workspace.name.toString()} className={"workspace-item"}> <div className={"workspace-item-name"}>{workspace.name}</div><div className={"workspace-item-classroom"}>{workspace.classroom} </div> </div>; })}
                     </div>
                 </div>
             <Footer/>

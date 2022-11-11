@@ -186,6 +186,10 @@ input {
     box-shadow: var(--shadow);
 
 }
+.workspace-item-classroom{
+    font-weight: normal;
+    font-size: 0.7em;
+}
 
 .workspace-item-add{
     background-color: dodgerblue;
