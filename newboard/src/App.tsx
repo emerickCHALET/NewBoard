@@ -7,6 +7,7 @@ import HomePage from "./pages/Login";
 import ErrorPage from "./pages/Error";
 import InscriptionPage from "./pages/Inscription";
 
+
 const MainPage = () => {
   return (
       <div className="Main">
@@ -30,3 +31,5 @@ export default function App(){
         </BrowserRouter>
     );
 }
+export const urlApi = "http://newboardapifr.swks7487.odns.fr/api/";
+;

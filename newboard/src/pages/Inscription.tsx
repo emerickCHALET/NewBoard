@@ -4,11 +4,33 @@ import Footer from "../components/Footer";
 import '../index.css';
 import * as Yup from 'yup';
 import {Formik, ErrorMessage, Form, Field} from 'formik';
+import axios from 'axios';
+import {urlApi} from "../App";
+
+async function postRegister(values: { lastname: string; firstname: string; email: string; password: string }) {
+
+    let payload = { firstname: values.firstname, lastname: values.lastname, email: values.email, password: values.password };
+    await axios
+        .post(urlApi + 'users',payload)
+        .then((response) => {
+            if(response.status === 200){
+                console.log('Account created')
+            }
+        })
+        .catch(function (error) {
+            if(error.response) {
+                console.log(error.response.data.message)
+            }
+        })
+}
 
 const InscriptionPage = () => {
-
     const validationSchema = Yup.object().shape({
-        name: Yup.string()
+        lastname: Yup.string()
+            .min(2, "Trop petit")
+            .max(25, "Trop long!")
+            .required("Ce champ est obligatoire"),
+        firstname: Yup.string()
             .min(2, "Trop petit")
             .max(25, "Trop long!")
             .required("Ce champ est obligatoire"),
@@ -21,14 +43,14 @@ const InscriptionPage = () => {
     });
 
     const initialValues = {
-        name: "",
+        lastname: "",
+        firstname:"",
         email: "",
         password: "",
     };
 
-    const handleSubmit = (values: { name: string; email: string; password: string}) => {
-        alert(JSON.stringify(values, null, 2));
-        console.log(values)
+    const handleSubmit = (values: { lastname: string; firstname: string; email: string; password: string}) => {
+        postRegister(values);
     };
 
     return (
@@ -42,10 +64,19 @@ const InscriptionPage = () => {
                 <div className="container-wrap">
                     <Form className="form-wrap">
                         <fieldset className={"field-area"}>
-                            <label htmlFor="name">Name:</label>
-                            <Field name="name" className="form-control" type="text"/>
+                            <label htmlFor="lastname">Nom:</label>
+                            <Field name="lastname" className="form-control" type="text"/>
                             <ErrorMessage
-                                name="name"
+                                name="lastname"
+                                component="small"
+                                className="text-danger"
+                            />
+                        </fieldset>
+                        <fieldset className={"field-area"}>
+                            <label htmlFor="firstname">Prénom:</label>
+                            <Field name="firstname" className="form-control" type="text"/>
+                            <ErrorMessage
+                                name="firstname"
                                 component="small"
                                 className="text-danger"
                             />
