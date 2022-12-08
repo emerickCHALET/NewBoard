@@ -6,20 +6,25 @@ import * as Yup from 'yup';
 import {Formik, ErrorMessage, Form, Field} from 'formik';
 import axios from 'axios';
 import {urlApi} from "../App";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 async function postRegister(values: { lastname: string; firstname: string; email: string; password: string }) {
-
     let payload = { firstname: values.firstname, lastname: values.lastname, email: values.email, password: values.password };
     await axios
         .post(urlApi + 'users',payload)
         .then((response) => {
             if(response.status === 200){
-                console.log('Account created')
+                toast.success("Inscription réussite !", {
+                    position: toast.POSITION.TOP_RIGHT,
+                });
             }
         })
         .catch(function (error) {
             if(error.response) {
-                console.log(error.response.data.message)
+                toast.error(error.response.data.message,{
+                    position: toast.POSITION.TOP_RIGHT
+                });
             }
         })
 }
@@ -56,6 +61,7 @@ const InscriptionPage = () => {
     return (
         <div className="wrap">
             <NavbarHome/>
+            <ToastContainer />
             <Formik
                 initialValues={initialValues}
                 validationSchema={validationSchema}
