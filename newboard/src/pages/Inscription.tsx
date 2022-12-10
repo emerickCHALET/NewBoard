@@ -31,6 +31,7 @@ async function postRegister(values: { lastname: string; firstname: string; email
 }
 
 const InscriptionPage = () => {
+    
     const validationSchema = Yup.object().shape({
         lastname: Yup.string()
             .min(2, "Trop petit")
