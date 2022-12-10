@@ -6,8 +6,9 @@ import * as Yup from 'yup';
 import {Formik, ErrorMessage, Form, Field} from 'formik';
 import axios from 'axios';
 import {urlApi} from "../App";
-import { ToastContainer, toast } from 'react-toastify';
+import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import {useNavigate} from "react-router";
 
 async function postRegister(values: { lastname: string; firstname: string; email: string; password: string }) {
     let payload = { firstname: values.firstname, lastname: values.lastname, email: values.email, password: values.password };
@@ -53,15 +54,15 @@ const InscriptionPage = () => {
         email: "",
         password: "",
     };
-
+    const navigate = useNavigate();
     const handleSubmit = (values: { lastname: string; firstname: string; email: string; password: string}) => {
         postRegister(values);
+        navigate('/login')
     };
 
     return (
         <div className="wrap">
             <NavbarHome/>
-            <ToastContainer />
             <Formik
                 initialValues={initialValues}
                 validationSchema={validationSchema}
