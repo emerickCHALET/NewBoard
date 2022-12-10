@@ -8,6 +8,7 @@ import ErrorPage from "./pages/Error";
 import Login from "./pages/Login";
 import WorkspacesPage from "./pages/WorkspacesPage";
 
+
 const MainPage = () => {
   return (
       <div className="wrap">
@@ -32,3 +33,5 @@ export default function App(){
         </BrowserRouter>
     );
 }
+export const urlApi = "http://newboardapifr.swks7487.odns.fr/api/";
+;
