@@ -21,6 +21,7 @@ const SideBar = () => {
     function Logout() {
         localStorage.setItem('permissions', '');
         localStorage.setItem('token', '');
+        navigate('/');
     }
 
     return (
