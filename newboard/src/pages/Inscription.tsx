@@ -10,8 +10,9 @@ import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import {useNavigate} from "react-router";
 
-async function postRegister(values: { lastname: string; firstname: string; email: string; password: string }) {
+async function postRegister(values: { lastname: string; firstname: string; email: string; password: string }): Promise<boolean> {
     let payload = { firstname: values.firstname, lastname: values.lastname, email: values.email, password: values.password };
+    let result = false;
     await axios
         .post(urlApi + 'users',payload)
         .then((response) => {
@@ -19,6 +20,7 @@ async function postRegister(values: { lastname: string; firstname: string; email
                 toast.success("Inscription réussite !", {
                     position: toast.POSITION.TOP_RIGHT,
                 });
+                result = true
             }
         })
         .catch(function (error) {
@@ -28,10 +30,11 @@ async function postRegister(values: { lastname: string; firstname: string; email
                 });
             }
         })
+    return result;
 }
 
 const InscriptionPage = () => {
-    
+
     const validationSchema = Yup.object().shape({
         lastname: Yup.string()
             .min(2, "Trop petit")
@@ -56,9 +59,11 @@ const InscriptionPage = () => {
         password: "",
     };
     const navigate = useNavigate();
-    const handleSubmit = (values: { lastname: string; firstname: string; email: string; password: string}) => {
-        postRegister(values);
-        navigate('/login')
+    const handleSubmit = async (values: { lastname: string; firstname: string; email: string; password: string }) => {
+        const result = await postRegister(values);
+        if (result) {
+            navigate('/login');
+        }
     };
 
     return (
