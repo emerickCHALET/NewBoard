@@ -1,5 +1,4 @@
 import React from 'react';
-import NavbarHome from "../components/NavbarHome";
 import Footer from "../components/Footer";
 import '../index.css';
 import * as Yup from 'yup';
@@ -9,6 +8,7 @@ import {urlApi} from "../App";
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import {useNavigate} from "react-router";
+import SideBar from "../components/SideBar";
 
 async function postRegister(values: { lastname: string; firstname: string; email: string; password: string }): Promise<boolean> {
     let payload = { firstname: values.firstname, lastname: values.lastname, email: values.email, password: values.password };
@@ -68,7 +68,7 @@ const InscriptionPage = () => {
 
     return (
         <div className="wrap">
-            <NavbarHome/>
+            <SideBar/>
             <Formik
                 initialValues={initialValues}
                 validationSchema={validationSchema}
