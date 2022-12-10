@@ -3,7 +3,33 @@ import NavbarHome from "../components/NavbarHome";
 import Footer from "../components/Footer";
 import * as Yup from 'yup';
 import {Formik, ErrorMessage, Form, Field} from 'formik';
+import {useNavigate} from "react-router";
+import axios from "axios";
+import {urlApi} from "../App";
+import {toast} from "react-toastify";
 
+async function postLogin(values: { email: string; password: string; }): Promise<boolean> {
+    let payload = { email: values.email, password: values.password };
+    let result = false;
+    await axios
+        .post(urlApi + 'login',payload)
+        .then((response) => {
+            if(response.status === 200){
+                toast.success("Bienvenue!", {
+                    position: toast.POSITION.TOP_RIGHT,
+                });
+                result = true
+            }
+        })
+        .catch(function (error) {
+            if(error.response) {
+                toast.error(error.response.data.message,{
+                    position: toast.POSITION.TOP_RIGHT
+                });
+            }
+        })
+    return result;
+}
 
 const Login = () => {
 
@@ -20,10 +46,14 @@ const Login = () => {
         password: "",
     };
 
-    const handleSubmit = (values: { email: string; password: string; }) => {
-        alert(JSON.stringify(values, null, 2));
-        console.log(values)
+    const navigate = useNavigate();
+    const handleSubmit = async (values: { email: string; password: string; }) => {
+        const result = await postLogin(values);
+        if (result) {
+            navigate('workspaces');
+        }
     };
+
     return (
         <div className="wrap">
             <NavbarHome/>
@@ -61,4 +91,4 @@ const Login = () => {
     )
 }
 
-export default Login;
+export default Login
