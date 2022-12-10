@@ -8,6 +8,8 @@ import axios from 'axios';
 import {urlApi} from "../App";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import {useNavigate} from "react-router-dom";
+import login from "./Login";
 
 async function postRegister(values: { lastname: string; firstname: string; email: string; password: string }) {
     let payload = { firstname: values.firstname, lastname: values.lastname, email: values.email, password: values.password };
@@ -18,6 +20,7 @@ async function postRegister(values: { lastname: string; firstname: string; email
                 toast.success("Inscription réussite !", {
                     position: toast.POSITION.TOP_RIGHT,
                 });
+                window.location.replace("/login")
             }
         })
         .catch(function (error) {
@@ -30,6 +33,9 @@ async function postRegister(values: { lastname: string; firstname: string; email
 }
 
 const InscriptionPage = () => {
+
+    const navigate = useNavigate()
+
     const validationSchema = Yup.object().shape({
         lastname: Yup.string()
             .min(2, "Trop petit")
