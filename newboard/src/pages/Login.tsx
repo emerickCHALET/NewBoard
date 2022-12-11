@@ -52,7 +52,7 @@ const Login = () => {
     const handleSubmit = async (values: { email: string; password: string; }) => {
         const result = await postLogin(values);
         if (result) {
-            navigate('workspaces');
+            navigate('/workspaces');
         }
     };
 
