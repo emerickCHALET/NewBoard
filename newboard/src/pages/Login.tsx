@@ -1,5 +1,4 @@
 import React from 'react';
-import NavbarHome from "../components/NavbarHome";
 import Footer from "../components/Footer";
 import * as Yup from 'yup';
 import {Formik, ErrorMessage, Form, Field} from 'formik';
@@ -7,6 +6,7 @@ import {useNavigate} from "react-router";
 import axios from "axios";
 import {urlApi} from "../App";
 import {toast} from "react-toastify";
+import SideBar from "../components/SideBar";
 
 async function postLogin(values: { email: string; password: string; }): Promise<boolean> {
     let payload = { email: values.email, password: values.password };
@@ -52,13 +52,13 @@ const Login = () => {
     const handleSubmit = async (values: { email: string; password: string; }) => {
         const result = await postLogin(values);
         if (result) {
-            navigate('workspaces');
+            navigate('/workspaces');
         }
     };
 
     return (
         <div className="wrap">
-            <NavbarHome/>
+            <SideBar/>
             <Formik
                 initialValues={initialValues}
                 validationSchema={validationSchema}

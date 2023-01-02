@@ -1,5 +1,4 @@
 import React, {useState} from 'react';
-import NavbarHome from "../components/NavbarHome";
 import Footer from "../components/Footer";
 import '../index.css';
 import Workspace from "../Classes/Workspace";
@@ -7,6 +6,7 @@ import Button from 'react-bootstrap/Button';
 import Modal from "react-bootstrap/Modal";
 import {Formik, ErrorMessage, Form, Field} from 'formik';
 import * as Yup from "yup";
+import SideBar from "../components/SideBar";
 
 
 const myWorkspace = new Workspace("PHP");
@@ -47,7 +47,7 @@ const WorkspacesPage = () => {
     return (
 
         <div className="wrap">
-            <NavbarHome/>
+            <SideBar/>
 
             {/* à voir pour sortir le modal de ce fichier et en faire un component */}
 
