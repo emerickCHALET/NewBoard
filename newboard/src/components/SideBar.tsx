@@ -14,16 +14,16 @@ import Container from "react-bootstrap/Container";
 const SideBar = () => {
 
     const token = localStorage.getItem('token');
-    const role = localStorage.getItem('permissions');
-    console.log(token);
-    console.log(role!.toString());
+    const role = localStorage.getItem('permissions_role');
+    console.log(localStorage);
+    //console.log(role!.toString());
     const navigate = useNavigate();
     const [sidebar, setSidebar] = useState(false);
     const showSidebar = () => setSidebar(!sidebar);
 
     function Logout() {
-        localStorage.setItem('permissions', '');
-        localStorage.setItem('token', '');
+        localStorage.removeItem('permissions_role');
+        localStorage.removeItem('token');
         navigate('/');
     }
 

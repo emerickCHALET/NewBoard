@@ -34,4 +34,3 @@ export default function App(){
     );
 }
 export const urlApi = "http://newboardapifr.swks7487.odns.fr/api/";
-;
