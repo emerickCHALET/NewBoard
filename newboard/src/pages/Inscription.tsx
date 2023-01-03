@@ -32,7 +32,6 @@ async function postRegister(values: { lastname: string; firstname: string; email
         })
     return result;
 }
-
 const InscriptionPage = () => {
 
     const validationSchema = Yup.object().shape({
