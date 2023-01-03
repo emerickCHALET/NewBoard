@@ -1,14 +1,46 @@
 import React from 'react';
-import NavbarHome from "../components/NavbarHome";
 import Footer from "../components/Footer";
 import '../index.css';
 import * as Yup from 'yup';
 import {Formik, ErrorMessage, Form, Field} from 'formik';
+import axios from 'axios';
+import {urlApi} from "../App";
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import {useNavigate} from "react-router";
+import SideBar from "../components/SideBar";
+
+async function postRegister(values: { lastname: string; firstname: string; email: string; password: string }): Promise<boolean> {
+    let payload = { firstname: values.firstname, lastname: values.lastname, email: values.email, password: values.password };
+    let result = false;
+    await axios
+        .post(urlApi + 'users',payload)
+        .then((response) => {
+            if(response.status === 200){
+                toast.success("Inscription réussite !", {
+                    position: toast.POSITION.TOP_RIGHT,
+                });
+                result = true
+            }
+        })
+        .catch(function (error) {
+            if(error.response) {
+                toast.error(error.response.data.message,{
+                    position: toast.POSITION.TOP_RIGHT
+                });
+            }
+        })
+    return result;
+}
 
 const InscriptionPage = () => {
 
     const validationSchema = Yup.object().shape({
-        name: Yup.string()
+        lastname: Yup.string()
+            .min(2, "Trop petit")
+            .max(25, "Trop long!")
+            .required("Ce champ est obligatoire"),
+        firstname: Yup.string()
             .min(2, "Trop petit")
             .max(25, "Trop long!")
             .required("Ce champ est obligatoire"),
@@ -21,19 +53,22 @@ const InscriptionPage = () => {
     });
 
     const initialValues = {
-        name: "",
+        lastname: "",
+        firstname:"",
         email: "",
         password: "",
     };
-
-    const handleSubmit = (values: { name: string; email: string; password: string}) => {
-        alert(JSON.stringify(values, null, 2));
-        console.log(values)
+    const navigate = useNavigate();
+    const handleSubmit = async (values: { lastname: string; firstname: string; email: string; password: string }) => {
+        const result = await postRegister(values);
+        if (result) {
+            navigate('/login');
+        }
     };
 
     return (
         <div className="wrap">
-            <NavbarHome/>
+            <SideBar/>
             <Formik
                 initialValues={initialValues}
                 validationSchema={validationSchema}
@@ -42,10 +77,19 @@ const InscriptionPage = () => {
                 <div className="container-wrap">
                     <Form className="form-wrap">
                         <fieldset className={"field-area"}>
-                            <label htmlFor="name">Name:</label>
-                            <Field name="name" className="form-control" type="text"/>
+                            <label htmlFor="lastname">Nom:</label>
+                            <Field name="lastname" className="form-control" type="text"/>
                             <ErrorMessage
-                                name="name"
+                                name="lastname"
+                                component="small"
+                                className="text-danger"
+                            />
+                        </fieldset>
+                        <fieldset className={"field-area"}>
+                            <label htmlFor="firstname">Prénom:</label>
+                            <Field name="firstname" className="form-control" type="text"/>
+                            <ErrorMessage
+                                name="firstname"
                                 component="small"
                                 className="text-danger"
                             />

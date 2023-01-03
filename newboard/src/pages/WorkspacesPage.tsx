@@ -103,7 +103,7 @@ const WorkspacesPage = () => {
     return (
 
         <div className="wrap">
-            <NavbarHome/>
+            <SideBar/>
 
             {/* à voir pour sortir le modal de ce fichier et en faire un component */}
 
