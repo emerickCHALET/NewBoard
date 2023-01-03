@@ -1,5 +1,4 @@
-import React, {useState} from 'react';
-import NavbarHome from "../components/NavbarHome";
+import React, {useEffect, useState} from 'react';
 import Footer from "../components/Footer";
 import '../index.css';
 import Workspace from "../Classes/Workspace";
@@ -7,40 +6,58 @@ import Button from 'react-bootstrap/Button';
 import Modal from "react-bootstrap/Modal";
 import {Formik, ErrorMessage, Form, Field} from 'formik';
 import * as Yup from "yup";
-import Classroom from "../Classes/Classroom";
-import Student from "../Classes/Student";
-import classroom from "../Classes/Classroom";
-
-const myStudent = new Student("Antoine", "Haller", "antoine-haller@outlook.fr");
-
-const myClassroom = new Classroom("L3 Cergy",[myStudent]);
-const myClassroom2 = new Classroom("L3 Paris",[myStudent]);
-const myClassroom3 = new Classroom("M1 Lead Dev",[myStudent]);
+import SideBar from "../components/SideBar";
+import axios from "axios";
+import {urlApi} from "../App";
+import {toast} from "react-toastify";
+import {useNavigate} from "react-router";
+import NavbarHome from "../components/NavbarHome";
 
 
-const myWorkspace = new Workspace("PHP", myClassroom.name);
-/*const myWorkspace2 = new Workspace("JavaScript");
-const myWorkspace3 = new Workspace("Flutter");
-const myWorkspace4 = new Workspace("React Native");
-const myWorkspace5 = new Workspace("iOS");
-const myWorkspace6 = new Workspace("Sécurité");*/
+let list: Array<Workspace> = [];
+const config = {
+    headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+};
 
-let classroomList: Array<Classroom> = [myClassroom, myClassroom2, myClassroom3];
-
-let list: Array<Workspace> = [myWorkspace];
+async function postWorkspace(values: { name: string; }): Promise<boolean> {
+    // voir pour récupérer l'id d'user
+    let payload = { name: values.name, idUser: 118 };
+    let result = false;
+    await axios
+        .post(urlApi + 'workspaces',payload, config)
+        .then((response) => {
+            if(response.status === 200){
+                toast.success("Workspace crée avec succès !", {
+                    position: toast.POSITION.TOP_RIGHT,
+                });
+                result = true
+            }
+        })
+        .catch(function (error) {
+            if(error.response) {
+                toast.error(error.response.data.message,{
+                    position: toast.POSITION.TOP_RIGHT
+                });
+            }
+        })
+    return result;
+}
 
 
 const WorkspacesPage = () => {
-
     const [show, setShow] = useState(false);
 
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
 
 
-    const handleSubmit = (values: { name: string, classroom: string}) => {
-        setShow(false);
-        list.push(new Workspace(values.name, values.classroom))
+    const navigate = useNavigate();
+    const handleSubmit = async (values: { name: string;}) => {
+        const result = await postWorkspace(values);
+        if(result){
+            //navigation de fonctionne pas ?
+            navigate("/workspaces");
+        }
     };
 
     const initialValues = {
@@ -55,6 +72,33 @@ const WorkspacesPage = () => {
             .required("Ce champ est obligatoire"),
 
     });
+
+    const [workspaces, setWorkspaces] = useState<Workspace[]>([])
+
+    const fetchData = () => {
+        axios
+            .get(urlApi + 'workspaces', config)
+            .then((response) => {
+                if (response.status === 200) {
+                    toast.success("Workspaces récupérés", {
+                        position: toast.POSITION.TOP_RIGHT,
+                    });
+                    setWorkspaces(response.data.data)
+                }
+            })
+            .catch(function (error) {
+                if (error.response) {
+                    toast.error(error.response.data.message.name + ". \nReconnexion requise", {
+                        position: toast.POSITION.TOP_RIGHT
+                    });
+                }
+
+
+            })
+    }
+    useEffect(() => {
+        fetchData()
+    }, [])
 
     return (
 
@@ -73,46 +117,44 @@ const WorkspacesPage = () => {
                         validationSchema={validationSchema}
                         onSubmit={(values) => handleSubmit(values)}
                     >
-                    <Form>
-                            <label htmlFor="name">Name:</label>
-                            <Field name="name" className="form-control" type="text"/>
-                            <ErrorMessage
-                                name="name"
-                                component="small"
-                                className="text-danger"
-                            />
-                            <label htmlFor={"classroom"}>Classroom :</label>
-                            <Field name={"classroom"} className={"form-control"} component={"select"}>
-                                <option value={"selection"}>Séléctionnez une classe</option>
-                                {classroomList.map((classroom) => { return <option value={classroom.name} key={classroom.name}>{classroom.name}</option>})}
-                            </Field>
-                        <Modal.Footer>
-                            <Button variant="secondary" onClick={handleClose}>
-                                Fermer
-                            </Button>
-                            <Button variant="primary" type={"submit"}>
-                                Créer
-                            </Button>
-                        </Modal.Footer>
-                    </Form>
+                        <Form>
+                            <fieldset className={"field-area"}>
+                                <label htmlFor="name">Name:</label>
+                                <Field name="name" className="form-control" type="text"/>
+                                <ErrorMessage
+                                    name="name"
+                                    component="small"
+                                    className="text-danger"
+                                />
+                            </fieldset>
+                            <Modal.Footer>
+                                <Button variant="secondary" onClick={handleClose}>
+                                    Fermer
+                                </Button>
+                                <Button variant="primary" type={"submit"}>
+                                    Créer
+                                </Button>
+                            </Modal.Footer>
+                        </Form>
                     </Formik>
                 </Modal.Body>
 
             </Modal>
-                <h2>Espaces de travail</h2>
-                <div className={"workspace-container"}>
-                    <div className={"workspace-list"}>
-                        {/* eslint-disable-next-line @typescript-eslint/no-unused-expressions */}
-                        <Button className={"workspace-item workspace-item-add"} variant="primary" onClick={() => { handleShow() }}>
-                            +
-                        </Button>
-                        {list.map((workspace) => { return <div key={workspace.name.toString()} className={"workspace-item"}> <div className={"workspace-item-name"}>{workspace.name}</div><div className={"workspace-item-classroom"}>{workspace.classroom} </div> </div>; })}
-                    </div>
+            <h2>Espaces de travail</h2>
+            <div className={"workspace-container"}>
+                <div className={"workspace-list"}>
+                    {/* eslint-disable-next-line @typescript-eslint/no-unused-expressions */}
+                    <Button className={"workspace-item workspace-item-add"} variant="primary" onClick={() => { handleShow() }}>
+                        +
+                    </Button>
+                    {workspaces.map((workspace) => { return <div key={workspace.name.toString()} className={"workspace-item"}> {workspace.name} </div>; })}
                 </div>
+            </div>
             <Footer/>
         </div>
     )
-}
 
+
+}
 export default WorkspacesPage;
 

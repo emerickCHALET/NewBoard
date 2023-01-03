@@ -8,8 +8,6 @@ class Workspace {
         this.name = name;
         this.classroom = classroom;
     }
-
-
 }
 
 export default Workspace;
