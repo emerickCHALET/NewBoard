@@ -1,11 +1,24 @@
-import React, {ChangeEvent} from 'react';
+import React, {ChangeEvent, useState} from 'react';
 import Footer from "../components/Footer";
 import SideBar from "../components/SideBar";
 import {useNavigate} from "react-router";
 import axios from "axios";
 import {urlApi} from "../App";
 import {toast} from "react-toastify";
-import useReadCSV from "../components/UseReadCsv";
+import { parse } from 'papaparse';
+import { readFileSync } from 'fs';
+import * as path from 'path';
+
+type Data = {
+    Nom: string;
+    Prenom: string;
+    Classe: string;
+    Email: string;
+};
+
+type Values = {
+    data: Data[]
+}
 
 //API
 async function postCsvUser(values: { email: string; password: string; }): Promise<boolean> {
@@ -34,35 +47,28 @@ async function postCsvUser(values: { email: string; password: string; }): Promis
     return result;
 }
 
-const Test = (value: string) => {
-    useReadCSV(value)
-};
-
 const Management = () => {
-
+    const [term, setTerm] = useState('');
     const navigate = useNavigate();
-    const handleSubmit = async () => {
-        console.log('la')
-        //const result = await postCsvUser(values);
+    const handleSubmit = () => {
         //if (result) {
         //    navigate('/management');
         //}
-    };
 
-    const input = document.getElementById('csvFile') as HTMLInputElement | null;
-    const value = input?.value;
+    };
 
     return (
         <div className="wrap">
             <SideBar/>
             <div className="container-wrap">
                 <form
-                    onSubmit={(e: React.SyntheticEvent) => {
-                        e.preventDefault();
-                        console.log(value);
-                        Test(value!);
-                    }}>
-                    <input id={"csvFile"} type={"file"} accept={".csv"} />
+                    onSubmit={handleSubmit}>
+                    <input
+                        id={"csvFile"}
+                        type={"file"}
+                        accept={".csv"}
+                        value={term}
+                        onChange={(e) => setTerm(e.target.value)}/>
                     <input type="submit" value="Valider" />
                 </form>
             </div>

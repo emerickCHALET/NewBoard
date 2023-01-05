@@ -15,9 +15,11 @@
     "bootstrap": "^5.2.2",
     "cdbreact": "^1.5.3",
     "csv-parse": "^5.3.3",
+    "csv-parser": "^3.0.0",
     "formik": "^2.2.9",
     "mdb-react-ui-kit": "^5.0.0",
     "papaparse": "^5.3.2",
+    "process": "^0.11.10",
     "react": "^18.2.0",
     "react-bootstrap": "^2.6.0",
     "react-dom": "^18.2.0",
@@ -26,6 +28,7 @@
     "react-router-dom": "^6.4.3",
     "react-scripts": "5.0.1",
     "react-toastify": "^9.1.1",
+    "stream-browserify": "^3.0.0",
     "typescript": "^4.8.4",
     "wc-toast": "^1.2.9",
     "web-vitals": "^3.0.4",
@@ -54,5 +57,10 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "browser": {
+    "fs": false,
+    "path": false,
+    "os": false
   }
 }
