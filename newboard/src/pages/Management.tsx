@@ -9,16 +9,6 @@ import { parse } from 'papaparse';
 import { readFileSync } from 'fs';
 import * as path from 'path';
 
-type Data = {
-    Nom: string;
-    Prenom: string;
-    Classe: string;
-    Email: string;
-};
-
-type Values = {
-    data: Data[]
-}
 
 //API
 async function postCsvUser(values: { email: string; password: string; }): Promise<boolean> {
@@ -48,13 +38,47 @@ async function postCsvUser(values: { email: string; password: string; }): Promis
 }
 
 const Management = () => {
-    const [term, setTerm] = useState('');
+    const [file, setFile] = useState<File>();
     const navigate = useNavigate();
-    const handleSubmit = () => {
-        //if (result) {
-        //    navigate('/management');
-        //}
+    const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
+        if (e.target.files) {
+            setFile(e.target.files[0]);
+        }
+    };
 
+    const handleUploadClick = () => {
+        if (!file) {
+            return;
+        }
+
+        fetch('http://localhost:3001/api/usersByFile', {
+            method: 'POST',
+            body: file,
+            // 👇 Set headers manually for single file upload
+            headers: {
+                'content-type': file.type,
+                'content-length': `${file.size}`, // 👈 Headers need to be a string
+            },
+        })
+            .then((res) => {
+                if(res.status === 200){
+                    toast.success("Liste des élèves ajouté avec succés", {
+                        position: toast.POSITION.TOP_RIGHT,
+                    });
+                    console.log(res)
+                }
+            })
+            .then((data) => console.log(data))
+            .catch((err) => {
+                {
+                    console.log(err.response)
+                    if(err.response) {
+                        toast.error(err.response.data.message,{
+                            position: toast.POSITION.TOP_RIGHT
+                        });
+                    }
+                }
+            });
     };
 
     return (
@@ -62,13 +86,12 @@ const Management = () => {
             <SideBar/>
             <div className="container-wrap">
                 <form
-                    onSubmit={handleSubmit}>
+                    onSubmit={handleUploadClick}>
                     <input
                         id={"csvFile"}
                         type={"file"}
                         accept={".csv"}
-                        value={term}
-                        onChange={(e) => setTerm(e.target.value)}/>
+                        onChange={handleFileChange}/>
                     <input type="submit" value="Valider" />
                 </form>
             </div>
