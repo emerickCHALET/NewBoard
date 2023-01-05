@@ -1,13 +1,13 @@
 import React, {ChangeEvent} from 'react';
 import Footer from "../components/Footer";
 import SideBar from "../components/SideBar";
-import {ErrorMessage, Field, Form, Formik} from "formik";
-import * as Yup from "yup";
 import {useNavigate} from "react-router";
 import axios from "axios";
 import {urlApi} from "../App";
 import {toast} from "react-toastify";
+import useReadCSV from "../components/UseReadCsv";
 
+//API
 async function postCsvUser(values: { email: string; password: string; }): Promise<boolean> {
     let payload = { email: values.email, password: values.password };
     let result = false;
@@ -34,53 +34,38 @@ async function postCsvUser(values: { email: string; password: string; }): Promis
     return result;
 }
 
+const Test = (value: string) => {
+    useReadCSV(value)
+};
+
 const Management = () => {
 
-    const validationSchema = Yup.object().shape({
-        email: Yup.string()
-            .email("Email invalide")
-            .required("L'email est obligatoire"),
-        password: Yup.string()
-            .required("Le mot de passe est obligatoire")
-    });
-
-    const initialValues = {
-        email: "",
-        password: "",
-    };
-
     const navigate = useNavigate();
-    const handleSubmit = async (values: { email: string; password: string; }) => {
-        const result = await postCsvUser(values);
-        if (result) {
-            navigate('/management');
-        }
+    const handleSubmit = async () => {
+        console.log('la')
+        //const result = await postCsvUser(values);
+        //if (result) {
+        //    navigate('/management');
+        //}
     };
 
-    const changeHandler = (e: React.FormEvent<HTMLInputElement>) => {
-        console.log(e.currentTarget.files![0])
-    }
+    const input = document.getElementById('csvFile') as HTMLInputElement | null;
+    const value = input?.value;
 
     return (
         <div className="wrap">
             <SideBar/>
-            <Formik
-                initialValues={initialValues}
-                validationSchema={validationSchema}
-                onSubmit={(values) => handleSubmit(values)}
-            >
-                <div className="container-wrap">
-                    <Form className="form-wrap">
-                        <input
-                            type="file"
-                            name="file"
-                            accept=".csv"
-                            onChange={changeHandler}
-                            style={{ display: "block", margin: "10px auto" }}
-                        />                        <button type="submit" className="form-button">Valider</button>
-                    </Form>
-                </div>
-            </Formik>
+            <div className="container-wrap">
+                <form
+                    onSubmit={(e: React.SyntheticEvent) => {
+                        e.preventDefault();
+                        console.log(value);
+                        Test(value!);
+                    }}>
+                    <input id={"csvFile"} type={"file"} accept={".csv"} />
+                    <input type="submit" value="Valider" />
+                </form>
+            </div>
             <Footer/>
         </div>
     )
