@@ -71,8 +71,7 @@ const InscriptionPage = () => {
             <Formik
                 initialValues={initialValues}
                 validationSchema={validationSchema}
-                onSubmit={(values) => handleSubmit(values)}
-            >
+                onSubmit={(values) => handleSubmit(values)}>
                 <div className="container-wrap">
                     <Form className="form-wrap">
                         <fieldset className={"field-area"}>

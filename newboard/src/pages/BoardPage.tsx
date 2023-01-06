@@ -1,70 +1,83 @@
 import React, {useEffect, useState} from 'react';
-import Footer from "../components/Footer";
-import '../index.css';
-import Workspace from "../Classes/Workspace";
-import Button from 'react-bootstrap/Button';
-import Modal from "react-bootstrap/Modal";
-import {Formik, ErrorMessage, Form, Field} from 'formik';
-import * as Yup from "yup";
 import SideBar from "../components/SideBar";
+import Footer from "../components/Footer";
+import {useLocation, useNavigate} from "react-router";
+import Student from "../Classes/Student";
+import Classroom from "../Classes/Classroom";
 import axios from "axios";
 import {urlApi} from "../App";
 import {toast} from "react-toastify";
-import {useNavigate} from "react-router";
-import Student from "../Classes/Student";
-import Classroom from "../Classes/Classroom";
+import * as Yup from "yup";
+import Modal from "react-bootstrap/Modal";
+import {ErrorMessage, Field, Form, Formik} from "formik";
+import Button from "react-bootstrap/Button";
+import Board from "../Classes/Board";
+
+
+
 
 
 const config = {
-    headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+    headers: {Authorization: `Bearer ${localStorage.getItem('token')}`}
 };
 
 const student1 = new Student("Antoine", "Haller", "antoine-haller@outlook.fr");
 const student2 = new Student("Emerick", "Chalet", "emerick.chalet@gmail.com");
 
-const studentArray = new Array<Student>;
+const studentArray = new Array<Student>();
 
 studentArray.push(student1, student2);
 
 const classroom = new Classroom("M1 Lead dev", studentArray);
 
-const classroomArray = new Array<Classroom>;
+const classroomArray = new Array<Classroom>();
 classroomArray.push(classroom);
 
-async function postWorkspace(values: { name: string; }): Promise<boolean> {
-    // voir pour récupérer l'id d'user
-    let payload = { name: values.name };
-    let result = false;
-    await axios
-        .post(urlApi + 'workspaces',payload, config)
-        .then((response) => {
-            if(response.status === 200){
-                let payload2 = { userID: localStorage.getItem('userId'), workspaceID: response.data.data.id};
-                axios
-                    .post(urlApi + 'workspacesUser', payload2, config)
-                    .then((response) => {
-                        if(response.status === 200) {
-                            toast.success("Workspace crée avec succès !", {
-                                position: toast.POSITION.TOP_RIGHT,
-                            });
-                            result = true
-                        }
-                    })
-            }
-        })
-        .catch(function (error) {
-            if(error.response) {
-                toast.error(error.response.data.message,{
-                    position: toast.POSITION.TOP_RIGHT
-                });
-            }
-        })
-    return result;
-}
 
 
 
-const WorkspacesPage = () => {
+const BoardPage = () => {
+
+    const location = useLocation();
+
+//get workspace name from previous page
+    let workspaceName = location.state.workspaceName;
+
+//we get the classroom selected in the form from workspacePage, must be replaced by classroom assigned to workspace
+    let classroomName = location.state.classroomName;
+    let workspaceId = location.state.workspaceId;
+
+    async function postBoard(values: { name: string; }): Promise<boolean> {
+        // voir pour récupérer l'id d'user
+        let payload = {name: values.name, workspaceID: workspaceId};
+        let result = false;
+        await axios
+            .post(urlApi + 'boards',payload, config)
+            .then((response) => {
+                if(response.status === 200){
+                    let payload2 = { userID: localStorage.getItem('userId'), boardID: response.data.data.id};
+                    axios
+                        .post(urlApi + 'boardUsers', payload2, config)
+                        .then((response) => {
+                            if(response.status === 200) {
+                                toast.success("Board crée avec succès !", {
+                                    position: toast.POSITION.TOP_RIGHT,
+                                });
+                                result = true
+                            }
+                        })
+                }
+            })
+            .catch(function (error) {
+                if(error.response) {
+                    toast.error(error.response.data.message,{
+                        position: toast.POSITION.TOP_RIGHT
+                    });
+                }
+            })
+        return result;
+    }
+
     const [show, setShow] = useState(false);
 
     const handleClose = () => setShow(false);
@@ -75,9 +88,9 @@ const WorkspacesPage = () => {
         setValue(e.target.value);
     };
 
-    const handleSubmit = async (values: { name: string;}) => {
-        const result = await postWorkspace(values);
-        if(result){
+    const handleSubmit = async (values: { name: string; }) => {
+        const result = await postBoard(values);
+        if (result) {
             handleClose()
             window.location.reload()
         }
@@ -96,17 +109,17 @@ const WorkspacesPage = () => {
 
     });
 
-    const [workspaces, setWorkspaces] = useState<Workspace[]>([])
+    const [boards, setBoards] = useState<Board[]>([])
 
     const fetchData = () => {
         axios
-            .get(urlApi + 'workspaces', config)
+            .get(urlApi + "boardByWorkspaceId/" + workspaceId, config)
             .then((response) => {
                 if (response.status === 200) {
-                    toast.success("Workspaces récupérés", {
+                    toast.success("Boards récupérés", {
                         position: toast.POSITION.TOP_RIGHT,
                     });
-                    setWorkspaces(response.data.data)
+                    setBoards(response.data.data)
                 }
             })
             .catch(function (error) {
@@ -119,6 +132,8 @@ const WorkspacesPage = () => {
 
             })
     }
+
+
     useEffect(() => {
         fetchData()
     }, [])
@@ -134,7 +149,7 @@ const WorkspacesPage = () => {
 
             <Modal show={show} onHide={handleClose}>
                 <Modal.Header closeButton>
-                    <Modal.Title>Créer un espace de travail</Modal.Title>
+                    <Modal.Title>Créer un tableau</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                     <Formik
@@ -152,12 +167,6 @@ const WorkspacesPage = () => {
                                     className="text-danger"
                                 />
                             </fieldset>
-                            <select defaultValue={value} onChange={handleChange}>
-                                <option value="default" disabled hidden>
-                                    Choisissez une classe
-                                </option>
-                                {classroomArray.map((classroom) => { return <option key={classroom.name.toString()} className={"workspace-item"} value={classroom.name} > {classroom.name} </option>; })}
-                            </select>
                             <Modal.Footer>
                                 <Button variant="secondary" onClick={handleClose}>
                                     Fermer
@@ -171,20 +180,20 @@ const WorkspacesPage = () => {
                 </Modal.Body>
 
             </Modal>
-            <h2>Espaces de travail</h2>
+            <h2>Tableaux {workspaceId}</h2>
             <div className={"workspace-container"}>
                 <div className={"workspace-list"}>
                     {/* eslint-disable-next-line @typescript-eslint/no-unused-expressions */}
-                    <Button className={"workspace-item workspace-item-add"} variant="primary" onClick={() => { handleShow() }}>
+                    <Button className={"workspace-item workspace-item-add"} variant="primary" onClick={() => {
+                        handleShow()
+                    }}>
                         +
                     </Button>
-                    {workspaces.map((workspace) => { return <div key={workspace.name.toString()} className={"workspace-item"} onClick={() => {
-                        navigate("/board",
-                            {state: {
-                                    workspaceName: workspace.name,
-                                    workspaceId: workspace.id,
-                                    classroomName: classroom.name
-                            }}) }}> {workspace.name} </div>; })}
+                    {boards.map((board) => {
+                        return <div key={board.name.toString()} className={"workspace-item"} onClick={() => {
+
+                        }}> {board.name} </div>;
+                    })}
                 </div>
             </div>
             <Footer/>
@@ -193,5 +202,5 @@ const WorkspacesPage = () => {
 
 
 }
-export default WorkspacesPage;
 
+export default BoardPage;
