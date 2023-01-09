@@ -8,6 +8,7 @@ import Login from "./pages/Login";
 import WorkspacesPage from "./pages/WorkspacesPage";
 import SideBar from "./components/SideBar";
 import BoardPage from "./pages/BoardPage";
+import Kanban from "./pages/Kanban";
 
 
 const MainPage = () => {
@@ -31,6 +32,7 @@ export default function App(){
             <Route path="inscription" element={<InscriptionPage/>}/>
             <Route path="workspaces" element={<WorkspacesPage/>}/>
             <Route path="board" element={<BoardPage/>}/>
+            <Route path="kanban" element={<Kanban/>}/>
         </Routes>
         </BrowserRouter>
     );
