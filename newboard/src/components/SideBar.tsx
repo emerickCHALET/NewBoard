@@ -69,7 +69,7 @@ const SideBar = () => {
                             })}
                             {role! === "ROLE_USER" ?
                             <li className='nav-text'>
-                                <Link to={'management'}>
+                                <Link to={'/management'}>
                                     <AiIcons.AiOutlineTeam />
                                     <span>Gestion</span>
                                 </Link>
