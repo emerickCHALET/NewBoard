@@ -9,9 +9,10 @@ import {urlApi} from "../App";
 import {toast} from "react-toastify";
 import * as Yup from "yup";
 import Modal from "react-bootstrap/Modal";
-import {ErrorMessage, Field, Form, Formik} from "formik";
+import {ErrorMessage, Field, Form, Formik, FormikValues} from "formik";
 import Button from "react-bootstrap/Button";
 import Board from "../Classes/Board";
+import Select from "react-select";
 
 
 
@@ -20,21 +21,6 @@ import Board from "../Classes/Board";
 const config = {
     headers: {Authorization: `Bearer ${localStorage.getItem('token')}`}
 };
-
-const student1 = new Student("Antoine", "Haller", "antoine-haller@outlook.fr");
-const student2 = new Student("Emerick", "Chalet", "emerick.chalet@gmail.com");
-
-const studentArray = new Array<Student>();
-
-studentArray.push(student1, student2);
-
-const classroom = new Classroom("M1 Lead dev", studentArray);
-
-const classroomArray = new Array<Classroom>();
-classroomArray.push(classroom);
-
-
-
 
 const BoardPage = () => {
 
@@ -78,6 +64,32 @@ const BoardPage = () => {
         return result;
     }
 
+    async function postWorkspaceUser(values: FormikValues): Promise<boolean> {
+        // voir pour récupérer l'id d'user
+        let payload = {userId: values.userId, workspaceID: workspaceId};
+        let result = false;
+        await axios
+            .post(urlApi + 'workspacesUser', payload, config)
+            .then((response) => {
+                if (response.status === 200) {
+                    if (response.status === 200) {
+                        toast.success("Workspace crée avec succès !", {
+                            position: toast.POSITION.TOP_RIGHT,
+                        });
+                        result = true
+                    }
+                }
+            })
+            .catch(function (error) {
+                if (error.response) {
+                    toast.error(error.response.data.message, {
+                        position: toast.POSITION.TOP_RIGHT
+                    });
+                }
+            })
+        return result;
+    }
+    
     const [show, setShow] = useState(false);
 
     const handleClose = () => setShow(false);
@@ -92,6 +104,13 @@ const BoardPage = () => {
         const result = await postBoard(values);
         if (result) {
             handleClose()
+            window.location.reload()
+        }
+    };
+
+    const handleSubmitAddUsers = async (values: FormikValues) => {
+        const result = await postWorkspaceUser(values);
+        if (result) {
             window.location.reload()
         }
     };
@@ -111,7 +130,7 @@ const BoardPage = () => {
 
     const [boards, setBoards] = useState<Board[]>([])
 
-    const fetchData = () => {
+    const getBoard = () => {
         axios
             .get(urlApi + "boardByWorkspaceId/" + workspaceId, config)
             .then((response) => {
@@ -133,12 +152,34 @@ const BoardPage = () => {
             })
     }
 
+    /*const [users, setUsers] = useState<Student[]>([])
+
+    const getUsers = () => {
+        axios
+            .get(urlApi + 'users', config)
+            .then((response) => {
+                if (response.status === 200) {
+                    setUsers(response.data.data);
+                }
+            })
+            .catch(function (error) {
+                if (error.response) {
+                    toast.error(error.response.data.message.name + ". \nReconnexion requise", {
+                        position: toast.POSITION.TOP_RIGHT
+                    });
+                }
+
+
+            })
+    }*/
 
     useEffect(() => {
-        fetchData()
+        getBoard()
+        //getUsers()
     }, [])
 
     const navigate = useNavigate();
+
 
     return (
 
@@ -180,7 +221,7 @@ const BoardPage = () => {
                 </Modal.Body>
 
             </Modal>
-            <h2>Tableaux {workspaceId}</h2>
+            <h2>Tableaux</h2>
             <div className={"workspace-container"}>
                 <div className={"workspace-list"}>
                     {/* eslint-disable-next-line @typescript-eslint/no-unused-expressions */}
@@ -191,7 +232,6 @@ const BoardPage = () => {
                     </Button>
                     {boards.map((board) => {
                         return <div key={board.name.toString()} className={"workspace-item"} onClick={() => {
-
                         }}> {board.name} </div>;
                     })}
                 </div>

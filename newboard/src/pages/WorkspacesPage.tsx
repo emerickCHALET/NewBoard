@@ -1,10 +1,11 @@
 import React, {useEffect, useState} from 'react';
+import Select, { OptionsOrGroups } from 'react-select'
 import Footer from "../components/Footer";
 import '../index.css';
 import Workspace from "../Classes/Workspace";
 import Button from 'react-bootstrap/Button';
 import Modal from "react-bootstrap/Modal";
-import {Formik, ErrorMessage, Form, Field} from 'formik';
+import {Formik, ErrorMessage, Form, Field, FormikValues} from 'formik';
 import * as Yup from "yup";
 import SideBar from "../components/SideBar";
 import axios from "axios";
@@ -13,37 +14,27 @@ import {toast} from "react-toastify";
 import {useNavigate} from "react-router";
 import Student from "../Classes/Student";
 import Classroom from "../Classes/Classroom";
+import student from "../Classes/Student";
 
-
+let workspaceId: number;
 const config = {
-    headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+    headers: {Authorization: `Bearer ${localStorage.getItem('token')}`}
 };
-
-const student1 = new Student("Antoine", "Haller", "antoine-haller@outlook.fr");
-const student2 = new Student("Emerick", "Chalet", "emerick.chalet@gmail.com");
-
-const studentArray = new Array<Student>;
-
-studentArray.push(student1, student2);
-
-const classroom = new Classroom("M1 Lead dev", studentArray);
-
-const classroomArray = new Array<Classroom>;
-classroomArray.push(classroom);
 
 async function postWorkspace(values: { name: string; }): Promise<boolean> {
     // voir pour récupérer l'id d'user
-    let payload = { name: values.name };
+    let payload = {name: values.name};
     let result = false;
     await axios
-        .post(urlApi + 'workspaces',payload, config)
+        .post(urlApi + 'workspaces', payload, config)
         .then((response) => {
-            if(response.status === 200){
-                let payload2 = { userID: localStorage.getItem('userId'), workspaceID: response.data.data.id};
+            if (response.status === 200) {
+                let payload2 = {userID: localStorage.getItem('userId'), workspaceID: response.data.data.id};
+                workspaceId = response.data.data.id;
                 axios
                     .post(urlApi + 'workspacesUser', payload2, config)
                     .then((response) => {
-                        if(response.status === 200) {
+                        if (response.status === 200) {
                             toast.success("Workspace crée avec succès !", {
                                 position: toast.POSITION.TOP_RIGHT,
                             });
@@ -53,8 +44,8 @@ async function postWorkspace(values: { name: string; }): Promise<boolean> {
             }
         })
         .catch(function (error) {
-            if(error.response) {
-                toast.error(error.response.data.message,{
+            if (error.response) {
+                toast.error(error.response.data.message, {
                     position: toast.POSITION.TOP_RIGHT
                 });
             }
@@ -63,21 +54,24 @@ async function postWorkspace(values: { name: string; }): Promise<boolean> {
 }
 
 
-
 const WorkspacesPage = () => {
     const [show, setShow] = useState(false);
 
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
+
+    const handleCloseAddUser = () => setShow(false);
+    const handleShowAddUser = () => setShow(true);
+
     const [value, setValue] = useState("default");
 
     const handleChange = (e: { target: { value: React.SetStateAction<string>; }; }) => {
         setValue(e.target.value);
     };
 
-    const handleSubmit = async (values: { name: string;}) => {
+    const handleSubmit = async (values: { name: string; }) => {
         const result = await postWorkspace(values);
-        if(result){
+        if (result) {
             handleClose()
             window.location.reload()
         }
@@ -98,7 +92,7 @@ const WorkspacesPage = () => {
 
     const [workspaces, setWorkspaces] = useState<Workspace[]>([])
 
-    const fetchData = () => {
+    const getWorkspaces = () => {
         axios
             .get(urlApi + 'workspaces', config)
             .then((response) => {
@@ -119,8 +113,10 @@ const WorkspacesPage = () => {
 
             })
     }
+
+
     useEffect(() => {
-        fetchData()
+        getWorkspaces()
     }, [])
 
     const navigate = useNavigate();
@@ -131,6 +127,8 @@ const WorkspacesPage = () => {
             <SideBar/>
 
             {/* à voir pour sortir le modal de ce fichier et en faire un component */}
+
+
 
             <Modal show={show} onHide={handleClose}>
                 <Modal.Header closeButton>
@@ -152,12 +150,6 @@ const WorkspacesPage = () => {
                                     className="text-danger"
                                 />
                             </fieldset>
-                            <select defaultValue={value} onChange={handleChange}>
-                                <option value="default" disabled hidden>
-                                    Choisissez une classe
-                                </option>
-                                {classroomArray.map((classroom) => { return <option key={classroom.name.toString()} className={"workspace-item"} value={classroom.name} > {classroom.name} </option>; })}
-                            </select>
                             <Modal.Footer>
                                 <Button variant="secondary" onClick={handleClose}>
                                     Fermer
@@ -172,6 +164,9 @@ const WorkspacesPage = () => {
 
             </Modal>
             <h2>Espaces de travail</h2>
+
+
+
             <div className={"workspace-container"}>
                 <div className={"workspace-list"}>
                     {/* eslint-disable-next-line @typescript-eslint/no-unused-expressions */}
@@ -183,7 +178,6 @@ const WorkspacesPage = () => {
                             {state: {
                                     workspaceName: workspace.name,
                                     workspaceId: workspace.id,
-                                    classroomName: classroom.name
                             }}) }}> {workspace.name} </div>; })}
                 </div>
             </div>
