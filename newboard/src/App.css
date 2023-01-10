@@ -101,3 +101,18 @@ span {
     margin-right: auto;
     width: 50%;
 }
+
+.tableUsers{
+    width: 95%;
+    margin: 0 auto;
+}
+
+.managementOptions{
+    display: flex;
+    justify-content: center;
+
+}
+
+.managementOptions-Btn{
+    margin: 0 10px;
+}
