@@ -9,7 +9,13 @@ import Navbar from "react-bootstrap/Navbar";
 import {Button} from "react-bootstrap";
 import Container from "react-bootstrap/Container";
 
-
+/**
+ * SideBar of the website when the user is authenticated
+ * @param {string} token - this is the authentication token where the user is authenticated
+ * @param {string} role - this is the role of the user
+ * @param {string} establishment - this is the establishment Id when a administrator is connected
+ * @constructor
+ */
 const SideBar = () => {
 
     const token = localStorage.getItem('token');
@@ -21,6 +27,10 @@ const SideBar = () => {
     const [sidebar, setSidebar] = useState(false);
     const showSidebar = () => setSidebar(!sidebar);
 
+    /**
+     * Logout the user connected
+     * @constructor
+     */
     function Logout() {
         localStorage.removeItem('permissions_role');
         localStorage.removeItem('token');

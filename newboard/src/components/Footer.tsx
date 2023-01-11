@@ -1,5 +1,9 @@
 import React from 'react';
 
+/**
+ * Footer of the website
+ * @constructor
+ */
 const Footer = () => {
     return (
         <div className="footer">

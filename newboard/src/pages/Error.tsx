@@ -2,6 +2,10 @@ import React from 'react';
 import SideBar from "../components/SideBar";
 import Footer from "../components/Footer";
 
+/**
+ * Page that appears when a route is not accessible
+ * @constructor
+ */
 const ErrorPage = () => {
     return (
         <div className="wrap">

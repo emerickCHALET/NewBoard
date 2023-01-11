@@ -10,15 +10,22 @@ import {urlApi} from "../App";
 import {toast} from "react-toastify";
 import Papa from "papaparse";
 import { Table } from 'react-bootstrap';
-import Select from 'react-select';
 
-
+/**
+ * const who created a headers with the token for authenticated a request to API
+ */
 const config = {
     headers: {Authorization: `Bearer ${localStorage.getItem('token')}`}
 };
+/**
+ * const who get the establishmentId of a admin login
+ */
 const establishmentId = parseInt(localStorage.getItem('establishmentId')!);
 
-
+/**
+ * Register a new User
+ * @param values necessary for register a new user
+ */
 async function postRegister(values: { lastname: string; firstname: string; email: string; password: string, class: string }): Promise<any> {
     let payload = { firstname: values.firstname, lastname: values.lastname, email: values.email, password: values.password, class: values.class };
     await axios
@@ -39,6 +46,10 @@ async function postRegister(values: { lastname: string; firstname: string; email
         })
 }
 
+/**
+ * Register a new classroom who is assigned to the establishment ID of the admin connected
+ * @param values necessary for register a new classroom
+ */
 async function postClassrom(values: { ClassroomName: string; }): Promise<any> {
     let payload = { ClassroomName: values.ClassroomName , EstablishmentId: establishmentId};
     console.log(payload)

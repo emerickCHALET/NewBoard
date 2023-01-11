@@ -35,4 +35,7 @@ export default function App(){
         </BrowserRouter>
     );
 }
+/**
+ * url of the Production environment
+ */
 export const urlApi = "http://newboardapifr.swks7487.odns.fr/api/";
