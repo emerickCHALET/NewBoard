@@ -25,6 +25,7 @@ const SideBar = () => {
         localStorage.removeItem('permissions_role');
         localStorage.removeItem('token');
         localStorage.removeItem('establishmentId');
+        localStorage.removeItem('userId');
         navigate('/');
     }
 

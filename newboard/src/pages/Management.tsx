@@ -43,7 +43,7 @@ async function postClassrom(values: { ClassroomName: string; }): Promise<any> {
     let payload = { ClassroomName: values.ClassroomName , EstablishmentId: establishmentId};
     console.log(payload)
     await axios
-        .post('http://localhost:3001/api/classroom',payload,config)
+        .post(urlApi + 'classroom',payload,config)
         .then((response) => {
             if(response.status === 200){
                 toast.success("Classe crée avec succès !", {
@@ -91,7 +91,7 @@ const Management = () => {
             complete: async (results) => { // La fonction complete sera appelée une fois que le fichier a été lu
                 console.log(results.data)
                 await axios
-                    .post('http://localhost:3001/api/usersByFile', results.data, config)
+                    .post(urlApi + 'usersByFile', results.data, config)
                     .then((response) => {
                         if (response.status === 200) {
                             toast.success("Etudiants créer!", {
@@ -116,9 +116,10 @@ const Management = () => {
 
     const getClassroomsByEstablishmentId = () => {
         axios
-            .get('http://localhost:3001/api/classroomsByEstablishmentId/' + establishmentId, config)
+            .get(urlApi + 'classroomsByEstablishmentId/' + establishmentId, config)
             .then((response) => {
                 if (response.status === 200) {
+                    console.log(response.data.data)
                     setClassrooms(response.data.data)
                 }
             })
@@ -128,8 +129,6 @@ const Management = () => {
                         position: toast.POSITION.TOP_RIGHT
                     });
                 }
-
-
             })
     }
 
