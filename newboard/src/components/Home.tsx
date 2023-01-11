@@ -2,6 +2,10 @@ import React from 'react';
 import {Button} from "react-bootstrap";
 import {useNavigate} from "react-router-dom";
 
+/**
+ * Home Page when the user is not authenticated
+ * @constructor
+ */
 const Home = () => {
     const navigate = useNavigate();
     return (

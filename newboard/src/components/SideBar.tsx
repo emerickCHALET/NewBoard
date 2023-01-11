@@ -3,27 +3,39 @@ import 'bootstrap/dist/css/bootstrap.min.css'
 import {Link, useNavigate} from "react-router-dom";
 import * as FaIcons from "react-icons/fa";
 import * as AiIcons from "react-icons/ai";
-import { SidebarData } from "./SideBarData";
 import "../App.css";
 import { IconContext } from "react-icons";
 import Navbar from "react-bootstrap/Navbar";
 import {Button} from "react-bootstrap";
 import Container from "react-bootstrap/Container";
 
-
+/**
+ * SideBar of the website when the user is authenticated
+ * @param {string} token - this is the authentication token where the user is authenticated
+ * @param {string} role - this is the role of the user
+ * @param {string} establishment - this is the establishment Id when a administrator is connected
+ * @constructor
+ */
 const SideBar = () => {
 
     const token = localStorage.getItem('token');
     const role = localStorage.getItem('permissions_role');
+    const establishment = localStorage.getItem('establishmentId');
     console.log(localStorage);
     //console.log(role!.toString());
     const navigate = useNavigate();
     const [sidebar, setSidebar] = useState(false);
     const showSidebar = () => setSidebar(!sidebar);
 
+    /**
+     * Logout the user connected
+     * @constructor
+     */
     function Logout() {
         localStorage.removeItem('permissions_role');
         localStorage.removeItem('token');
+        localStorage.removeItem('establishmentId');
+        localStorage.removeItem('userId');
         navigate('/');
     }
 
@@ -57,19 +69,16 @@ const SideBar = () => {
                                     <AiIcons.AiOutlineClose />
                                 </Link>
                             </li>
-                            {SidebarData.map((item, index) => {
-                                return (
-                                    <li key={index} className={item.cName}>
-                                        <Link to={item.path}>
-                                            {item.icon}
-                                            <span>{item.title}</span>
-                                        </Link>
-                                    </li>
-                                );
-                            })}
-                            {role! === "ROLE_USER" ?
+                            {role! === "ROLE_USER"?
+                                <li className='nav-text'>
+                                    <Link to={'/workspaces'}>
+                                        <AiIcons.AiFillLayout />
+                                        <span>Workspaces</span>
+                                    </Link>
+                                </li> : <></>}
+                            {role! === "ROLE_ADMIN" &&  establishment != null?
                             <li className='nav-text'>
-                                <Link to={'Management'}>
+                                <Link to={'/management'}>
                                     <AiIcons.AiOutlineTeam />
                                     <span>Gestion</span>
                                 </Link>

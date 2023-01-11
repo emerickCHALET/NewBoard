@@ -10,6 +10,10 @@ import 'react-toastify/dist/ReactToastify.css';
 import {useNavigate} from "react-router";
 import SideBar from "../components/SideBar";
 
+/**
+ * Register a new User
+ * @param values - all the values necessary for register the user
+ */
 async function postRegister(values: { lastname: string; firstname: string; email: string; password: string }): Promise<boolean> {
     let payload = { firstname: values.firstname, lastname: values.lastname, email: values.email, password: values.password };
     let result = false;
@@ -33,7 +37,6 @@ async function postRegister(values: { lastname: string; firstname: string; email
     return result;
 }
 const InscriptionPage = () => {
-
     const validationSchema = Yup.object().shape({
         lastname: Yup.string()
             .min(2, "Trop petit")

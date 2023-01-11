@@ -152,7 +152,6 @@ const WorkspacesPage = () => {
                         </Form>
                     </Formik>
                 </Modal.Body>
-
             </Modal>
             <h2>Espaces de travail</h2>
 

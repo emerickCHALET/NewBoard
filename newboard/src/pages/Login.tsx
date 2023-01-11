@@ -8,6 +8,10 @@ import {urlApi} from "../App";
 import {toast} from "react-toastify";
 import SideBar from "../components/SideBar";
 
+/**
+ * function who check the identifiers of a user and connect him if that's good
+ * @param values necessary for Login a user
+ */
 async function postLogin(values: { email: string; password: string; }): Promise<boolean> {
     let payload = { email: values.email, password: values.password };
     let result = false;
@@ -22,6 +26,9 @@ async function postLogin(values: { email: string; password: string; }): Promise<
                 localStorage.setItem('permissions_role', response.data.data.role);
                 localStorage.setItem('token', response.data.token);
                 localStorage.setItem('userId', response.data.data.id);
+                if(response.data.data.role === "ROLE_ADMIN"){
+                    localStorage.setItem('establishmentId', response.data.data.establishmentId);
+                }
                 result = true
             }
         })
@@ -36,7 +43,6 @@ async function postLogin(values: { email: string; password: string; }): Promise<
 }
 
 const Login = () => {
-
     const validationSchema = Yup.object().shape({
         email: Yup.string()
             .email("Email invalide")

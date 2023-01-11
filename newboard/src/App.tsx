@@ -9,6 +9,8 @@ import WorkspacesPage from "./pages/WorkspacesPage";
 import SideBar from "./components/SideBar";
 import BoardPage from "./pages/BoardPage";
 import Kanban from "./pages/Kanban";
+import Management from "./pages/Management";
+
 
 
 const MainPage = () => {
@@ -33,8 +35,12 @@ export default function App(){
             <Route path="workspaces" element={<WorkspacesPage/>}/>
             <Route path="board" element={<BoardPage/>}/>
             <Route path="kanban" element={<Kanban/>}/>
+            <Route path="management" element={<Management/>}/>
         </Routes>
         </BrowserRouter>
     );
 }
+/**
+ * url of the Production environment
+ */
 export const urlApi = "http://newboardapifr.swks7487.odns.fr/api/";
