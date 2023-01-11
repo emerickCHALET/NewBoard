@@ -22,7 +22,6 @@ async function postLogin(values: { email: string; password: string; }): Promise<
                 toast.success("Bienvenue!", {
                     position: toast.POSITION.TOP_RIGHT,
                 });
-                console.log(response)
                 localStorage.setItem('permissions_role', response.data.data.role);
                 localStorage.setItem('token', response.data.token);
                 localStorage.setItem('userId', response.data.data.id);
