@@ -1,5 +1,4 @@
 import React, {useEffect, useState} from 'react';
-import Select, { OptionsOrGroups } from 'react-select'
 import Footer from "../components/Footer";
 import '../index.css';
 import Workspace from "../Classes/Workspace";
@@ -12,9 +11,6 @@ import axios from "axios";
 import {urlApi} from "../App";
 import {toast} from "react-toastify";
 import {useNavigate} from "react-router";
-import Student from "../Classes/Student";
-import Classroom from "../Classes/Classroom";
-import student from "../Classes/Student";
 
 let workspaceId: number;
 const config = {
@@ -97,9 +93,6 @@ const WorkspacesPage = () => {
             .get(urlApi + 'workspaces', config)
             .then((response) => {
                 if (response.status === 200) {
-                    toast.success("Workspaces récupérés", {
-                        position: toast.POSITION.TOP_RIGHT,
-                    });
                     setWorkspaces(response.data.data)
                 }
             })
@@ -126,9 +119,7 @@ const WorkspacesPage = () => {
         <div className="wrap">
             <SideBar/>
 
-            {/* à voir pour sortir le modal de ce fichier et en faire un component */}
-
-
+            {/* See how to get the modal out and create a component */}
 
             <Modal show={show} onHide={handleClose}>
                 <Modal.Header closeButton>
@@ -169,7 +160,6 @@ const WorkspacesPage = () => {
 
             <div className={"workspace-container"}>
                 <div className={"workspace-list"}>
-                    {/* eslint-disable-next-line @typescript-eslint/no-unused-expressions */}
                     <Button className={"workspace-item workspace-item-add"} variant="primary" onClick={() => { handleShow() }}>
                         +
                     </Button>

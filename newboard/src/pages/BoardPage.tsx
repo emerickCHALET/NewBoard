@@ -2,8 +2,6 @@ import React, {useEffect, useState} from 'react';
 import SideBar from "../components/SideBar";
 import Footer from "../components/Footer";
 import {useLocation, useNavigate} from "react-router";
-import Student from "../Classes/Student";
-import Classroom from "../Classes/Classroom";
 import axios from "axios";
 import {urlApi} from "../App";
 import {toast} from "react-toastify";
@@ -12,10 +10,6 @@ import Modal from "react-bootstrap/Modal";
 import {ErrorMessage, Field, Form, Formik, FormikValues} from "formik";
 import Button from "react-bootstrap/Button";
 import Board from "../Classes/Board";
-import Select from "react-select";
-
-
-
 
 
 const config = {
@@ -31,10 +25,11 @@ const BoardPage = () => {
 
 //we get the classroom selected in the form from workspacePage, must be replaced by classroom assigned to workspace
     let classroomName = location.state.classroomName;
+
+// get workspace ID from previous page
     let workspaceId = location.state.workspaceId;
 
     async function postBoard(values: { name: string; }): Promise<boolean> {
-        // voir pour récupérer l'id d'user
         let payload = {name: values.name, workspaceID: workspaceId};
         let result = false;
         await axios
@@ -135,9 +130,6 @@ const BoardPage = () => {
             .get(urlApi + "boardByWorkspaceId/" + workspaceId, config)
             .then((response) => {
                 if (response.status === 200) {
-                    toast.success("Boards récupérés", {
-                        position: toast.POSITION.TOP_RIGHT,
-                    });
                     setBoards(response.data.data)
                 }
             })
@@ -186,7 +178,7 @@ const BoardPage = () => {
         <div className="wrap">
             <SideBar/>
 
-            {/* à voir pour sortir le modal de ce fichier et en faire un component */}
+            {/* See how to get the modal out and create a component */}
 
             <Modal show={show} onHide={handleClose}>
                 <Modal.Header closeButton>
