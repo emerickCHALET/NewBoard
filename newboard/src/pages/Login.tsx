@@ -12,7 +12,7 @@ async function postLogin(values: { email: string; password: string; }): Promise<
     let payload = { email: values.email, password: values.password };
     let result = false;
     await axios
-        .post(urlApi + 'login',payload)
+        .post('http://localhost:3001/api/login',payload)
         .then((response) => {
             if(response.status === 200){
                 toast.success("Bienvenue!", {
@@ -21,6 +21,9 @@ async function postLogin(values: { email: string; password: string; }): Promise<
                 console.log(response)
                 localStorage.setItem('permissions_role', response.data.data.role);
                 localStorage.setItem('token', response.data.token);
+                if(response.data.data.role === "ROLE_ADMIN"){
+                    localStorage.setItem('establishmentId', response.data.data.establishmentId);
+                }
                 result = true
             }
         })

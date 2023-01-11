@@ -3,7 +3,6 @@ import 'bootstrap/dist/css/bootstrap.min.css'
 import {Link, useNavigate} from "react-router-dom";
 import * as FaIcons from "react-icons/fa";
 import * as AiIcons from "react-icons/ai";
-import { SidebarData } from "./SideBarData";
 import "../App.css";
 import { IconContext } from "react-icons";
 import Navbar from "react-bootstrap/Navbar";
@@ -15,6 +14,7 @@ const SideBar = () => {
 
     const token = localStorage.getItem('token');
     const role = localStorage.getItem('permissions_role');
+    const establishment = localStorage.getItem('establishmentId');
     console.log(localStorage);
     //console.log(role!.toString());
     const navigate = useNavigate();
@@ -24,6 +24,7 @@ const SideBar = () => {
     function Logout() {
         localStorage.removeItem('permissions_role');
         localStorage.removeItem('token');
+        localStorage.removeItem('establishmentId');
         navigate('/');
     }
 
@@ -57,17 +58,14 @@ const SideBar = () => {
                                     <AiIcons.AiOutlineClose />
                                 </Link>
                             </li>
-                            {SidebarData.map((item, index) => {
-                                return (
-                                    <li key={index} className={item.cName}>
-                                        <Link to={item.path}>
-                                            {item.icon}
-                                            <span>{item.title}</span>
-                                        </Link>
-                                    </li>
-                                );
-                            })}
-                            {role! === "ROLE_USER" ?
+                            {role! === "ROLE_USER"?
+                                <li className='nav-text'>
+                                    <Link to={'/workspaces'}>
+                                        <AiIcons.AiFillLayout />
+                                        <span>Workspaces</span>
+                                    </Link>
+                                </li> : <></>}
+                            {role! === "ROLE_ADMIN" &&  establishment != null?
                             <li className='nav-text'>
                                 <Link to={'/management'}>
                                     <AiIcons.AiOutlineTeam />

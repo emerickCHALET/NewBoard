@@ -3,18 +3,21 @@ import Footer from "../components/Footer";
 import SideBar from "../components/SideBar";
 import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
-import {ErrorMessage, Field, Form, Formik} from "formik";
+import {ErrorMessage, Field, Form, Formik } from "formik";
 import * as Yup from "yup";
 import axios from "axios";
 import {urlApi} from "../App";
 import {toast} from "react-toastify";
 import Papa from "papaparse";
 import { Table } from 'react-bootstrap';
+import Select from 'react-select';
 
 
 const config = {
     headers: {Authorization: `Bearer ${localStorage.getItem('token')}`}
 };
+const establishmentId = parseInt(localStorage.getItem('establishmentId')!);
+
 
 async function postRegister(values: { lastname: string; firstname: string; email: string; password: string, class: string }): Promise<any> {
     let payload = { firstname: values.firstname, lastname: values.lastname, email: values.email, password: values.password, class: values.class };
@@ -23,6 +26,27 @@ async function postRegister(values: { lastname: string; firstname: string; email
         .then((response) => {
             if(response.status === 200){
                 toast.success("Elève ajouter avec succès !", {
+                    position: toast.POSITION.TOP_RIGHT,
+                });
+            }
+        })
+        .catch(function (error) {
+            if(error.response) {
+                toast.error(error.response.data.message,{
+                    position: toast.POSITION.TOP_RIGHT
+                });
+            }
+        })
+}
+
+async function postClassrom(values: { ClassroomName: string; }): Promise<any> {
+    let payload = { ClassroomName: values.ClassroomName , EstablishmentId: establishmentId};
+    console.log(payload)
+    await axios
+        .post('http://localhost:3001/api/classroom',payload,config)
+        .then((response) => {
+            if(response.status === 200){
+                toast.success("Classe crée avec succès !", {
                     position: toast.POSITION.TOP_RIGHT,
                 });
             }
@@ -88,6 +112,31 @@ const Management = () => {
     };
 
     //Ajout d'un élève
+    const [classrooms, setClassrooms] = useState<any[]>([]);
+
+    const getClassroomsByEstablishmentId = () => {
+        axios
+            .get('http://localhost:3001/api/classroomsByEstablishmentId/' + establishmentId, config)
+            .then((response) => {
+                if (response.status === 200) {
+                    setClassrooms(response.data.data)
+                }
+            })
+            .catch(function (error) {
+                if (error.response) {
+                    toast.error(error.response.data.message.name + ". \nReconnexion requise", {
+                        position: toast.POSITION.TOP_RIGHT
+                    });
+                }
+
+
+            })
+    }
+
+    useEffect(() => {
+        getClassroomsByEstablishmentId()
+    }, [])
+
     const [showSecond, setShowSecond] = useState(false);
     const handleCloseSecond = () => setShowSecond(false);
     const handleShowSecond = () => setShowSecond(true);
@@ -124,6 +173,26 @@ const Management = () => {
         handleCloseSecond();
     };
 
+    //Ajout d'une classe
+    const [showThird, setShowThird] = useState(false);
+    const handleCloseThird = () => setShowThird(false);
+    const handleShowThird = () => setShowThird(true);
+
+    const validationSchemaThird = Yup.object().shape({
+        ClassroomName: Yup.string()
+            .min(2, "Trop petit")
+            .max(25, "Trop long!")
+            .required("Ce champ est obligatoire"),
+    });
+
+    const initialValuesThird = {
+        ClassroomName: ""
+    };
+    const handleSubmitThird = async (values: { ClassroomName: string;}) => {
+        await postClassrom(values);
+        handleCloseThird();
+    };
+
     //Affichage Table
     const [data, setData] = useState<any>([]);
 
@@ -132,11 +201,7 @@ const Management = () => {
             .get(urlApi + 'users',config)
             .then((response) => {
                 if (response.status === 200) {
-                    toast.success("Utilisateurs récupérés", {
-                        position: toast.POSITION.TOP_RIGHT,
-                    });
                     setData(response.data.data);
-                    console.log(response.data.data);
                 }
             })
             .catch(function (error) {
@@ -206,6 +271,21 @@ const Management = () => {
                                     />
                                 </fieldset>
                                 <fieldset className={"field-area"}>
+                                    <label htmlFor={"class"}>Classe :</label>
+                                    <Field as="select" name="class" className="form-control" type="class">
+                                        {classrooms.map(classroom => (
+                                            <option key={classroom.id} value={classroom.ClassroomName}>
+                                                {classroom.ClassroomName}
+                                            </option>
+                                        ))}
+                                    </Field>
+                                    <ErrorMessage
+                                        name="class"
+                                        component="small"
+                                        className="text-danger"
+                                    />
+                                </fieldset>
+                                <fieldset className={"field-area"}>
                                     <label htmlFor={"email"}>Email :</label>
                                     <Field name="email" className="form-control" type="email"/>
                                     <ErrorMessage
@@ -223,11 +303,37 @@ const Management = () => {
                                         className="text-danger"
                                     />
                                 </fieldset>
+                                <Modal.Footer>
+                                    <Button variant="primary" className="form-control" type={"submit"}>
+                                        Créer
+                                    </Button>
+                                </Modal.Footer>
+                            </Form>
+                        </Formik>
+                    </Modal.Body>
+                </Modal>
+                <Button className={"workspace-item workspace-item-add managementOptions-Btn"} variant="primary" onClick={() => {
+                    handleShowSecond()
+                }}>
+                    Ajouter un élève
+                </Button>
+                <br/>
+                <Modal show={showThird} onHide={handleCloseThird}>
+                    <Modal.Header closeButton>
+                        <Modal.Title>Ajouter un élève</Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>
+                        <Formik
+                            initialValues={initialValuesThird}
+                            validationSchema={validationSchemaThird}
+                            onSubmit={(values) => handleSubmitThird(values)}
+                        >
+                            <Form className="field-area">
                                 <fieldset className={"field-area"}>
-                                    <label htmlFor={"class"}>Classe :</label>
-                                    <Field name="class" className="form-control" type="class"/>
+                                    <label htmlFor="ClassroomName">Nom de la classe :</label>
+                                    <Field name="ClassroomName" className="form-control" type="text"/>
                                     <ErrorMessage
-                                        name="class"
+                                        name="ClassroomName"
                                         component="small"
                                         className="text-danger"
                                     />
@@ -241,10 +347,10 @@ const Management = () => {
                         </Formik>
                     </Modal.Body>
                 </Modal>
-                <Button className={"workspace-item workspace-item-add"} variant="primary" onClick={() => {
-                    handleShowSecond()
+                <Button className={"workspace-item workspace-item-add managementOptions-Btn"} variant="primary" onClick={() => {
+                    handleShowThird()
                 }}>
-                    Ajouter
+                    Ajouter une classe
                 </Button>
             </div>
             <div className={"tableUsers"}>
