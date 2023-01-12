@@ -1,4 +1,3 @@
-
 let users: {id: string, username: string}[] = []
 
 export const userJoin = (id: string, username: string): boolean => {
