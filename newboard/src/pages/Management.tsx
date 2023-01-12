@@ -6,7 +6,7 @@ import Button from "react-bootstrap/Button";
 import {ErrorMessage, Field, Form, Formik } from "formik";
 import * as Yup from "yup";
 import axios from "axios";
-import {urlApi} from "../App";
+import {urlApi, urlLocal} from "../App";
 import {toast} from "react-toastify";
 import Papa from "papaparse";
 import { Table } from 'react-bootstrap';
@@ -27,7 +27,7 @@ const establishmentId = parseInt(localStorage.getItem('establishmentId')!);
  * @param values necessary for register a new user
  */
 async function postRegister(values: { lastname: string; firstname: string; email: string; password: string, class: string }): Promise<any> {
-    let payload = { firstname: values.firstname, lastname: values.lastname, email: values.email, password: values.password, class: values.class };
+    let payload = { firstname: values.firstname, lastname: values.lastname, email: values.email, password: values.password, class: values.class, establishmentId: establishmentId };
     await axios
         .post(urlApi + 'users',payload)
         .then((response) => {
@@ -92,7 +92,8 @@ const Management = () => {
         const config = {
             headers:{
                 header1: file.type,
-                header2: file.size
+                header2: file.size,
+                header3: establishmentId
             }
         };
 
@@ -102,16 +103,16 @@ const Management = () => {
             complete: async (results) => { // La fonction complete sera appelée une fois que le fichier a été lu
                 console.log(results.data)
                 await axios
-                    .post(urlApi + 'usersByFile', results.data, config)
+                    .post(urlLocal + 'usersByFile', results.data, config)
                     .then((response) => {
                         if (response.status === 200) {
                             toast.success("Etudiants créer!", {
                                 position: toast.POSITION.TOP_RIGHT,
                             });
-                            console.log(response)
                         }
                     })
                     .catch(function (error) {
+                        console.log(error)
                         if (error.response) {
                             toast.error(error.response.data.message, {
                                 position: toast.POSITION.TOP_RIGHT
@@ -208,7 +209,7 @@ const Management = () => {
 
     useEffect(() => {
         axios
-            .get(urlApi + 'users',config)
+            .get(urlApi + 'usersByEstablishmentId/' + establishmentId, config)
             .then((response) => {
                 if (response.status === 200) {
                     setData(response.data.data);
