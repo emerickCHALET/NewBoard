@@ -92,7 +92,8 @@ const Management = () => {
         const config = {
             headers:{
                 header1: file.type,
-                header2: file.size
+                header2: file.size,
+                header3 : establishmentId
             }
         };
 
@@ -102,7 +103,7 @@ const Management = () => {
             complete: async (results) => { // La fonction complete sera appelée une fois que le fichier a été lu
                 console.log(results.data)
                 await axios
-                    .post(urlApi + 'usersByFile', results.data, config)
+                    .post( urlApi + 'usersByFile', results.data, config)
                     .then((response) => {
                         if (response.status === 200) {
                             toast.success("Etudiants créer!", {
@@ -208,7 +209,7 @@ const Management = () => {
 
     useEffect(() => {
         axios
-            .get(urlApi + 'users',config)
+            .get(urlApi + 'usersByEstablishmentId/' + establishmentId,config)
             .then((response) => {
                 if (response.status === 200) {
                     setData(response.data.data);
