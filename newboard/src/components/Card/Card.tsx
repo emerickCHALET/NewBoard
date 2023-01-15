@@ -20,11 +20,10 @@ interface NewCardProps {
 export const NewCard: React.FC<NewCardProps> = ({ onSuccess, onDismiss }) => {
   const [currentTitle, setCurrentTitle] = useState("");
 
-  const ref = useRef<HTMLTextAreaElement>();
-
-  useClickOutside(ref, () => {
+  const ref = useClickOutside(() => {
     onDismiss();
-  });
+  })
+
 
   const onKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === "Enter") {
@@ -60,18 +59,16 @@ const Card: React.FC<CardProps> = ({ title, id, editCard, currentIndex }) => {
   const [currentTitle, setCurrentTitle] = useState(title);
   const [isEditing, setIsEditing] = useState(false);
 
-  const ref = useRef<HTMLTextAreaElement>();
-
-  useClickOutside(ref, () => {
+  const ref = useClickOutside(() => {
     if (isEditing) {
       setIsEditing(false);
     }
-  });
+  })
 
   useEffect(() => {
     if (isEditing) {
       ref?.current?.focus?.();
-      ref?.current?.select?.();
+      //ref?.current?.select?.();
     }
   }, [isEditing]);
 

@@ -38,11 +38,9 @@ export const NewColumn: React.FC<NewColumnProps> = ({
 }) => {
   const [currentTitle, setCurrentTitle] = useState("");
 
-  const ref = useRef<HTMLTextAreaElement>();
-
-  useClickOutside(ref, () => {
+  const ref = useClickOutside(() => {
     onDismiss();
-  });
+  })
 
   const onKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === "Enter") {
@@ -88,7 +86,6 @@ const Column: React.FC<ColumnProps> = ({
   const [currentTitle, setCurrentTitle] = useState(title);
   const [isEditing, setIsEditing] = useState(false);
   const [isAddingCard, setIsAddingCard] = useState(false);
-  const ref = useRef<HTMLTextAreaElement>();
 
   const cardListRefCallback = useCallback((node: HTMLDivElement | null) => {
     if (node !== null) {
@@ -96,16 +93,16 @@ const Column: React.FC<ColumnProps> = ({
     }
   }, []);
 
-  useClickOutside(ref, () => {
+  const ref = useClickOutside(() => {
     if (isEditing) {
       setIsEditing(false);
     }
-  });
+  })
 
   useEffect(() => {
     if (isEditing) {
       ref?.current?.focus?.();
-      ref?.current?.select?.();
+      //ref?.current?.select?.();
     } else {
       ref?.current?.blur?.();
     }
