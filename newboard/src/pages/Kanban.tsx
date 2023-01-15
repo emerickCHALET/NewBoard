@@ -46,8 +46,6 @@ const AddNewColumn: React.FC<AddNewColumnProps> = ({ columns, setColumns }) => {
 const Kanban = () => {
 
     const [columns, setColumns] = useState<ColumnInterface[]>([
-        { id: "1", title: "Teste", cards: [] },
-        { id: "2", title: "Teste", cards: [] }
     ]);
 
     const updateColumn = (id: string, title: string) => {

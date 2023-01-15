@@ -7,7 +7,7 @@ interface Props {
 }
 
 const AddColumnButton: React.FC<Props> = ({ onClick }) => {
-  return <Container onClick={onClick}>Adicionar outra lista</Container>;
+  return <Container onClick={onClick}>Ajouter une liste</Container>;
 };
 
 export default AddColumnButton;

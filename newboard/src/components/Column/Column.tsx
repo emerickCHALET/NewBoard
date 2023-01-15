@@ -198,7 +198,7 @@ const Column: React.FC<ColumnProps> = ({
           </Droppable>
           {!isAddingCard && (
             <Button onClick={() => setIsAddingCard(true)}>
-              Adicionar outro cartão
+              Ajouter une carte
             </Button>
           )}
         </Container>
