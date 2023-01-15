@@ -8,8 +8,8 @@ import Login from "./pages/Login";
 import WorkspacesPage from "./pages/WorkspacesPage";
 import SideBar from "./components/SideBar";
 import BoardPage from "./pages/BoardPage";
-import Kanban from "./pages/Kanban";
 import Management from "./pages/Management";
+import Kanban from "./pages/Kanban";
 
 
 
