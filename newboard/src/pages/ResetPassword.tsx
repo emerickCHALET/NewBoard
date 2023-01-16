@@ -14,12 +14,12 @@ async function putReset(values: { password: string}): Promise<boolean> {
     let data = {  password: values.password };
     let params = new URLSearchParams(window.location.search);
     let tokenAccess = params.get('check');
-    let myHeaders = {
-        'Authorization': 'Bearer ' +tokenAccess
+    const config = {
+        headers: {Authorization: `Bearer ${tokenAccess}`}
     };
     let result = false;
     await axios
-        .put(urlLocal+'reset',data,{headers: myHeaders})
+        .put(urlLocal+'reset',data,config)
         .then((response) => {
             if(response.status === 200){
                 toast.success("Mot de passe modifié !", {
@@ -30,7 +30,6 @@ async function putReset(values: { password: string}): Promise<boolean> {
         })
         .catch(function (error) {
             if(error.response) {
-                console.log("Check token "+tokenAccess);
                 toast.error(error.response.data.message,{
                     position: toast.POSITION.TOP_RIGHT
                 });
