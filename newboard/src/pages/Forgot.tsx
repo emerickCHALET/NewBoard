@@ -4,7 +4,7 @@ import * as Yup from 'yup';
 import {Formik, ErrorMessage, Form, Field} from 'formik';
 import {useNavigate} from "react-router";
 import axios from "axios";
-import {urlApi} from "../App";
+import {urlLocal} from "../App";
 import {toast} from "react-toastify";
 import SideBar from "../components/SideBar";
 
@@ -12,7 +12,7 @@ async function postForgot(values: { email: string}): Promise<boolean> {
     let data = {  email: values.email };
     let result = false;
     await axios
-        .post(urlApi + 'forgot',data)
+        .post(urlLocal + 'forgot',data)
         .then((response) => {
             if(response.status === 200){
                 toast.success("Un email vous à été envoyé !", {

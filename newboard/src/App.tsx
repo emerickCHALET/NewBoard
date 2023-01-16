@@ -37,5 +37,5 @@ export default function App(){
         </BrowserRouter>
     );
 }
-export const urlApi = "http://localhost:3001/api/";
-//export const urlApi = "http://newboardapifr.swks7487.odns.fr/api/";
+export const urlApi = "http://newboardapifr.swks7487.odns.fr/api/";
+export const urlLocal = "http://localhost:3001/api/";

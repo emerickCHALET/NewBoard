@@ -1,10 +1,10 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import Footer from "../components/Footer";
 import '../index.css';
 import * as Yup from 'yup';
 import {Formik, ErrorMessage, Form, Field} from 'formik';
 import axios from 'axios';
-import {urlApi} from "../App";
+import {urlLocal} from "../App";
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useNavigate } from "react-router";
@@ -19,7 +19,7 @@ async function putReset(values: { password: string}): Promise<boolean> {
     };
     let result = false;
     await axios
-        .put(urlApi+'reset',data,{headers: myHeaders})
+        .put(urlLocal+'reset',data,{headers: myHeaders})
         .then((response) => {
             if(response.status === 200){
                 toast.success("Mot de passe modifié !", {
