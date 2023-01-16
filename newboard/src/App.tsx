@@ -7,7 +7,10 @@ import ErrorPage from "./pages/Error";
 import Login from "./pages/Login";
 import WorkspacesPage from "./pages/WorkspacesPage";
 import SideBar from "./components/SideBar";
+import BoardPage from "./pages/BoardPage";
+import Kanban from "./pages/Kanban";
 import Management from "./pages/Management";
+
 
 
 const MainPage = () => {
@@ -30,6 +33,8 @@ export default function App(){
             <Route path="*" element={<ErrorPage/>}/>
             <Route path="inscription" element={<InscriptionPage/>}/>
             <Route path="workspaces" element={<WorkspacesPage/>}/>
+            <Route path="board" element={<BoardPage/>}/>
+            <Route path="kanban" element={<Kanban/>}/>
             <Route path="management" element={<Management/>}/>
         </Routes>
         </BrowserRouter>

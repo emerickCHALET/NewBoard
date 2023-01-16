@@ -93,7 +93,7 @@ const Management = () => {
             headers:{
                 header1: file.type,
                 header2: file.size,
-                header3: establishmentId
+                header3 : establishmentId
             }
         };
 
@@ -209,7 +209,7 @@ const Management = () => {
 
     useEffect(() => {
         axios
-            .get(urlApi + 'usersByEstablishmentId/' + establishmentId, config)
+            .get(urlApi + 'usersByEstablishmentId/' + establishmentId,config)
             .then((response) => {
                 if (response.status === 200) {
                     setData(response.data.data);

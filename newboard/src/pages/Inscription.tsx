@@ -36,7 +36,6 @@ async function postRegister(values: { lastname: string; firstname: string; email
         })
     return result;
 }
-
 const InscriptionPage = () => {
     const validationSchema = Yup.object().shape({
         lastname: Yup.string()
@@ -75,8 +74,7 @@ const InscriptionPage = () => {
             <Formik
                 initialValues={initialValues}
                 validationSchema={validationSchema}
-                onSubmit={(values) => handleSubmit(values)}
-            >
+                onSubmit={(values) => handleSubmit(values)}>
                 <div className="container-wrap">
                     <Form className="form-wrap">
                         <fieldset className={"field-area"}>
