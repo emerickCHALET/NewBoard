@@ -7,6 +7,8 @@ import ErrorPage from "./pages/Error";
 import Login from "./pages/Login";
 import WorkspacesPage from "./pages/WorkspacesPage";
 import SideBar from "./components/SideBar";
+import Forgot from "./pages/Forgot";
+import ResetPassword from "./pages/ResetPassword";
 
 
 const MainPage = () => {
@@ -26,6 +28,8 @@ export default function App(){
         <Routes>
             <Route path="/" element={<MainPage/>}/>
             <Route path="login" element={<Login/>}/>
+            <Route path="forgot" element={<Forgot/>}/>
+            <Route path="reset" element={<ResetPassword/>}/>
             <Route path="*" element={<ErrorPage/>}/>
             <Route path="inscription" element={<InscriptionPage/>}/>
             <Route path="workspaces" element={<WorkspacesPage/>}/>
@@ -33,4 +37,5 @@ export default function App(){
         </BrowserRouter>
     );
 }
-export const urlApi = "http://newboardapifr.swks7487.odns.fr/api/";
+export const urlApi = "http://localhost:3001/api/";
+//export const urlApi = "http://newboardapifr.swks7487.odns.fr/api/";

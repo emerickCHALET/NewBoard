@@ -1,32 +1,36 @@
 import React from 'react';
 import Footer from "../components/Footer";
+import '../index.css';
 import * as Yup from 'yup';
 import {Formik, ErrorMessage, Form, Field} from 'formik';
-import {useNavigate} from "react-router";
-import axios from "axios";
+import axios from 'axios';
 import {urlApi} from "../App";
-import {toast} from "react-toastify";
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { useNavigate } from "react-router";
 import SideBar from "../components/SideBar";
-import {Link} from "react-router-dom";
 
-async function postLogin(values: { email: string; password: string; }): Promise<boolean> {
-    let payload = { email: values.email, password: values.password };
+async function putReset(values: { password: string}): Promise<boolean> {
+    let data = {  password: values.password };
+    let params = new URLSearchParams(window.location.search);
+    let tokenAccess = params.get('check');
+    let myHeaders = {
+        'Authorization': 'Bearer ' +tokenAccess
+    };
     let result = false;
     await axios
-        .post(urlApi + 'login',payload)
+        .put(urlApi+'reset',data,{headers: myHeaders})
         .then((response) => {
             if(response.status === 200){
-                toast.success("Bienvenue!", {
+                toast.success("Mot de passe modifié !", {
                     position: toast.POSITION.TOP_RIGHT,
                 });
-                console.log(response)
-                localStorage.setItem('permissions_role', response.data.data.role);
-                localStorage.setItem('token', response.data.token);
                 result = true
             }
         })
         .catch(function (error) {
             if(error.response) {
+                console.log("Check token "+tokenAccess);
                 toast.error(error.response.data.message,{
                     position: toast.POSITION.TOP_RIGHT
                 });
@@ -35,26 +39,22 @@ async function postLogin(values: { email: string; password: string; }): Promise<
     return result;
 }
 
-const Login = () => {
+const ResetPassword = () => {
 
     const validationSchema = Yup.object().shape({
-        email: Yup.string()
-            .email("Email invalide")
-            .required("L'email est obligatoire"),
         password: Yup.string()
+            .min(8, "Le mot de passe doit contenir au moins 8 caractères")
             .required("Le mot de passe est obligatoire")
     });
 
     const initialValues = {
-        email: "",
         password: "",
     };
-
     const navigate = useNavigate();
-    const handleSubmit = async (values: { email: string; password: string; }) => {
-        const result = await postLogin(values);
+    const handleSubmit = async (values: { password: string }) => {
+        const result = await putReset(values);
         if (result) {
-            navigate('/workspaces');
+            navigate('/login');
         }
     };
 
@@ -69,25 +69,15 @@ const Login = () => {
                 <div className="container-wrap">
                     <Form className="form-wrap">
                         <fieldset className={"field-area"}>
-                            <label htmlFor={"email"}>Email</label>
-                            <Field name="email" className="form-control" type="email"/>
-                            <ErrorMessage
-                                name="email"
-                                component="small"
-                                className="text-danger"
-                            />
-                        </fieldset>
-                        <fieldset className={"field-area"}>
-                            <label htmlFor={"password"}>Password</label>
-                            <Field name="password" className="form-control" type="password"/>
+                            <p>Veuillez saisir votre nouveau mot de passe</p>
+                            <Field name="password" placeholder="Mot de passe" className="form-control" type="password"/>
                             <ErrorMessage
                                 name="password"
                                 component="small"
                                 className="text-danger"
                             />
                         </fieldset>
-                        <Link to={'/forgot'}>Mot de passe oublié ?</Link>
-                        <button type="submit" className="form-button">Login</button>
+                        <button className={"form-button"} type="submit">Sauvegarder</button>
                     </Form>
                 </div>
             </Formik>
@@ -96,4 +86,5 @@ const Login = () => {
     )
 }
 
-export default Login
+
+export default ResetPassword;
