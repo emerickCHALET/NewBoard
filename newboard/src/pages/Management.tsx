@@ -3,13 +3,14 @@ import Footer from "../components/Footer";
 import SideBar from "../components/SideBar";
 import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
-import {ErrorMessage, Field, Form, Formik } from "formik";
+import {ErrorMessage, Field, Form, Formik, FormikValues} from "formik";
 import * as Yup from "yup";
 import axios from "axios";
-import {urlApi} from "../App";
+import {urlApi, urlLocal} from "../App";
 import {toast} from "react-toastify";
 import Papa from "papaparse";
 import { Table } from 'react-bootstrap';
+import * as AiIcons from "react-icons/ai";
 
 /**
  * const who created a headers with the token for authenticated a request to API
@@ -27,7 +28,7 @@ const establishmentId = parseInt(localStorage.getItem('establishmentId')!);
  * @param values necessary for register a new user
  */
 async function postRegister(values: { lastname: string; firstname: string; email: string; password: string, class: string }): Promise<any> {
-    let payload = { firstname: values.firstname, lastname: values.lastname, email: values.email, password: values.password, class: values.class };
+    let payload = { firstname: values.firstname, lastname: values.lastname, email: values.email, password: values.password, class: values.class, establishmentId: establishmentId };
     await axios
         .post(urlApi + 'users',payload)
         .then((response) => {
@@ -52,7 +53,6 @@ async function postRegister(values: { lastname: string; firstname: string; email
  */
 async function postClassrom(values: { ClassroomName: string; }): Promise<any> {
     let payload = { ClassroomName: values.ClassroomName , EstablishmentId: establishmentId};
-    console.log(payload)
     await axios
         .post(urlApi + 'classroom',payload,config)
         .then((response) => {
@@ -70,6 +70,55 @@ async function postClassrom(values: { ClassroomName: string; }): Promise<any> {
             }
         })
 }
+
+/**
+ * Update details of a student who exist already
+ * @param values necessary for update a student
+ */
+async function putUser(values: {id:string; lastname: string; firstname: string; email: string; class: string }): Promise<any> {
+    let payload = { firstname: values.firstname, lastname: values.lastname, email: values.email, class: values.class };
+    await axios
+        .put(urlApi + 'studentUpdateByAdmin/' + values.id,payload,config)
+        .then((response) => {
+            if(response.status === 200){
+                toast.success("Elève mis a jour avec succès !", {
+                    position: toast.POSITION.TOP_RIGHT,
+                });
+            }
+        })
+        .catch(function (error) {
+            if(error.response) {
+                toast.error(error.response.data.message,{
+                    position: toast.POSITION.TOP_RIGHT
+                });
+            }
+        })
+}
+
+/**
+ *
+ * @param values contains the id of the student to delete
+ * @constructor
+ */
+async function DeleteStudent(values: { idStudent: string}): Promise<void> {
+    await axios
+        .delete(urlApi + 'users/' + values.idStudent,config)
+        .then((response) => {
+            if(response.status === 200){
+                toast.success("Etudiant supprimé !", {
+                    position: toast.POSITION.TOP_RIGHT,
+                });
+            }
+        })
+        .catch(function (error) {
+            if(error.response) {
+                toast.error(error.response.data.message,{
+                    position: toast.POSITION.TOP_RIGHT
+                });
+            }
+        })
+}
+
 const Management = () => {
 
     //Ajout en masse via CSV
@@ -103,16 +152,16 @@ const Management = () => {
             complete: async (results) => { // La fonction complete sera appelée une fois que le fichier a été lu
                 console.log(results.data)
                 await axios
-                    .post( urlApi + 'usersByFile', results.data, config)
+                    .post(urlLocal + 'usersByFile', results.data, config)
                     .then((response) => {
                         if (response.status === 200) {
                             toast.success("Etudiants créer!", {
                                 position: toast.POSITION.TOP_RIGHT,
                             });
-                            console.log(response)
                         }
                     })
                     .catch(function (error) {
+                        console.log(error)
                         if (error.response) {
                             toast.error(error.response.data.message, {
                                 position: toast.POSITION.TOP_RIGHT
@@ -202,6 +251,38 @@ const Management = () => {
     const handleSubmitThird = async (values: { ClassroomName: string;}) => {
         await postClassrom(values);
         handleCloseThird();
+    };
+
+    //Modification d'un élève
+
+    const [showFourth, setShowFourth] = useState(false);
+    const [initialValuesFourth, setinitialValuesFourth] = useState({id:"" ,lastname: "", firstname:"", email:"", class:""})
+    const handleCloseFourth = () => setShowFourth(false);
+    const handleShowFourth = (item: { id: React.Key | null | undefined; lastname: string | number | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | React.ReactFragment | React.ReactPortal | null | undefined; firstname: string | number | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | React.ReactFragment | React.ReactPortal | null | undefined; class: string | number | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | React.ReactFragment | React.ReactPortal | null | undefined; email: string | number | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | React.ReactFragment | React.ReactPortal | null | undefined }) => {
+        setinitialValuesFourth({id: item.id!.toString() ,lastname: item.lastname!.toString(), firstname:item.firstname!.toString(), email:item.email!.toString(), class:item.class!.toString()})
+        setShowFourth(true);
+    };
+
+    const validationSchemaFourth = Yup.object().shape({
+        lastname: Yup.string()
+            .min(2, "Trop petit")
+            .max(25, "Trop long!")
+            .required("Ce champ est obligatoire"),
+        firstname: Yup.string()
+            .min(2, "Trop petit")
+            .max(25, "Trop long!")
+            .required("Ce champ est obligatoire"),
+        email: Yup.string()
+            .email("Email invalide")
+            .required("L'email est obligatoire"),
+        class: Yup.string()
+            .min(2, "La classe doit contenir au moins 2 caractères")
+            .required("La classe est obligatoire")
+    });
+
+    const handleSubmitFourth = async (values: {id:string; lastname: string; firstname: string; email: string; class: string }) => {
+       await putUser(values);
+        handleCloseFourth();
     };
 
     //Affichage Table
@@ -331,7 +412,7 @@ const Management = () => {
                 <br/>
                 <Modal show={showThird} onHide={handleCloseThird}>
                     <Modal.Header closeButton>
-                        <Modal.Title>Ajouter un élève</Modal.Title>
+                        <Modal.Title>Ajouter une classe</Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
                         <Formik
@@ -363,6 +444,69 @@ const Management = () => {
                 }}>
                     Ajouter une classe
                 </Button>
+                <br/>
+                <Modal show={showFourth} onHide={handleCloseFourth}>
+                    <Modal.Header closeButton>
+                        <Modal.Title>Modifier un élève</Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>
+                        <Formik
+                            initialValues={initialValuesFourth}
+                            validationSchema={validationSchemaFourth}
+                            onSubmit={(values) => handleSubmitFourth(values)}
+                        >
+                            <Form className="field-area">
+                                <fieldset className={"field-area"}>
+                                    <label htmlFor="lastname">Nom:</label>
+                                    <Field name="lastname" className="form-control" type="text"/>
+                                    <ErrorMessage
+                                        name="lastname"
+                                        component="small"
+                                        className="text-danger"
+                                    />
+                                </fieldset>
+                                <fieldset className={"field-area"}>
+                                    <label htmlFor="firstname">Prénom:</label>
+                                    <Field name="firstname" className="form-control" type="text"/>
+                                    <ErrorMessage
+                                        name="firstname"
+                                        component="small"
+                                        className="text-danger"
+                                    />
+                                </fieldset>
+                                <fieldset className={"field-area"}>
+                                    <label htmlFor={"class"}>Classe :</label>
+                                    <Field as="select" name="class" className="form-control" type="class">
+                                        {classrooms.map(classroom => (
+                                            <option key={classroom.id} value={classroom.ClassroomName}>
+                                                {classroom.ClassroomName}
+                                            </option>
+                                        ))}
+                                    </Field>
+                                    <ErrorMessage
+                                        name="class"
+                                        component="small"
+                                        className="text-danger"
+                                    />
+                                </fieldset>
+                                <fieldset className={"field-area"}>
+                                    <label htmlFor={"email"}>Email :</label>
+                                    <Field name="email" className="form-control" type="email"/>
+                                    <ErrorMessage
+                                        name="email"
+                                        component="small"
+                                        className="text-danger"
+                                    />
+                                </fieldset>
+                                <Modal.Footer>
+                                    <Button variant="primary" className="form-control" type={"submit"}>
+                                        Modifier
+                                    </Button>
+                                </Modal.Footer>
+                            </Form>
+                        </Formik>
+                    </Modal.Body>
+                </Modal>
             </div>
             <div className={"tableUsers"}>
                 <Table responsive variant="light">
@@ -373,6 +517,8 @@ const Management = () => {
                         <th>Prénom</th>
                         <th>Classe</th>
                         <th>Email</th>
+                        <th>Editer</th>
+                        <th>Supprimer</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -383,6 +529,8 @@ const Management = () => {
                             <td>{item.firstname}</td>
                             <td>{item.class}</td>
                             <td>{item.email}</td>
+                            <td><Button variant="primary" onClick={(e:any) => handleShowFourth(item)}><AiIcons.AiOutlineUserDelete /></Button></td>
+                            <td><Button variant="danger" onClick={(e:any) => DeleteStudent({idStudent: item.id!.toString()})}><AiIcons.AiOutlineUserDelete /></Button></td>
                         </tr>
                     ))}
                     </tbody>
