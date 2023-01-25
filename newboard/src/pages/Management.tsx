@@ -119,6 +119,29 @@ async function DeleteStudent(values: { idStudent: string}): Promise<void> {
         })
 }
 
+/**
+ *
+ * @param values contains the id of the classroom to delete
+ * @constructor
+ */
+async function DeleteClassroom(values: { idClassroom: string}): Promise<void> {
+    await axios
+        .delete(urlApi + 'classroom/' + values.idClassroom,config)
+        .then((response) => {
+            if(response.status === 200){
+                toast.success("Classe supprimée !", {
+                    position: toast.POSITION.TOP_RIGHT,
+                });
+            }
+        })
+        .catch(function (error) {
+            if(error.response) {
+                toast.error(error.response.data.message,{
+                    position: toast.POSITION.TOP_RIGHT
+                });
+            }
+        })
+}
 const Management = () => {
 
     //Ajout en masse via CSV
@@ -285,7 +308,7 @@ const Management = () => {
         handleCloseFourth();
     };
 
-    //Affichage Table
+    //Affichage Table Student
     const [data, setData] = useState<any>([]);
 
     useEffect(() => {
@@ -294,6 +317,26 @@ const Management = () => {
             .then((response) => {
                 if (response.status === 200) {
                     setData(response.data.data);
+                }
+            })
+            .catch(function (error) {
+                if (error.response) {
+                    toast.error(error.response.data.message.name, {
+                        position: toast.POSITION.TOP_RIGHT
+                    });
+                }
+            })
+    }, []);
+
+    //Affichage Table Classroom
+    const [dataClassroom, setDataClassroom] = useState<any>([]);
+
+    useEffect(() => {
+        axios
+            .get(urlApi + 'classroomsByEstablishmentId//' + establishmentId,config)
+            .then((response) => {
+                if (response.status === 200) {
+                    setDataClassroom(response.data.data);
                 }
             })
             .catch(function (error) {
@@ -508,6 +551,7 @@ const Management = () => {
                     </Modal.Body>
                 </Modal>
             </div>
+            <h1 className={"management-title"}>Liste des élèves</h1>
             <div className={"tableUsers"}>
                 <Table responsive variant="light">
                     <thead>
@@ -531,6 +575,28 @@ const Management = () => {
                             <td>{item.email}</td>
                             <td><Button variant="primary" onClick={(e:any) => handleShowFourth(item)}><AiIcons.AiOutlineUserDelete /></Button></td>
                             <td><Button variant="danger" onClick={(e:any) => DeleteStudent({idStudent: item.id!.toString()})}><AiIcons.AiOutlineUserDelete /></Button></td>
+                        </tr>
+                    ))}
+                    </tbody>
+                </Table>
+            </div>
+            <br/>
+            <h1 className={"management-title"}>Liste des classes</h1>
+            <div className={"tableUsers"}>
+                <Table responsive variant="light">
+                    <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Classe</th>
+                        <th>Supprimer</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {dataClassroom.map((items: { id: React.Key | null | undefined; ClassroomName: string | number | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | React.ReactFragment | React.ReactPortal | null | undefined;}, index: number) => (
+                        <tr key={items.id}>
+                            <td>{index + 1}</td>
+                            <td>{items.ClassroomName}</td>
+                            <td><Button variant="danger" onClick={(e:any) => DeleteClassroom({idClassroom: items.id!.toString()})}><AiIcons.AiOutlineUserDelete /></Button></td>
                         </tr>
                     ))}
                     </tbody>
