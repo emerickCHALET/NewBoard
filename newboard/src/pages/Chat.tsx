@@ -10,14 +10,14 @@ import ErrorPage from "./Error";
    import Messages from "../components/Messages/Messages";
     import SideBar from "../components/SideBar";
     import Footer from "../components/Footer";
+    import Message from "../Classes/Message";
 
     const Client = () => {
         const [connectedUsers, setConnectedUsers] = useState([] as {id: string, username: string}[]);
         const [username, setUsername] = useState("");
         const [connected, setConnected] = useState(false)
-        const [messages, setMessages] = useState([] as {message: string, username: string}[]);
-        const [message, setMessage] = useState("");
-
+        const [messages, setMessages] = useState(Array<Message>);
+        const [message, setMessage] = useState(Message);
         const socketClient = useRef<SocketIOClient.Socket>();
 
         useEffect(() => {
@@ -36,8 +36,8 @@ import ErrorPage from "./Error";
                     setConnectedUsers(connectedUsers.filter(user => user.username !== username));
                 })
 
-                socketClient.current.on("receive-message", (message: {message: string; username: string}) => {
-                    setMessages(prev => [...prev, message]);
+                socketClient.current.on("receive-message", (message: Array<Message>) => {
+                    setMessages(message);
                 })
             }
 
@@ -55,7 +55,7 @@ import ErrorPage from "./Error";
 
         const handleSendMenssage = () => {
             if(socketClient.current){
-                setMessages(prev => [...prev, {message, username}]);
+                setMessages(prev => [...prev, {Message}[]]);
                 socketClient.current.emit("message", {message, username});
                 setMessage("")
             }
@@ -76,7 +76,7 @@ import ErrorPage from "./Error";
 
                         <Messages
                             handleSendMessage={handleSendMenssage}
-                            message={message}
+                            message.message={message}
                             setMessage={setMessage}
                             messages={messages}
                             username={username}

@@ -1,18 +1,21 @@
 import React from 'react'
-import Message from './Message'
+import messageItem from "./MessageItem";
+import Message from '../../Classes/Message'
+import {array} from "yup";
+import MessageItem from "./MessageItem";
 
 const Messages = (props: {
     handleSendMessage: Function;
-    message: string;
+    message: Message;
     setMessage: Function;
-    messages: {username: string; message: string;}[];
+    messages: Array<Message>;
     username: string;
 }) => {
     return (
         <div className="messages">
             <ul className="message-list scrollable">
                 {props.messages.map((message, i) => (
-                    <Message key={i + message.username} message={message} username={props.username} />
+                    <MessageItem key={i + message.id} message={message}/>
                 ))}
             </ul>
 
@@ -23,7 +26,7 @@ const Messages = (props: {
                 <input
                     type="text"
                     placeholder="Type your message..."
-                    value={props.message}
+                    value={props.message.message}
                     onChange={e => props.setMessage(e.target.value)}
                     required={true}
                 />
