@@ -1,7 +1,7 @@
 import React from 'react'
 import User from './User'
 
-const ConnectedUsers = (props: {connectedUsers: {id: string, username: string}[]}) => {
+const ConnectedUsers = (props: {connectedUsers: { id: string; username: string; }[]}) => {
     return (
         <div className="connected-users scrollable">
             <h2>Connected Users</h2>

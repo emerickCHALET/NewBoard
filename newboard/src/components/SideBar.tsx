@@ -87,6 +87,13 @@ const SideBar = () => {
                                 <a className='nav-text'><AiIcons.AiOutlineLogout />
                                     <span>Se déconnecter</span></a>
                             </li>
+                            <li className='nav-text'>
+                                <Link to={'/chat'}>
+                                    <AiIcons.AiOutlineTeam />
+                                    <span>chat</span>
+                                </Link>
+                            </li>
+
                         </ul>
                     </nav>
                     : <></>}

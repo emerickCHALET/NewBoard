@@ -3,11 +3,14 @@
 import React, {useEffect, useRef, useState} from 'react';
 import * as io from "socket.io-client";
 import {toast, ToastContainer} from "react-toastify";
+
 import express from "express";
 import ErrorPage from "./Error";
-    import EnterUsername from "../components/EnterUsername";
+
     import ConnectedUsers from "../components/ConnectedUsers/ConnectedUsers";
    import Messages from "../components/Messages/Messages";
+    import SideBar from "../components/SideBar";
+    import Navbar from "react-bootstrap/Navbar";
 
     const Client = () => {
         const [connectedUsers, setConnectedUsers] = useState([] as {id: string, username: string}[]);
@@ -48,6 +51,7 @@ import ErrorPage from "./Error";
         const handleConnection = () => {
             if(socketClient.current){
                 socketClient.current.emit("handle-connection", username);
+
             }
         }
 
@@ -59,15 +63,13 @@ import ErrorPage from "./Error";
             }
         }
 
+        // @ts-ignore
+        // @ts-ignore
         return (
+
             <div className="app">
                 {
-                    !connected &&
-                    <EnterUsername handleConnection={handleConnection} username={username} setUsername={setUsername}/>
-                }
 
-                {
-                    connected &&
                     <>
                         <ConnectedUsers connectedUsers={connectedUsers}/>
 
@@ -83,6 +85,7 @@ import ErrorPage from "./Error";
 
                 <ToastContainer position="bottom-right"/>
             </div>
+
         );
     }
 

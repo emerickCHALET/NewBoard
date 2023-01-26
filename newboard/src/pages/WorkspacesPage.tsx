@@ -170,6 +170,7 @@ const WorkspacesPage = () => {
                             }}) }}> {workspace.name} </div>; })}
                 </div>
             </div>
+
             <Footer/>
         </div>
     )

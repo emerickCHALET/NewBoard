@@ -23,6 +23,7 @@ async function postLogin(values: { email: string; password: string; }): Promise<
                     position: toast.POSITION.TOP_RIGHT,
                 });
                 localStorage.setItem('permissions_role', response.data.data.role);
+                localStorage.setItem('nom prenom', response.data.data.firstname + ' ' + response.data.data.lastname);
                 localStorage.setItem('token', response.data.token);
                 localStorage.setItem('userId', response.data.data.id);
                 if(response.data.data.role === "ROLE_ADMIN"){
@@ -62,6 +63,9 @@ const Login = () => {
             navigate('/workspaces');
         }
     };
+    
+
+
 
     return (
         <div className="wrap">
@@ -81,6 +85,7 @@ const Login = () => {
                                 component="small"
                                 className="text-danger"
                             />
+
                         </fieldset>
                         <fieldset className={"field-area"}>
                             <label htmlFor={"password"}>Password</label>
