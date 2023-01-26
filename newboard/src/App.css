@@ -101,3 +101,26 @@ span {
     margin-right: auto;
     width: 50%;
 }
+
+.tableUsers{
+    margin: 1rem auto;
+    text-align: center;
+    width: 100%;
+    max-width: 100%;
+    border-collapse: collapse;
+    border: 1px solid
+}
+
+.managementOptions{
+    display: flex;
+    justify-content: center;
+}
+
+.managementOptions-Btn{
+    margin: auto;
+}
+
+.management-title{
+    text-align: center;
+    color: white;
+}

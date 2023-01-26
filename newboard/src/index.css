@@ -184,7 +184,19 @@ input {
     background-color: white;
     border-radius: var(--radius);
     box-shadow: var(--shadow);
+    cursor: pointer;
+    transition: 0.3s;
+}
 
+.workspace-item:hover{
+    opacity: 80%;
+    transform: translateY(0.20em);
+    box-shadow: none;
+}
+
+.workspace-item-classroom{
+    font-weight: normal;
+    font-size: 0.7em;
 }
 
 .workspace-item-add{
