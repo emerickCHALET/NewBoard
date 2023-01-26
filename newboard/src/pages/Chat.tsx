@@ -18,7 +18,7 @@ import ErrorPage from "./Error";
         const [connected, setConnected] = useState(false)
         const [messages, setMessages] = useState(Array<Message>);
         const [message, setMessage] = useState(Message);
-        const socketClient = useRef<SocketIOClient.Socket>();
+        const socketClient = useRef<io.Socket>();
 
         useEffect(() => {
             socketClient.current = io.connect("http://localhost:5000");
@@ -55,9 +55,9 @@ import ErrorPage from "./Error";
 
         const handleSendMenssage = () => {
             if(socketClient.current){
-                setMessages(prev => [...prev, {Message}[]]);
+                setMessages(messages);
                 socketClient.current.emit("message", {message, username});
-                setMessage("")
+                setMessage(message)
             }
         }
 
@@ -76,7 +76,7 @@ import ErrorPage from "./Error";
 
                         <Messages
                             handleSendMessage={handleSendMenssage}
-                            message.message={message}
+                            message={new Message(1, "", 1, "")}
                             setMessage={setMessage}
                             messages={messages}
                             username={username}
