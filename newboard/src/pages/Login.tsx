@@ -25,6 +25,8 @@ async function postLogin(values: { email: string; password: string; }): Promise<
                 localStorage.setItem('permissions_role', response.data.data.role);
                 localStorage.setItem('token', response.data.token);
                 localStorage.setItem('userId', response.data.data.id);
+                localStorage.setItem('userClass', response.data.data.class)
+                console.log(response.data.data.class)
                 if(response.data.data.role === "ROLE_ADMIN"){
                     localStorage.setItem('establishmentId', response.data.data.establishmentId);
                 }

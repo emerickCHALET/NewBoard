@@ -19,11 +19,23 @@ import Column, { NewColumn } from "../components/Column";
 import AddColumnButton from "../components/AddColumnButton";
 
 import { Card, Column as ColumnInterface } from "../types";
+import Modal from "react-bootstrap/Modal";
+import {ErrorMessage, Field, Form, Formik} from "formik";
+import Button from "react-bootstrap/Button";
+import * as Yup from "yup";
+import axios from "axios";
+import {urlApi} from "../App";
+import {toast} from "react-toastify";
+import {useLocation} from "react-router";
+import Student from "../Classes/Student";
 
 interface AddNewColumnProps {
     columns: ColumnInterface[];
     setColumns: React.Dispatch<React.SetStateAction<ColumnInterface[]>>;
 }
+const config = {
+    headers: {Authorization: `Bearer ${localStorage.getItem('token')}`}
+};
 
 const AddNewColumn: React.FC<AddNewColumnProps> = ({ columns, setColumns }) => {
     const [isAddingColumn, setIsAddingColumn] = useState(false);
@@ -44,6 +56,70 @@ const AddNewColumn: React.FC<AddNewColumnProps> = ({ columns, setColumns }) => {
     return <AddColumnButton onClick={() => setIsAddingColumn(true)} />;
 };
 const Kanban = () => {
+    const location = useLocation();
+
+    const boardId = location.state.boardId
+
+    const [show, setShow] = useState(false);
+
+    const handleClose = () => {setShow(false); console.log("ok")}
+    const handleShow = () => setShow(true);
+
+    const handleSubmit = async (values: {userId: number}) => {
+        console.log(values.userId, boardId)
+        const result = await postBoardUser(values.userId);
+        if (result) {
+            handleClose()
+            window.location.reload()
+        }
+    };
+
+    const initialValues = {
+        userId: 0
+    };
+
+     async function postBoardUser(userId: number): Promise<boolean> {
+        let payload = {userID: userId, boardID: boardId};
+        console.log(payload)
+        let result = false;
+        await axios
+            .post(urlApi + 'boardUsers', payload, config)
+            .then((response) => {
+                if (response.status === 200) {
+                    result = true
+                }
+            })
+            .catch(function (error) {
+                if (error.response) {
+                    toast.error(error.response.data.message, {
+                        position: toast.POSITION.TOP_RIGHT
+                    });
+                }
+            })
+        return result;
+    }
+
+    const [users, setUsers] = useState<Student[]>([])
+
+    const className = localStorage.getItem("userClass")
+    const getUsers = () => {
+        axios
+            .get(urlApi + "boardByClassIdAndBoardId/"+ className + "/" + boardId, config)
+            .then((response) => {
+                if (response.status === 200) {
+                    setUsers(response.data.data);
+                }
+            })
+            .catch(function (error) {
+                if (error.response) {
+                    toast.error(error.response.data.message.name + ". \nReconnexion requise", {
+                        position: toast.POSITION.TOP_RIGHT
+                    });
+                }
+
+
+            })
+    }
 
     const [columns, setColumns] = useState<ColumnInterface[]>([
     ]);
@@ -109,10 +185,56 @@ const Kanban = () => {
         }
     };
 
+    useEffect(() => {
+        getUsers()
+    }, [])
+
     return (
 
         <div className="wrap">
             <SideBar/>
+            <Modal show={show} onHide={handleClose}>
+                <Modal.Header closeButton>
+                    <Modal.Title>Ajouter un élève au board</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <Formik
+                        initialValues={initialValues}
+                        onSubmit={(values) => handleSubmit(values)}
+                    >
+                        <Form>
+                            <fieldset className={"field-area"}>
+                                <label htmlFor="name">User:</label>
+                                <Field as="select" name="userId" className="form-control" type="userId">
+                                    {users.map((user) => (
+                                        <option key={user.id} value={user.id}>
+                                            {user.email}
+                                        </option>
+                                    ))}
+                                </Field>
+                                <ErrorMessage
+                                    name="name"
+                                    component="small"
+                                    className="text-danger"
+                                />
+                            </fieldset>
+                            <Modal.Footer>
+                                <Button variant="secondary" onClick={handleClose}>
+                                    Fermer
+                                </Button>
+                                <Button variant="primary" type={"submit"}>
+                                    Ajouter
+                                </Button>
+                            </Modal.Footer>
+                        </Form>
+                    </Formik>
+                </Modal.Body>
+            </Modal>
+            <Button className={"workspace-item workspace-item-add"} variant="primary" onClick={() => {
+                handleShow()
+            }}>
+                +
+            </Button>
             <div className="App">
                 <DragDropContext onDragEnd={onDragEnd}>
                     <Droppable
@@ -147,6 +269,7 @@ const Kanban = () => {
                     </div>
                 </DragDropContext>
             </div>
+
             <Footer/>
         </div>
     );

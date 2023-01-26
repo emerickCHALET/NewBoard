@@ -1,11 +1,13 @@
-class Workspace {
+class Board {
+    id: number;
     name: String;
     workspaceID: number;
 
-    constructor(name: string, workspaceID: number) {
+    constructor(id: number, name: string, workspaceID: number) {
+        this.id = id;
         this.name = name;
         this.workspaceID = workspaceID;
     }
 }
 
-export default Workspace;
+export default Board;

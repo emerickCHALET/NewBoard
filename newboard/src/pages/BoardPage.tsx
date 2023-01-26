@@ -224,7 +224,11 @@ const BoardPage = () => {
                     </Button>
                     {boards.map((board) => {
                         return <div key={board.name.toString()} className={"workspace-item"} onClick={() => {
-                            navigate("/kanban")
+                            console.log(board.id);
+                            navigate("/kanban",
+                                {state: {
+                                boardId: board.id
+                            }})
                         }}> {board.name} </div>;
                     })}
                 </div>
