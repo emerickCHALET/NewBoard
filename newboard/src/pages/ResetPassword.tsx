@@ -5,23 +5,24 @@ import * as Yup from 'yup';
 import {Formik, ErrorMessage, Form, Field} from 'formik';
 import axios from 'axios';
 import {urlLocal} from "../App";
-import { toast } from 'react-toastify';
+import {toast} from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { useNavigate } from "react-router";
+import {useNavigate} from "react-router";
 import SideBar from "../components/SideBar";
 
-async function putReset(values: { password: string}): Promise<boolean> {
-    let data = {  password: values.password };
+async function putReset(values: { password: string }): Promise<boolean> {
+    let data = {password: values.password};
     let params = new URLSearchParams(window.location.search);
     let tokenAccess = params.get('check');
+    let route = '?check=';
     let myHeaders = {
-        'Authorization': 'Bearer ' +tokenAccess
+        'Authorization': 'Bearer ' + tokenAccess
     };
     let result = false;
     await axios
-        .put(urlLocal+'reset',data,{headers: myHeaders})
+        .put(urlLocal + 'reset' + route + tokenAccess, data, {headers: myHeaders})
         .then((response) => {
-            if(response.status === 200){
+            if (response.status === 200) {
                 toast.success("Mot de passe modifié !", {
                     position: toast.POSITION.TOP_RIGHT,
                 });
@@ -29,9 +30,8 @@ async function putReset(values: { password: string}): Promise<boolean> {
             }
         })
         .catch(function (error) {
-            if(error.response) {
-                console.log("Check token "+tokenAccess);
-                toast.error(error.response.data.message,{
+            if (error.response) {
+                toast.error(error.response.data.message, {
                     position: toast.POSITION.TOP_RIGHT
                 });
             }
@@ -57,6 +57,16 @@ const ResetPassword = () => {
             navigate('/login');
         }
     };
+    const [searchParams, setSearchParams] = useState(new URLSearchParams(window.location.search));
+    useEffect(() => {
+        const searchParams = new URLSearchParams(window.location.search);
+        setSearchParams(searchParams);
+        if (!searchParams.get('check')) {
+            navigate('/')
+        } else {
+            console.log("Existing token")
+        }
+    }, []);
 
     return (
         <div className="wrap">

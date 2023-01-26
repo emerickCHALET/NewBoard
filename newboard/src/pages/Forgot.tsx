@@ -8,13 +8,13 @@ import {urlLocal} from "../App";
 import {toast} from "react-toastify";
 import SideBar from "../components/SideBar";
 
-async function postForgot(values: { email: string}): Promise<boolean> {
-    let data = {  email: values.email };
+async function postForgot(values: { email: string }): Promise<boolean> {
+    let data = {email: values.email};
     let result = false;
     await axios
-        .post(urlLocal + 'forgot',data)
+        .post(urlLocal + 'forgot', data)
         .then((response) => {
-            if(response.status === 200){
+            if (response.status === 200) {
                 toast.success("Un email vous à été envoyé !", {
                     position: toast.POSITION.TOP_RIGHT,
                 });
@@ -22,8 +22,8 @@ async function postForgot(values: { email: string}): Promise<boolean> {
             }
         })
         .catch(function (error) {
-            if(error.response) {
-                toast.error(error.response.data.message,{
+            if (error.response) {
+                toast.error(error.response.data.message, {
                     position: toast.POSITION.TOP_RIGHT
                 });
             }
@@ -43,7 +43,7 @@ const Forgot = () => {
         email: ""
     };
     const navigate = useNavigate();
-    const handleSubmit = async (values: { email: string}) => {
+    const handleSubmit = async (values: { email: string }) => {
         const result = await postForgot(values);
         if (result) {
             setTimeout(() => {
@@ -63,7 +63,8 @@ const Forgot = () => {
                 <div className="container-wrap">
                     <Form className="form-wrap">
                         <fieldset className={"field-area"}>
-                            <p>Entre ton adresse email pour recevoir un lien de réinitialisation de ton mot de passe.</p>
+                            <p>Entre ton adresse email pour recevoir un lien de réinitialisation de ton mot de
+                                passe.</p>
                             <Field name='email' placeholder='Email' className="form-control" type="email"/>
                             <ErrorMessage
                                 name="email"
