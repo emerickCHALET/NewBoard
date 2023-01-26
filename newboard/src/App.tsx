@@ -10,7 +10,7 @@ import SideBar from "./components/SideBar";
 import BoardPage from "./pages/BoardPage";
 import Kanban from "./pages/Kanban";
 import Management from "./pages/Management";
-
+import Client from "./pages/Chat";
 
 
 const MainPage = () => {
@@ -36,6 +36,7 @@ export default function App(){
             <Route path="board" element={<BoardPage/>}/>
             <Route path="kanban" element={<Kanban/>}/>
             <Route path="management" element={<Management/>}/>
+            <Route path="chat" element={<Client/>}/>
         </Routes>
         </BrowserRouter>
     );

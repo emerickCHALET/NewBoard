@@ -8,6 +8,8 @@ import ErrorPage from "./Error";
     import EnterUsername from "../components/EnterUsername";
     import ConnectedUsers from "../components/ConnectedUsers/ConnectedUsers";
    import Messages from "../components/Messages/Messages";
+    import SideBar from "../components/SideBar";
+    import Footer from "../components/Footer";
 
     const Client = () => {
         const [connectedUsers, setConnectedUsers] = useState([] as {id: string, username: string}[]);
@@ -61,6 +63,7 @@ import ErrorPage from "./Error";
 
         return (
             <div className="app">
+                <SideBar/>
                 {
                     !connected &&
                     <EnterUsername handleConnection={handleConnection} username={username} setUsername={setUsername}/>

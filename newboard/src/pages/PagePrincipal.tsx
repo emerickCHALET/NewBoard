@@ -1,6 +1,4 @@
 import React from 'react';
-import { Sidebar, Menu, MenuItem, useProSidebar } from 'react-pro-sidebar';
-import NavbarHome from "../components/NavbarHome";
 
 
 const PagePrincipal = () => {
