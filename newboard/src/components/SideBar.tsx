@@ -21,8 +21,6 @@ const SideBar = () => {
     const token = localStorage.getItem('token');
     const role = localStorage.getItem('permissions_role');
     const establishment = localStorage.getItem('establishmentId');
-    console.log(localStorage);
-    //console.log(role!.toString());
     const navigate = useNavigate();
     const [sidebar, setSidebar] = useState(false);
     const showSidebar = () => setSidebar(!sidebar);

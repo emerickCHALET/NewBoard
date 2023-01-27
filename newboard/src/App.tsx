@@ -7,11 +7,12 @@ import ErrorPage from "./pages/Error";
 import Login from "./pages/Login";
 import WorkspacesPage from "./pages/WorkspacesPage";
 import SideBar from "./components/SideBar";
+import Forgot from "./pages/Forgot";
+import ResetPassword from "./pages/ResetPassword";
 import BoardPage from "./pages/BoardPage";
-import Kanban from "./pages/Kanban";
 import Management from "./pages/Management";
 import Client from "./pages/Chat";
-
+import Kanban from "./pages/Kanban";
 
 const MainPage = () => {
   return (
@@ -30,6 +31,8 @@ export default function App(){
         <Routes>
             <Route path="/" element={<MainPage/>}/>
             <Route path="login" element={<Login/>}/>
+            <Route path="forgot" element={<Forgot/>}/>
+            <Route path="reset" element={<ResetPassword/>}/>
             <Route path="*" element={<ErrorPage/>}/>
             <Route path="inscription" element={<InscriptionPage/>}/>
             <Route path="workspaces" element={<WorkspacesPage/>}/>
@@ -45,3 +48,4 @@ export default function App(){
  * url of the Production environment
  */
 export const urlApi = "http://newboardapifr.swks7487.odns.fr/api/";
+export const urlLocal = "http://localhost:3001/api/"

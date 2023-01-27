@@ -7,6 +7,7 @@ import axios from "axios";
 import {urlApi} from "../App";
 import {toast} from "react-toastify";
 import SideBar from "../components/SideBar";
+import {Link} from "react-router-dom";
 
 /**
  * function who check the identifiers of a user and connect him if that's good
@@ -91,6 +92,7 @@ const Login = () => {
                                 className="text-danger"
                             />
                         </fieldset>
+                        <Link to={'/forgot'}>Mot de passe oublié ?</Link>
                         <button type="submit" className="form-button">Login</button>
                     </Form>
                 </div>
