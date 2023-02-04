@@ -34,6 +34,7 @@ const SideBar = () => {
         localStorage.removeItem('token');
         localStorage.removeItem('establishmentId');
         localStorage.removeItem('userId');
+        localStorage.removeItem('email');
         navigate('/');
     }
 
@@ -75,12 +76,12 @@ const SideBar = () => {
                                     </Link>
                                 </li> : <></>}
                             {role! === "ROLE_ADMIN" &&  establishment != null?
-                            <li className='nav-text'>
-                                <Link to={'/management'}>
-                                    <AiIcons.AiOutlineTeam />
-                                    <span>Gestion</span>
-                                </Link>
-                            </li> : <></>}
+                                <li className='nav-text'>
+                                    <Link to={'/management'}>
+                                        <AiIcons.AiOutlineTeam />
+                                        <span>Gestion</span>
+                                    </Link>
+                                </li> : <></>}
                             <li className='nav-text' onClick={Logout}>
                                 <a className='nav-text'><AiIcons.AiOutlineLogout />
                                     <span>Se déconnecter</span></a>
@@ -90,7 +91,7 @@ const SideBar = () => {
                     : <></>}
             </IconContext.Provider>
         </>
-)
+    )
 }
 
 export default SideBar;

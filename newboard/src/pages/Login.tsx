@@ -4,10 +4,11 @@ import * as Yup from 'yup';
 import {Formik, ErrorMessage, Form, Field} from 'formik';
 import {useNavigate} from "react-router";
 import axios from "axios";
-import {urlApi} from "../App";
+import {urlApi, urlLocal} from "../App";
 import {toast} from "react-toastify";
 import SideBar from "../components/SideBar";
 import {Link} from "react-router-dom";
+import useProtectedLogin from "../components/ProtectedLogin";
 
 /**
  * function who check the identifiers of a user and connect him if that's good
@@ -17,14 +18,14 @@ async function postLogin(values: { email: string; password: string; }): Promise<
     let payload = { email: values.email, password: values.password };
     let result = false;
     await axios
-        .post(urlApi + 'login',payload)
+        .post(urlLocal + 'login',payload)
         .then((response) => {
             if(response.status === 200){
                 toast.success("Bienvenue!", {
                     position: toast.POSITION.TOP_RIGHT,
                 });
                 localStorage.setItem('permissions_role', response.data.data.role);
-                localStorage.setItem('token', response.data.token);
+                localStorage.setItem('email', response.data.data.email);
                 localStorage.setItem('userId', response.data.data.id);
                 if(response.data.data.role === "ROLE_ADMIN"){
                     localStorage.setItem('establishmentId', response.data.data.establishmentId);
@@ -42,7 +43,29 @@ async function postLogin(values: { email: string; password: string; }): Promise<
     return result;
 }
 
+async function postToken() {
+    let result = false;
+    const email = localStorage.getItem('email')
+    await axios
+        .post(urlLocal + 'token', { email })
+        .then((response) => {
+            if (response.status === 200) {
+                localStorage.setItem('token', response.data.data.token);
+                result = true
+            }
+        })
+        .catch((error) => {
+            toast.error(error.response.data.message,{
+                position: toast.POSITION.TOP_RIGHT
+            });
+        })
+    return result;
+
+}
+
+
 const Login = () => {
+    const { loading } = useProtectedLogin()
     const validationSchema = Yup.object().shape({
         email: Yup.string()
             .email("Email invalide")
@@ -58,12 +81,16 @@ const Login = () => {
 
     const navigate = useNavigate();
     const handleSubmit = async (values: { email: string; password: string; }) => {
-        const result = await postLogin(values);
-        if (result) {
+        const loginResult = await postLogin(values);
+        const tokenResult = await postToken();
+
+        if (loginResult && tokenResult) {
             navigate('/workspaces');
         }
     };
-
+    if (loading){
+        return <div>Loading...</div>
+    }
     return (
         <div className="wrap">
             <SideBar/>
