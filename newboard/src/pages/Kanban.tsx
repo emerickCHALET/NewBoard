@@ -28,6 +28,8 @@ import {urlApi} from "../App";
 import {toast} from "react-toastify";
 import {useLocation} from "react-router";
 import Student from "../Classes/Student";
+import io from 'socket.io-client';
+
 
 interface AddNewColumnProps {
     columns: ColumnInterface[];
@@ -56,6 +58,10 @@ const AddNewColumn: React.FC<AddNewColumnProps> = ({ columns, setColumns }) => {
     return <AddColumnButton onClick={() => setIsAddingColumn(true)} />;
 };
 const Kanban = () => {
+    const socket = io('http://localhost:3002');
+    // emission ok, a déclencher lorsque le tableau est mis a jour
+    //socket.emit('chat message', 'Hello, world!');
+
     const location = useLocation();
 
     const boardId = location.state.boardId
