@@ -1,7 +1,7 @@
 import React from 'react';
 import Footer from "./components/Footer";
 import Home from "./components/Home";
-import {BrowserRouter,Routes, Route} from "react-router-dom";
+import {BrowserRouter, Route, Routes} from "react-router-dom";
 import InscriptionPage from "./pages/Inscription";
 import ErrorPage from "./pages/Error";
 import Login from "./pages/Login";
@@ -12,33 +12,35 @@ import ResetPassword from "./pages/ResetPassword";
 import BoardPage from "./pages/BoardPage";
 import Management from "./pages/Management";
 import Kanban from "./pages/Kanban";
+import AttendanceSheet from "./pages/Attendance";
 
 const MainPage = () => {
-  return (
-      <div className="wrap">
-          <SideBar/>
-          <Home/>
-          <Footer/>
-      </div>
+    return (
+        <div className="wrap">
+            <SideBar/>
+            <Home/>
+            <Footer/>
+        </div>
 
-  );
+    );
 }
 
-export default function App(){
+export default function App() {
     return (
         <BrowserRouter>
-        <Routes>
-            <Route path="/" element={<MainPage/>}/>
-            <Route path="login" element={<Login/>}/>
-            <Route path="forgot" element={<Forgot/>}/>
-            <Route path="reset" element={<ResetPassword/>}/>
-            <Route path="*" element={<ErrorPage/>}/>
-            <Route path="inscription" element={<InscriptionPage/>}/>
-            <Route path="workspaces" element={<WorkspacesPage/>}/>
-            <Route path="board" element={<BoardPage/>}/>
-            <Route path="kanban" element={<Kanban/>}/>
-            <Route path="management" element={<Management/>}/>
-        </Routes>
+            <Routes>
+                <Route path="/" element={<MainPage/>}/>
+                <Route path="login" element={<Login/>}/>
+                <Route path="forgot" element={<Forgot/>}/>
+                <Route path="reset" element={<ResetPassword/>}/>
+                <Route path="*" element={<ErrorPage/>}/>
+                <Route path="inscription" element={<InscriptionPage/>}/>
+                <Route path="workspaces" element={<WorkspacesPage/>}/>
+                <Route path="board" element={<BoardPage/>}/>
+                <Route path="attendance" element={<AttendanceSheet/>}/>
+                <Route path="kanban" element={<Kanban/>}/>
+                <Route path="management" element={<Management/>}/>
+            </Routes>
         </BrowserRouter>
     );
 }
