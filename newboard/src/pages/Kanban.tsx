@@ -22,7 +22,6 @@ import { Card, Column as ColumnInterface } from "../types";
 import Modal from "react-bootstrap/Modal";
 import {ErrorMessage, Field, Form, Formik} from "formik";
 import Button from "react-bootstrap/Button";
-import * as Yup from "yup";
 import axios from "axios";
 import {urlApi} from "../App";
 import {toast} from "react-toastify";
@@ -39,52 +38,9 @@ const config = {
     headers: {Authorization: `Bearer ${localStorage.getItem('token')}`}
 };
 
-const AddNewColumn: React.FC<AddNewColumnProps> = ({ columns, setColumns }) => {
-    const [isAddingColumn, setIsAddingColumn] = useState(false);
-
-    const cancelColumnAddition = () => {
-        setIsAddingColumn(false);
-    };
-
-    const addColumn = (id: string, title: string) => {
-        setColumns([...columns, { id, title, cards: [] }]);
-        setIsAddingColumn(false);
-    };
-
-    if (isAddingColumn) {
-        return <NewColumn onSuccess={addColumn} onDismiss={cancelColumnAddition} />;
-    }
-
-    return <AddColumnButton onClick={() => setIsAddingColumn(true)} />;
-};
 const Kanban = () => {
-    const socket = io('http://localhost:3002');
-    // emission ok, a déclencher lorsque le tableau est mis a jour
-    //socket.emit('chat message', 'Hello, world!');
 
-    const location = useLocation();
-
-    const boardId = location.state.boardId
-
-    const [show, setShow] = useState(false);
-
-    const handleClose = () => {setShow(false); console.log("ok")}
-    const handleShow = () => setShow(true);
-
-    const handleSubmit = async (values: {userId: number}) => {
-        console.log(values.userId, boardId)
-        const result = await postBoardUser(values.userId);
-        if (result) {
-            handleClose()
-            window.location.reload()
-        }
-    };
-
-    const initialValues = {
-        userId: 0
-    };
-
-     async function postBoardUser(userId: number): Promise<boolean> {
+    async function postBoardUser(userId: number): Promise<boolean> {
         let payload = {userID: userId, boardID: boardId};
         console.log(payload)
         let result = false;
@@ -127,8 +83,58 @@ const Kanban = () => {
             })
     }
 
+    const location = useLocation();
+
+    const boardId = location.state.boardId
+
+    const [show, setShow] = useState(false);
+
+    const handleClose = () => {setShow(false); console.log("ok")}
+    const handleShow = () => setShow(true);
+    const handleSubmit = async (values: {userId: number}) => {
+        console.log(values.userId, boardId)
+        const result = await postBoardUser(values.userId);
+        if (result) {
+            handleClose()
+            window.location.reload()
+        }
+    };
+
+    const initialValues = {
+        userId: 0
+    };
+
+    // Kanban
+
+    const socket = io('http://localhost:3002');
+    // emission ok, a déclencher lorsque le tableau est mis a jour
+    //socket.emit('kanban message', 'Update Kanban');
+
     const [columns, setColumns] = useState<ColumnInterface[]>([
     ]);
+
+    function SendKanbanToSocket() {
+        let json = JSON.stringify(columns)
+        socket.emit("kanban message", json, boardId.toString());
+    }
+
+    const AddNewColumn: React.FC<AddNewColumnProps> = ({ columns, setColumns }) => {
+        const [isAddingColumn, setIsAddingColumn] = useState(false);
+
+        const cancelColumnAddition = () => {
+            setIsAddingColumn(false);
+        };
+
+        const addColumn = (id: string, title: string) => {
+            setColumns([...columns, { id, title, cards: [] }]);
+            setIsAddingColumn(true);
+        };
+
+        if (isAddingColumn) {
+            return <NewColumn onSuccess={addColumn} onDismiss={cancelColumnAddition} />;
+        }
+        return <AddColumnButton onClick={() => setIsAddingColumn(true)} />;
+    };
 
     const updateColumn = (id: string, title: string) => {
         setColumns(updateColumnById(columns, { id, title }));
@@ -190,6 +196,10 @@ const Kanban = () => {
             return;
         }
     };
+
+    useEffect( () => {
+        SendKanbanToSocket()
+    },[columns])
 
     useEffect(() => {
         getUsers()
