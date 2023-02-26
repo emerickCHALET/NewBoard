@@ -23,16 +23,21 @@ import Modal from "react-bootstrap/Modal";
 import {ErrorMessage, Field, Form, Formik} from "formik";
 import Button from "react-bootstrap/Button";
 import axios from "axios";
-import {urlApi} from "../App";
+import {urlApi, urlLocal} from "../App";
 import {toast} from "react-toastify";
 import {useLocation} from "react-router";
 import Student from "../Classes/Student";
 import io from 'socket.io-client';
+import column from "../components/Column";
 
 
 interface AddNewColumnProps {
     columns: ColumnInterface[];
     setColumns: React.Dispatch<React.SetStateAction<ColumnInterface[]>>;
+}
+interface Message {
+    sender: string;
+    text: string;
 }
 const config = {
     headers: {Authorization: `Bearer ${localStorage.getItem('token')}`}
@@ -45,7 +50,7 @@ const Kanban = () => {
         console.log(payload)
         let result = false;
         await axios
-            .post(urlApi + 'boardUsers', payload, config)
+            .post(urlLocal + 'boardUsers', payload, config)
             .then((response) => {
                 if (response.status === 200) {
                     result = true
@@ -92,7 +97,6 @@ const Kanban = () => {
     const handleClose = () => {setShow(false); console.log("ok")}
     const handleShow = () => setShow(true);
     const handleSubmit = async (values: {userId: number}) => {
-        console.log(values.userId, boardId)
         const result = await postBoardUser(values.userId);
         if (result) {
             handleClose()
@@ -105,17 +109,37 @@ const Kanban = () => {
     };
 
     // Kanban
+    const getBoard = () => {
+        axios
+            .get(urlApi + "boards/"+ boardId, config)
+            .then((response) => {
+                if (response.status === 200) {
+                    setColumns(JSON.parse(response.data.data.content))
+                }
+            })
+            .catch(function (error) {
+                if (error.response) {
+                    toast.error(error.response.data.message.name + ". \nReconnexion requise", {
+                        position: toast.POSITION.TOP_RIGHT
+                    });
+                }
+
+
+            })
+    }
 
     const socket = io('http://localhost:3002');
-    // emission ok, a déclencher lorsque le tableau est mis a jour
-    //socket.emit('kanban message', 'Update Kanban');
 
-    const [columns, setColumns] = useState<ColumnInterface[]>([
+    socket.on('kanban message', (msg: Message) => {
+        console.log(`Message reçu de ${msg.sender}: ${msg.text}`);
+    });
+
+    let [columns, setColumns] = useState<ColumnInterface[]>([
     ]);
 
     function SendKanbanToSocket() {
         let json = JSON.stringify(columns)
-        socket.emit("kanban message", json, boardId.toString());
+        socket.emit("kanban message", json, boardId.toString(), { exceptSelf: true });
     }
 
     const AddNewColumn: React.FC<AddNewColumnProps> = ({ columns, setColumns }) => {
@@ -204,6 +228,10 @@ const Kanban = () => {
     useEffect(() => {
         getUsers()
     }, [])
+
+    useEffect(() => {
+        getBoard()
+    },[])
 
     return (
 
