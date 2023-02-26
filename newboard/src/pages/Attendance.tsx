@@ -21,6 +21,8 @@ const AttendanceSheet: React.FC = () => {
     const [selectedClassId, setSelectedClassId] = useState<string>('');
     const [classrooms, setClassrooms] = useState<Classrooms[]>([]);
     const [selectedStudents, setSelectedStudents] = useState<Student[]>([]);
+    const [isLoading, setIsLoading] = useState<boolean>(false);
+
     const getClassrooms = () => {
         axios.get(urlLocal + 'classrooms')
             .then((response) => {
@@ -61,6 +63,34 @@ const AttendanceSheet: React.FC = () => {
                 }
             })
     }
+
+    const saveAttendance = () => {
+        const myData = {
+            classroomId: selectedClassId,
+            attendance: selectedStudents.map(student => {
+                return {
+                    firstname: student.firstname,
+                    lastname: student.lastname,
+                    present: student.present
+                }
+            })
+        }
+        setIsLoading(true);
+        console.log(myData);
+        axios.post(urlLocal + 'attendance', myData)
+            .then((response) => {
+                setIsLoading(false);
+                toast.success("Appel enregistré !", {
+                    position: toast.POSITION.TOP_RIGHT
+                });
+            })
+            .catch((error) => {
+                setIsLoading(false);
+                toast.error("Erreur lors de l'enregistrement !", {
+                    position: toast.POSITION.TOP_RIGHT
+                });
+            });
+    };
 
     const handleClassSelection = (event: React.ChangeEvent<HTMLSelectElement>) => {
         setSelectedClassId(event.target.value);
@@ -123,9 +153,14 @@ const AttendanceSheet: React.FC = () => {
                     ))}
                     </tbody>
                     <br/>
-                    <Button variant="light" onClick={() => console.log(selectedClassId + selectedStudents)}>
-                        Sauvegarder
+                    <Button
+                        variant="light"
+                        onClick={saveAttendance}
+                        disabled={isLoading}
+                    >
+                        {isLoading ? "Enregistrement en cours..." : "Sauvegarder"}
                     </Button>
+
                 </Table>
             )}
         </div>
