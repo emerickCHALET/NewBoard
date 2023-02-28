@@ -139,8 +139,6 @@ const BoardPage = () => {
                         position: toast.POSITION.TOP_RIGHT
                     });
                 }
-
-
             })
     }
 
@@ -171,7 +169,6 @@ const BoardPage = () => {
     }, [])
 
     const navigate = useNavigate();
-
 
     return (
 

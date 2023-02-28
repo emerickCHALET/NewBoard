@@ -23,7 +23,7 @@ import Modal from "react-bootstrap/Modal";
 import {ErrorMessage, Field, Form, Formik} from "formik";
 import Button from "react-bootstrap/Button";
 import axios from "axios";
-import {urlApi, urlLocal} from "../App";
+import {urlApi, urlApiSocket, urlLocal} from "../App";
 import {toast} from "react-toastify";
 import {useLocation} from "react-router";
 import Student from "../Classes/Student";
@@ -114,7 +114,9 @@ const Kanban = () => {
             .get(urlApi + "boards/"+ boardId, config)
             .then((response) => {
                 if (response.status === 200) {
-                    setColumns(JSON.parse(response.data.data.content))
+                    if(response.data.data.content != null){
+                        setColumns(JSON.parse(response.data.data.content))
+                    }
                 }
             })
             .catch(function (error) {
@@ -123,14 +125,13 @@ const Kanban = () => {
                         position: toast.POSITION.TOP_RIGHT
                     });
                 }
-
-
             })
     }
 
-    const socket = io('http://localhost:3002');
+    const socket = io(urlApiSocket);
 
     socket.on('kanban message', (msg: Message) => {
+        console.log('la')
         console.log(`Message reçu de ${msg.sender}: ${msg.text}`);
     });
 
@@ -140,6 +141,7 @@ const Kanban = () => {
     function SendKanbanToSocket() {
         let json = JSON.stringify(columns)
         socket.emit("kanban message", json, boardId.toString(), { exceptSelf: true });
+        console.log('test')
     }
 
     const AddNewColumn: React.FC<AddNewColumnProps> = ({ columns, setColumns }) => {
