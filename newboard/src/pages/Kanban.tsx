@@ -45,6 +45,14 @@ const config = {
 
 const Kanban = () => {
 
+    const location = useLocation()
+    // Initialize boardId here because the app crashes when we click on menu button, location.state.boardId would be null ?? 
+    let boardId = 0
+    if(location.state != null){
+        boardId = location.state.boardId
+    }
+
+
     async function postBoardUser(userId: number): Promise<boolean> {
         let payload = {userID: userId, boardID: boardId};
         console.log(payload)
@@ -88,9 +96,6 @@ const Kanban = () => {
             })
     }
 
-    const location = useLocation();
-
-    const boardId = location.state.boardId
 
     const [show, setShow] = useState(false);
 
