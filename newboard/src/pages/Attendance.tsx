@@ -4,6 +4,7 @@ import SideBar from '../components/SideBar';
 import {urlLocal} from "../App";
 import axios from "axios";
 import {toast} from "react-toastify";
+import useProtectedPO from "../components/ProtectedPO";
 
 interface Student {
     firstname: string;
@@ -18,6 +19,7 @@ interface Classrooms {
 }
 
 const AttendanceSheet: React.FC = () => {
+    const { loading } = useProtectedPO()
     const [selectedClassId, setSelectedClassId] = useState<string>('');
     const [classrooms, setClassrooms] = useState<Classrooms[]>([]);
     const [selectedStudents, setSelectedStudents] = useState<Student[]>([]);
@@ -32,7 +34,7 @@ const AttendanceSheet: React.FC = () => {
             })
             .catch(function (error) {
                 if (error.response) {
-                    toast.error(error.response.data.message.name + ". \nReconnexion requise", {
+                    toast.error(error.response.data.message.name + ". \nErreur Classroom", {
                         position: toast.POSITION.TOP_RIGHT
                     });
                 }
@@ -57,7 +59,7 @@ const AttendanceSheet: React.FC = () => {
             })
             .catch(function (error) {
                 if (error.response) {
-                    toast.error("Erreur axios", {
+                    toast.error("Erreur Student", {
                         position: toast.POSITION.TOP_RIGHT
                     });
                 }
@@ -108,6 +110,9 @@ const AttendanceSheet: React.FC = () => {
             return users;
         }));
     };
+
+    if (loading){
+    }
 
     return (
         <div className="wrap">
