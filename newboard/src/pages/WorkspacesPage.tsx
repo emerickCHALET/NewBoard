@@ -153,9 +153,6 @@ const WorkspacesPage = () => {
                 </Modal.Body>
             </Modal>
             <h2>Espaces de travail</h2>
-
-
-
             <div className={"workspace-container"}>
                 <div className={"workspace-list"}>
                     <Button className={"workspace-item workspace-item-add"} variant="primary" onClick={() => { handleShow() }}>

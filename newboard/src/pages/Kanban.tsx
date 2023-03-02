@@ -23,7 +23,7 @@ import Modal from "react-bootstrap/Modal";
 import {ErrorMessage, Field, Form, Formik} from "formik";
 import Button from "react-bootstrap/Button";
 import axios from "axios";
-import {urlApi, urlApiSocket, urlLocal} from "../App";
+import {urlApi, urlApiSocket} from "../App";
 import {toast} from "react-toastify";
 import {useLocation} from "react-router";
 import Student from "../Classes/Student";
@@ -43,7 +43,7 @@ const config = {
 const Kanban = () => {
 
     const location = useLocation()
-    // Initialize boardId here because the app crashes when we click on menu button, location.state.boardId would be null ?? 
+    // Initialize boardId here because the app crashes when we click on menu button, location.state.boardId would be null ??
     let boardId = 0
     if(location.state != null){
         boardId = location.state.boardId
@@ -54,7 +54,7 @@ const Kanban = () => {
         console.log(payload)
         let result = false;
         await axios
-            .post(urlLocal + 'boardUsers', payload, config)
+            .post(urlApi + 'boardUsers', payload, config)
             .then((response) => {
                 if (response.status === 200) {
                     result = true
@@ -87,8 +87,6 @@ const Kanban = () => {
                         position: toast.POSITION.TOP_RIGHT
                     });
                 }
-
-
             })
     }
 
@@ -129,7 +127,7 @@ const Kanban = () => {
 
     const socket = io(urlApiSocket);
 
-    socket.on('message', (msg) => {
+    socket.on('kanban message', (msg) => {
         console.log(`Message reçu : ${msg}`);
     });
 

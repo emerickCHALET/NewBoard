@@ -4,7 +4,7 @@ import '../index.css';
 import * as Yup from 'yup';
 import {Formik, ErrorMessage, Form, Field} from 'formik';
 import axios from 'axios';
-import {urlApi, urlLocal} from "../App";
+import {urlApi} from "../App";
 import {toast} from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import {useNavigate} from "react-router";
