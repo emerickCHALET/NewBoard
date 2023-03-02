@@ -35,10 +35,7 @@ interface AddNewColumnProps {
     columns: ColumnInterface[];
     setColumns: React.Dispatch<React.SetStateAction<ColumnInterface[]>>;
 }
-interface Message {
-    sender: string;
-    text: string;
-}
+
 const config = {
     headers: {Authorization: `Bearer ${localStorage.getItem('token')}`}
 };
@@ -51,7 +48,6 @@ const Kanban = () => {
     if(location.state != null){
         boardId = location.state.boardId
     }
-
 
     async function postBoardUser(userId: number): Promise<boolean> {
         let payload = {userID: userId, boardID: boardId};
@@ -96,9 +92,7 @@ const Kanban = () => {
             })
     }
 
-
     const [show, setShow] = useState(false);
-
     const handleClose = () => {setShow(false); console.log("ok")}
     const handleShow = () => setShow(true);
     const handleSubmit = async (values: {userId: number}) => {
@@ -135,18 +129,17 @@ const Kanban = () => {
 
     const socket = io(urlApiSocket);
 
-    socket.on('kanban message', (msg: Message) => {
-        console.log('la')
-        console.log(`Message reçu de ${msg.sender}: ${msg.text}`);
+    socket.on('message', (msg) => {
+        console.log(`Message reçu : ${msg}`);
     });
 
     let [columns, setColumns] = useState<ColumnInterface[]>([
     ]);
 
-    function SendKanbanToSocket() {
+    const SendKanbanToSocket = () => {
         let json = JSON.stringify(columns)
         socket.emit("kanban message", json, boardId.toString(), { exceptSelf: true });
-        console.log('test')
+        console.log('column send')
     }
 
     const AddNewColumn: React.FC<AddNewColumnProps> = ({ columns, setColumns }) => {
