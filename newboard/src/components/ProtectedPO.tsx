@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import {useEffect, useState} from 'react';
 import {useNavigate} from "react-router";
 
 const useProtectedPO = () => {
@@ -10,7 +10,7 @@ const useProtectedPO = () => {
             const token = localStorage.getItem('token');
             const role = localStorage.getItem('permissions_role');
 
-            if (token && role == "ROLE_ADMIN") {
+            if (token && role === "ROLE_ADMIN") {
                 setLoading(false);
             } else {
                 localStorage.clear();

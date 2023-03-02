@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import Footer from "./components/Footer";
 import Home from "./components/Home";
 import {BrowserRouter, Route, Routes} from "react-router-dom";
@@ -13,6 +13,7 @@ import BoardPage from "./pages/BoardPage";
 import Management from "./pages/Management";
 import Kanban from "./pages/Kanban";
 import AttendanceSheet from "./pages/Attendance";
+import {toast} from "react-toastify";
 
 const MainPage = () => {
     return (
@@ -26,6 +27,40 @@ const MainPage = () => {
 }
 
 export default function App() {
+
+    useEffect(() => {
+        const handleOnlineStatus = () => {
+            const offlineMsg = () => (
+                <div>
+                    <p>Vous êtes hors ligne.</p>
+                    <p>Les modifications apportées ne seront pas enregistrées.</p>
+                </div>
+            );
+            const toastOptions = {
+                position: toast.POSITION.BOTTOM_LEFT,
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+            };
+
+            if (!navigator.onLine) {
+                toast.warn(offlineMsg, toastOptions);
+            } else {
+                toast.success("Vous êtes de nouveau en ligne.", toastOptions);
+            }
+        };
+
+        window.addEventListener('online', handleOnlineStatus);
+        window.addEventListener('offline', handleOnlineStatus);
+
+        return () => {
+            window.removeEventListener('online', handleOnlineStatus);
+            window.removeEventListener('offline', handleOnlineStatus);
+        };
+    }, []);
+
     return (
         <BrowserRouter>
             <Routes>
@@ -37,9 +72,9 @@ export default function App() {
                 <Route path="inscription" element={<InscriptionPage/>}/>
                 <Route path="workspaces" element={<WorkspacesPage/>}/>
                 <Route path="board" element={<BoardPage/>}/>
-                <Route path="attendance" element={<AttendanceSheet/>}/>
                 <Route path="kanban" element={<Kanban/>}/>
                 <Route path="management" element={<Management/>}/>
+                <Route path="attendance" element={<AttendanceSheet/>}/>
             </Routes>
         </BrowserRouter>
     );
