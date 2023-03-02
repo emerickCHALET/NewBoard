@@ -20,6 +20,13 @@ const BoardPage = () => {
 
     const location = useLocation();
 
+    // Initialize workspaceId here because the app crashes when we click on menu button, location.state.workspaceId would be null ??
+    let workspaceId = 0
+    if(location.state != null){
+        workspaceId = location.state.workspaceId;
+    }
+/*
+
 //get workspace name from previous page
     let workspaceName = location.state.workspaceName;
 
@@ -27,7 +34,8 @@ const BoardPage = () => {
     let classroomName = location.state.classroomName;
 
 // get workspace ID from previous page
-    let workspaceId = location.state.workspaceId;
+*/
+
 
     async function postBoard(values: { name: string; }): Promise<boolean> {
         let payload = {name: values.name, workspaceID: workspaceId};
@@ -139,8 +147,6 @@ const BoardPage = () => {
                         position: toast.POSITION.TOP_RIGHT
                     });
                 }
-
-
             })
     }
 
@@ -171,7 +177,6 @@ const BoardPage = () => {
     }, [])
 
     const navigate = useNavigate();
-
 
     return (
 
@@ -224,7 +229,11 @@ const BoardPage = () => {
                     </Button>
                     {boards.map((board) => {
                         return <div key={board.name.toString()} className={"workspace-item"} onClick={() => {
-                            navigate("/kanban")
+                            console.log(board.id);
+                            navigate("/kanban",
+                                {state: {
+                                boardId: board.id
+                            }})
                         }}> {board.name} </div>;
                     })}
                 </div>
