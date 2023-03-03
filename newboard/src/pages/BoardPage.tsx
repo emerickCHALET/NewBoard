@@ -11,7 +11,6 @@ import {ErrorMessage, Field, Form, Formik, FormikValues} from "formik";
 import Button from "react-bootstrap/Button";
 import Board from "../Classes/Board";
 
-
 const config = {
     headers: {Authorization: `Bearer ${localStorage.getItem('token')}`}
 };
@@ -28,6 +27,7 @@ const BoardPage = () => {
 
 // get workspace ID from previous page
     let workspaceId = location.state.workspaceId;
+
 
     async function postBoard(values: { name: string; }): Promise<boolean> {
         let payload = {name: values.name, workspaceID: workspaceId};
@@ -60,7 +60,6 @@ const BoardPage = () => {
     }
 
     async function postWorkspaceUser(values: FormikValues): Promise<boolean> {
-        // voir pour récupérer l'id d'user
         let payload = {userId: values.userId, workspaceID: workspaceId};
         let result = false;
         await axios
@@ -214,6 +213,11 @@ const BoardPage = () => {
 
             </Modal>
             <h2>Tableaux</h2>
+            <Button className={"workspace-item workspace-item-add"} variant="primary" onClick={() => {
+                navigate("/chat", {state: {workspaceId}})
+            }}>
+                Chat
+            </Button>
             <div className={"workspace-container"}>
                 <div className={"workspace-list"}>
                     {/* eslint-disable-next-line @typescript-eslint/no-unused-expressions */}
