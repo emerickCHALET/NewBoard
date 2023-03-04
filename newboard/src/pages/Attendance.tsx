@@ -7,6 +7,7 @@ import {toast} from "react-toastify";
 import useProtectedPO from "../components/ProtectedPO";
 
 interface Student {
+    id: number;
     firstname: string;
     lastname: string;
     present: boolean;
@@ -18,10 +19,21 @@ interface Classrooms {
     ClassroomName: string;
 }
 
+interface Attendance {
+    id: string;
+    classroomsId: string;
+    call_date: string;
+    present: boolean;
+    students: Student[];
+
+}
+
 const AttendanceSheet: React.FC = () => {
-    const { loading } = useProtectedPO()
+    const {loading} = useProtectedPO()
     const [selectedClassId, setSelectedClassId] = useState<string>('');
+    const [selectedHistory, setSelectedHistory] = useState<string>('');
     const [classrooms, setClassrooms] = useState<Classrooms[]>([]);
+    const [history, setHistory] = useState<Attendance[]>([]);
     const [selectedStudents, setSelectedStudents] = useState<Student[]>([]);
     const [isLoading, setIsLoading] = useState<boolean>(false);
 
@@ -40,9 +52,27 @@ const AttendanceSheet: React.FC = () => {
                 }
             })
     }
+    const getHistory = () => {
+        axios.get(urlLocal + 'attendanceHistory')
+            .then((response) => {
+                if (response.status === 200) {
+                    setHistory(response.data.data)
+                }
+            })
+            .catch(function (error) {
+                if (error.response) {
+                    toast.error(error.response.data.message.name + ". \nErreur History", {
+                        position: toast.POSITION.TOP_RIGHT
+                    });
+                }
+            })
+        console.log(classrooms)
+
+    }
 
     useEffect(() => {
         getClassrooms();
+        getHistory();
     }, []);
 
     const getStudentByClass = () => {
@@ -66,11 +96,34 @@ const AttendanceSheet: React.FC = () => {
             })
     }
 
+    // const getStudentByHistory = () => {
+    //     const id = {
+    //         params: {
+    //             call_date: selectedHistory
+    //         }
+    //     }
+    //     axios.get(urlLocal + 'usersByClassroom', id)
+    //         .then((response) => {
+    //             if (response.status === 200) {
+    //                 setSelectedStudents(response.data.data)
+    //             }
+    //         })
+    //         .catch(function (error) {
+    //             if (error.response) {
+    //                 toast.error("Erreur Student", {
+    //                     position: toast.POSITION.TOP_RIGHT
+    //                 });
+    //             }
+    //         })
+    // }
+
     const saveAttendance = () => {
         const myData = {
             classroomId: selectedClassId,
             attendance: selectedStudents.map(student => {
+                // attendance: selectedStudents && selectedStudents.map(student => {
                 return {
+                    id: student.id,
                     firstname: student.firstname,
                     lastname: student.lastname,
                     present: student.present
@@ -96,22 +149,28 @@ const AttendanceSheet: React.FC = () => {
 
     const handleClassSelection = (event: React.ChangeEvent<HTMLSelectElement>) => {
         setSelectedClassId(event.target.value);
+        setSelectedHistory("");
         getStudentByClass();
     };
 
+    const handleHistorySelection = (event: React.ChangeEvent<HTMLSelectElement>) => {
+        setSelectedHistory(event.target.value);
+        setSelectedClassId("");
+    }
+
     const handleToggleAttendance = (index: number) => {
-        setSelectedStudents(selectedStudents.map((users, i) => {
+        setSelectedStudents(selectedStudents.map((student, i) => {
             if (i === index) {
                 return {
-                    ...users,
-                    present: !users.present
+                    ...student,
+                    present: !student.present
                 };
             }
-            return users;
+            return student;
         }));
     };
 
-    if (loading){
+    if (loading) {
     }
 
     return (
@@ -119,17 +178,52 @@ const AttendanceSheet: React.FC = () => {
             <SideBar/>
             <h1 className="text-center my-5">Feuille d'appel</h1>
             <Form>
-                <Form.Group>
-                    <Form.Label>Classe</Form.Label>
-                    <Form.Select onChange={handleClassSelection}>
-                        <option>Choisissez une classe</option>
-                        {classrooms.map(classroom => (
-                            <option key={classroom.id} value={classroom.id}>
-                                {classroom.ClassroomName}
-                            </option>
-                        ))}
-                    </Form.Select>
-                </Form.Group>
+                <div className="row">
+                    <div className="col">
+                        <Form.Group>
+                            <Form.Label>Classe</Form.Label>
+                            <Form.Select onChange={handleClassSelection} value={selectedClassId} defaultValue="">
+                                <option value="" disabled>Choisissez une classe</option>
+                                {classrooms.map(classroom => (
+                                    <option key={classroom.id} value={classroom.id}>
+                                        {classroom.ClassroomName}
+                                    </option>
+                                ))}
+                            </Form.Select>
+                        </Form.Group>
+                    </div>
+                    <div className="col">
+                        <Form.Group>
+                            <Form.Label>Historique</Form.Label>
+                            <Form.Select onChange={handleHistorySelection} value={selectedHistory} defaultValue="">
+                                <option value="" disabled>Choisissez un appel</option>
+                                {/*{history && history.map(attendance => (*/}
+                                {/*    <option key={attendance.call_date} value={attendance.call_date}>*/}
+                                {/*        Classe : {attendance.classroomsId} le {new Date(attendance.call_date).toLocaleDateString("fr-FR")}*/}
+                                {/*    </option>*/}
+                                {/*))}*/}
+                                {history && history.map((attendance) => {
+                                    const date = new Date(attendance.call_date);
+                                    const options: Intl.DateTimeFormatOptions = {
+                                        year: 'numeric',
+                                        month: 'long',
+                                        day: 'numeric',
+                                        hour: '2-digit',
+                                        minute: '2-digit',
+                                        timeZone: 'Europe/Paris'
+                                    };
+                                    const newDate = date.toLocaleString('fr-FR', options);
+                                    const displayData = `Classe : ${attendance.classroomsId} le ${newDate}`;
+                                    return (
+                                        <option key={attendance.call_date} value={attendance.call_date}>
+                                            {displayData}
+                                        </option>
+                                    );
+                                })};
+                            </Form.Select>
+                        </Form.Group>
+                    </div>
+                </div>
             </Form>
             {selectedClassId && (
                 <Table responsive bordered variant="light">
@@ -137,7 +231,47 @@ const AttendanceSheet: React.FC = () => {
                     <tr>
                         <th>Nom de l'étudiant</th>
                         <th>Prénom de l'étudiant</th>
-                        <th>Présent/Absent</th>
+                        <th>Présent / Absent</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {selectedStudents.map((users, index) => (
+                        <tr key={index}>
+                            <td>{users.lastname}</td>
+                            <td>{users.firstname}</td>
+                            <td>
+                                {users.present ? 'Présent' : 'Absent'}
+                                <Button
+                                    variant="link"
+                                    onClick={() => handleToggleAttendance(index)}
+                                >
+                                    Modifier
+                                </Button>
+                            </td>
+                        </tr>
+                    ))}
+                    </tbody>
+                    <br/>
+                    <Button
+                        variant="light"
+                        onClick={saveAttendance}
+                        disabled={isLoading}
+                    >
+                        {isLoading ? "Enregistrement en cours..." : "Sauvegarder"}
+                    </Button>
+
+                </Table>
+            )}
+
+            {/*    Tableau historique*/}
+
+            {selectedHistory && (
+                <Table responsive bordered variant="light">
+                    <thead>
+                    <tr>
+                        <th>Nom de l'étudiant</th>
+                        <th>Prénom de l'étudiant</th>
+                        <th>Présent / Absent</th>
                     </tr>
                     </thead>
                     <tbody>
