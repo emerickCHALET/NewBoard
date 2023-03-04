@@ -51,6 +51,8 @@ async function postWorkspace(values: { name: string; }): Promise<boolean> {
 
 
 const WorkspacesPage = () => {
+    const [isLoading, setIsLoading] = useState<boolean>(true);
+
     const [show, setShow] = useState(false);
 
     const handleClose = () => setShow(false);
@@ -94,14 +96,12 @@ const WorkspacesPage = () => {
             .then((response) => {
                 if (response.status === 200) {
                     setWorkspaces(response.data.data)
+                    setIsLoading(false);
                 }
             })
             .catch(function (error) {
                 if (error.response) {
-                    toast.error(error.response.data.message.name + ". \nReconnexion requise", {
-                        position: toast.POSITION.TOP_RIGHT
-                    });
-                    console.log(error.response)
+
                 }
             })
     }
@@ -112,6 +112,18 @@ const WorkspacesPage = () => {
     }, [])
 
     const navigate = useNavigate();
+
+    if (isLoading) {
+        return <div className="wrap">
+            <SideBar/>
+            <div className={"workspacePresentation"}>
+                <div className={"workspace-container"}>
+                    <img className={'iconLoading'} src={"./loading.gif"}/>
+                </div>
+            </div>
+            <Footer/>
+        </div>;
+    }
 
     return (
 
