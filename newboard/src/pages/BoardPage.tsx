@@ -16,6 +16,7 @@ const config = {
 };
 
 const BoardPage = () => {
+    const [isLoading, setIsLoading] = useState<boolean>(true);
 
     const location = useLocation();
 
@@ -154,6 +155,7 @@ const BoardPage = () => {
             .then((response) => {
                 if (response.status === 200) {
                     setBoards(response.data.data)
+                    setIsLoading(false);
                 }
             })
             .catch(function (error) {
@@ -192,6 +194,18 @@ const BoardPage = () => {
     }, [])
 
     const navigate = useNavigate();
+
+    if (isLoading) {
+        return <div className="wrap">
+            <SideBar/>
+            <div className={"workspacePresentation"}>
+                <div className={"workspace-container"}>
+                    <img className={'iconLoading'} src={"./loading.gif"}/>
+                </div>
+            </div>
+            <Footer/>
+        </div>;
+    }
 
     return (
 
@@ -233,29 +247,33 @@ const BoardPage = () => {
                 </Modal.Body>
 
             </Modal>
-            <h2>Tableaux</h2>
-            <Button className={"workspace-item workspace-item-add"} variant="primary" onClick={() => {
-                navigate("/chat", {state: {roomId}})
-            }}>
-                Chat
-            </Button>
-            <div className={"workspace-container"}>
-                <div className={"workspace-list"}>
-                    {/* eslint-disable-next-line @typescript-eslint/no-unused-expressions */}
-                    <Button className={"workspace-item workspace-item-add"} variant="primary" onClick={() => {
-                        handleShow()
-                    }}>
-                        +
-                    </Button>
-                    {boards.map((board) => {
-                        return <div key={board.name.toString()} className={"workspace-item"} onClick={() => {
-                            console.log(board.id);
-                            navigate("/kanban",
-                                {state: {
-                                boardId: board.id
-                            }})
-                        }}> {board.name} </div>;
-                    })}
+            <div>
+                <h2>Tableaux</h2>
+                <br/>
+                <br/>
+                <Button className={"workspace-item workspace-item-add"} variant="primary" onClick={() => {
+                    navigate("/chat", {state: {roomId}})
+                }}>
+                    Chat
+                </Button>
+                <div className={"workspace-container"}>
+                    <div className={"workspace-list"}>
+                        {/* eslint-disable-next-line @typescript-eslint/no-unused-expressions */}
+                        <Button className={"workspace-item workspace-item-add"} variant="primary" onClick={() => {
+                            handleShow()
+                        }}>
+                            +
+                        </Button>
+                        {boards.map((board) => {
+                            return <div key={board.name.toString()} className={"workspace-item"} onClick={() => {
+                                console.log(board.id);
+                                navigate("/kanban",
+                                    {state: {
+                                            boardId: board.id
+                                        }})
+                            }}> {board.name} </div>;
+                        })}
+                    </div>
                 </div>
             </div>
             <Footer/>
