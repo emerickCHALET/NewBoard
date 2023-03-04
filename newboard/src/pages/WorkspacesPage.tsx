@@ -117,7 +117,6 @@ const WorkspacesPage = () => {
             })
     }
 
-
     useEffect(() => {
         getWorkspaces()
     }, [])

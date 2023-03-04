@@ -9,6 +9,8 @@ import {useLocation, useNavigate} from "react-router";
 import "../Chat.css"
 import axios from "axios";
 import {urlApi} from "../App";
+// @ts-ignore
+import ScrollToBottom from "react-scroll-to-bottom";
 
 const ChatPage = () => {
     const config = {
@@ -22,53 +24,6 @@ const ChatPage = () => {
 
     const [currentMessage, setCurrentMessage] = useState("");
     const [messageList, setMessageList] = useState([]);
-    function sendMessage() {
-        if(currentMessage !== ""){
-            const messageData = {
-                roomId: room,
-                sentBy: localStorage.getItem("userId"),
-                message: "FAKE MESSAGE",
-            }
-            if (userId !== null){
-                socket.emit("send_message", messageData)
-                postMessage(room.toString(), userId.toString() ,currentMessage)
-            }
-            // @ts-ignore
-            //setMessageList((messageList) => [...messageList, {roomId: room.toString(), sentBy: userId.toString() ,currentMessage}])
-
-        }
-
-    }
-
-    const validationSchema = Yup.object().shape({
-        message: Yup.string()
-            .required("veuillez entrer un message"),
-
-    });
-
-    const initialValues = {
-        message: ""
-    };
-
-    function postMessage(roomId: string, sentBy: String, message: String): boolean {
-        let payload = {sentBy: sentBy, message: message, roomId: roomId};
-        let result = false;
-        axios
-            .post(urlApi + 'messages',payload, config)
-            .then((response) => {
-                if(response.status === 200){
-                    result = true
-                }
-            })
-            .catch(function (error) {
-                if(error.response) {
-                    toast.error(error.response.data.message,{
-                        position: toast.POSITION.TOP_RIGHT
-                    });
-                }
-            })
-        return result;
-    }
 
     async function getMessages() {
         await axios
@@ -90,60 +45,82 @@ const ChatPage = () => {
             })
     }
 
-    const navigate = useNavigate();
-    const handleSubmit = async (values: {message: string; }) => {
-        setCurrentMessage(values.message)
-        sendMessage()
-    };
+
+    const submitMessage = () => {
+        if (userId !== null && currentMessage != ""){
+            const messageData = {
+                roomId: room.toString(),
+                sentBy: userId.toString(),
+                message: currentMessage,
+            }
+            socket.emit("send_message", messageData)
+        }
+    }
 
     useEffect(() => {
-        getMessages().then(r => socket.emit("join_room", room))
+        socket.emit("join_room", room)
+        getMessages()
+    },[])
 
 
-        socket.on("receive_message", (message) => {
+    useEffect(() => {
+// @ts-ignore
+        socket.on("message_received", (data) => {
+            console.log(data)
             // @ts-ignore
-            console.log(message)
+            setMessageList((list) => [...list, data])
         })
+
     }, [socket])
 
     return (
 
         <div className="wrap">
             <SideBar/>
-            <div className="chat-wrap">
-
-
-                <div className="container-wrap-chat">
-                    {messageList.map((messageContent) => {
-                        const {message, sentBy, created} = messageContent;
-                        return <div>
-                            <h1>{message}</h1>
-                            <p>id sender: {sentBy}</p>
-                            <p>{created}</p>
-                        </div>
-
-                    })}
+            <div className="chat-window">
+                <div className="chat-header">
+                    <p>Live Chat</p>
                 </div>
-                <Formik
-                    initialValues={initialValues}
-                    validationSchema={validationSchema}
-                    onSubmit={(values) => handleSubmit(values)}
-                >
-                    <div className="container-wrap-form">
-                        <Form className="form-wrap-message">
-                            <fieldset className={"field-area"}>
-                                <Field name="message" className="form-input-message" type="text" placeholder="Tapez votre message..."/>
-                                <ErrorMessage
-                                    name="message"
-                                    component="small"
-                                    className="text-danger"
-                                />
-                            </fieldset>
-                            <button type="submit" className="send-message-button">Envoyer</button>
-                        </Form>
-                    </div>
-                </Formik>
+                <div className="chat-body">
+                    <ScrollToBottom className="message-container">
+                        {messageList.map((messageContent) => {
+                            const {sentBy, message, created} = messageContent;
+                            return (
+
+                                <div
+                                    className="message"
+                                    id={userId == sentBy ? "you" : "other"}
+                                >
+                                    <div>
+                                        <div className="message-content">
+                                            <p>{message}</p>
+                                        </div>
+                                        <div className="message-meta">
+                                            <p id="time">{created}</p>
+                                            <p id="author">{sentBy}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            );
+                        })}
+                    </ScrollToBottom>
+                </div>
+                <div className="chat-footer">
+                    <input
+                        type="text"
+                        value={currentMessage}
+                        placeholder="Hey..."
+                        onChange={(event) => {
+                            setCurrentMessage(event.target.value);
+                        }}
+                        onKeyPress={(event) => {
+                            event.key === "Enter" && submitMessage();
+                        }}
+                    />
+                    <button onClick={submitMessage}>&#9658;</button>
+                </div>
             </div>
+
         <Footer/>
         </div>
 
@@ -151,3 +128,29 @@ const ChatPage = () => {
 }
 
 export default ChatPage;
+
+
+/*
+<div className="chat-window">
+    <div className="chat-body">
+        {messageList.map((messageContent) => {
+            const {sentBy, message, created} = messageContent;
+            return (
+                <div className={"message-wrap"} id={userId === sentBy ? "you" : "other" }>
+                    <div className={"message-content"}>
+                        <h4>{message}</h4>
+                    </div>
+                    <div className={"message-meta"}>
+                        <p>{created}</p>
+                        <p>id sender: {sentBy}</p>
+                    </div>
+                </div>
+
+            )})}
+    </div>
+    <input id={"messageText"} type={"text"} placeholder={"message..."} onChange={(event) => {
+        setCurrentMessage(event.target.value)
+    }
+    }/>
+    <button onClick={submitMessage}>Send</button>
+</div>*/
