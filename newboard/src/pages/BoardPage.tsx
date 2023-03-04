@@ -28,9 +28,12 @@ const BoardPage = () => {
 // get workspace ID from previous page
     let workspaceId = location.state.workspaceId;
 
+    let roomId = location.state.roomId
+
 
     async function postBoard(values: { name: string; }): Promise<boolean> {
-        let payload = {name: values.name, workspaceID: workspaceId};
+        let payload = {name: values.name, workspaceID: workspaceId, roomId: 0};
+        payload.roomId = await postRoom(payload)
         let result = false;
         await axios
             .post(urlApi + 'boards',payload, config)
@@ -57,6 +60,18 @@ const BoardPage = () => {
                 }
             })
         return result;
+    }
+    async function postRoom(values: { name: string; }): Promise<number>{
+        let payload = {name: values.name}
+        let result = 0
+        await axios
+            .post(urlApi + 'rooms', payload,  config)
+            .then((response) => {
+                if (response.status === 200) {
+                    result = response.data.data.id
+                }
+            });
+        return result
     }
 
     async function postWorkspaceUser(values: FormikValues): Promise<boolean> {
@@ -89,6 +104,7 @@ const BoardPage = () => {
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
     const [value, setValue] = useState("default");
+    const [room, setRoom] = useState(0);
 
     const handleChange = (e: { target: { value: React.SetStateAction<string>; }; }) => {
         setValue(e.target.value);
@@ -214,7 +230,7 @@ const BoardPage = () => {
             </Modal>
             <h2>Tableaux</h2>
             <Button className={"workspace-item workspace-item-add"} variant="primary" onClick={() => {
-                navigate("/chat", {state: {workspaceId}})
+                navigate("/chat", {state: {roomId}})
             }}>
                 Chat
             </Button>

@@ -12,28 +12,25 @@ import {urlApi} from "../App";
 import {toast} from "react-toastify";
 import {useNavigate} from "react-router";
 
-let workspaceId: number;
+
 const config = {
     headers: {Authorization: `Bearer ${localStorage.getItem('token')}`}
 };
 
 async function postWorkspace(values: { name: string; }): Promise<boolean> {
     // voir pour récupérer l'id d'user
-    let payload = {name: values.name};
+    let payload = {name: values.name, roomId: 0};
     let result = false;
+    payload.roomId = await postRoom(payload)
     await axios
         .post(urlApi + 'workspaces', payload, config)
         .then((response) => {
             if (response.status === 200) {
                 let payload2 = {userID: localStorage.getItem('userId'), workspaceID: response.data.data.id};
-                workspaceId = response.data.data.id;
                 axios
                     .post(urlApi + 'workspacesUser', payload2, config)
                     .then((response) => {
                         if (response.status === 200) {
-                            toast.success("Workspace crée avec succès !", {
-                                position: toast.POSITION.TOP_RIGHT,
-                            });
                             result = true
                         }
                     })
@@ -47,6 +44,19 @@ async function postWorkspace(values: { name: string; }): Promise<boolean> {
             }
         })
     return result;
+}
+
+async function postRoom(values: { name: string; }): Promise<number>{
+    let payload = {name: values.name}
+    let result = 0
+     await axios
+        .post(urlApi + 'rooms', payload,  config)
+        .then((response) => {
+            if (response.status === 200) {
+                result = response.data.data.id
+            }
+        });
+    return result
 }
 
 
@@ -154,19 +164,18 @@ const WorkspacesPage = () => {
                 </Modal.Body>
             </Modal>
             <h2>Espaces de travail</h2>
-
-
-
             <div className={"workspace-container"}>
                 <div className={"workspace-list"}>
                     <Button className={"workspace-item workspace-item-add"} variant="primary" onClick={() => { handleShow() }}>
                         +
                     </Button>
                     {workspaces.map((workspace) => { return <div key={workspace.name.toString()} className={"workspace-item"} onClick={() => {
+                        console.log(workspace.roomId)
                         navigate("/board",
                             {state: {
                                     workspaceName: workspace.name,
                                     workspaceId: workspace.id,
+                                    roomId: workspace.roomId
                             }}) }}> {workspace.name} </div>; })}
                 </div>
             </div>

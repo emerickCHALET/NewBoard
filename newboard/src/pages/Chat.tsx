@@ -16,21 +16,26 @@ const ChatPage = () => {
     };
 
     const location = useLocation()
-    const room = location.state.workspaceId
+    const room = location.state.roomId
     let socket = io.connect("http://localhost:3001/");
+    let userId = localStorage.getItem("userId")
 
     const [currentMessage, setCurrentMessage] = useState("");
     const [messageList, setMessageList] = useState([]);
-    const sendMessage = async () => {
+    function sendMessage() {
         if(currentMessage !== ""){
             const messageData = {
-                room: room,
+                roomId: room,
                 sentBy: localStorage.getItem("userId"),
-                message: currentMessage,
+                message: "FAKE MESSAGE",
             }
-            await socket.emit("send_message", messageData)
+            if (userId !== null){
+                socket.emit("send_message", messageData)
+                postMessage(room.toString(), userId.toString() ,currentMessage)
+            }
             // @ts-ignore
-            await postMessage(messageData.room, messageData.sentBy, messageData.message)
+            //setMessageList((messageList) => [...messageList, {roomId: room.toString(), sentBy: userId.toString() ,currentMessage}])
+
         }
 
     }
@@ -45,14 +50,14 @@ const ChatPage = () => {
         message: ""
     };
 
-    async function postMessage(room: string, sentBy: String, message: String): Promise<boolean> {
-        let payload = {room: room, sentBy: sentBy, message: message};
+    function postMessage(roomId: string, sentBy: String, message: String): boolean {
+        let payload = {sentBy: sentBy, message: message, roomId: roomId};
         let result = false;
-        await axios
+        axios
             .post(urlApi + 'messages',payload, config)
             .then((response) => {
                 if(response.status === 200){
-
+                    result = true
                 }
             })
             .catch(function (error) {
@@ -65,12 +70,13 @@ const ChatPage = () => {
         return result;
     }
 
-    const getMessages = () => {
-        axios
-            .get(urlApi + "messages/", config)
+    async function getMessages() {
+        await axios
+            .get(urlApi + "messagesByRoomId/" + room, config)
             .then((response) => {
                 if (response.status === 200) {
                     setMessageList(response.data.data)
+                    console.log(messageList)
                 }
             })
             .catch(function (error) {
@@ -87,13 +93,12 @@ const ChatPage = () => {
     const navigate = useNavigate();
     const handleSubmit = async (values: {message: string; }) => {
         setCurrentMessage(values.message)
-
-        await sendMessage()
+        sendMessage()
     };
 
     useEffect(() => {
-        getMessages()
-        socket.emit("join_room", room);
+        getMessages().then(r => socket.emit("join_room", room))
+
 
         socket.on("receive_message", (message) => {
             // @ts-ignore
@@ -110,10 +115,11 @@ const ChatPage = () => {
 
                 <div className="container-wrap-chat">
                     {messageList.map((messageContent) => {
-                        const {message, sentBy} = messageContent;
+                        const {message, sentBy, created} = messageContent;
                         return <div>
                             <h1>{message}</h1>
                             <p>id sender: {sentBy}</p>
+                            <p>{created}</p>
                         </div>
 
                     })}
@@ -133,7 +139,7 @@ const ChatPage = () => {
                                     className="text-danger"
                                 />
                             </fieldset>
-                            <button type="submit" className="send-message-button">Send</button>
+                            <button type="submit" className="send-message-button">Envoyer</button>
                         </Form>
                     </div>
                 </Formik>
