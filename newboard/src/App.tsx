@@ -47,5 +47,11 @@ export default function App(){
 /**
  * url of the Production environment
  */
-export const urlLocal = "http://newboardapifr.swks7487.odns.fr/api/";
+//export const urlApi = "http://newboardapifr.swks7487.odns.fr/api/";
+//export const urlApiSocket = "http://newboardapifr.swks7487.odns.fr";
+
+/**
+ * url of the Development environment
+ */
 export const urlApi = "http://localhost:3001/api/"
+export const urlApiSocket = "http://localhost:3001";

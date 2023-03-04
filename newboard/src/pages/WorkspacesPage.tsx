@@ -111,9 +111,8 @@ const WorkspacesPage = () => {
                     toast.error(error.response.data.message.name + ". \nReconnexion requise", {
                         position: toast.POSITION.TOP_RIGHT
                     });
+                    console.log(error.response)
                 }
-
-
             })
     }
 

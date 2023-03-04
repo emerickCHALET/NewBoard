@@ -4,7 +4,7 @@ import * as Yup from 'yup';
 import {Formik, ErrorMessage, Form, Field} from 'formik';
 import {useNavigate} from "react-router";
 import axios from "axios";
-import {urlApi, urlLocal} from "../App";
+import {urlApi} from "../App";
 import {toast} from "react-toastify";
 import SideBar from "../components/SideBar";
 
