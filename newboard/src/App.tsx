@@ -11,7 +11,7 @@ import Forgot from "./pages/Forgot";
 import ResetPassword from "./pages/ResetPassword";
 import BoardPage from "./pages/BoardPage";
 import Management from "./pages/Management";
-import Client from "./pages/Chat";
+import Chat from "./pages/Chat";
 import Kanban from "./pages/Kanban";
 
 const MainPage = () => {
@@ -39,7 +39,7 @@ export default function App(){
             <Route path="board" element={<BoardPage/>}/>
             <Route path="kanban" element={<Kanban/>}/>
             <Route path="management" element={<Management/>}/>
-            <Route path="chat" element={<Client/>}/>
+            <Route path="chat" element={<Chat/>}/>
         </Routes>
         </BrowserRouter>
     );
@@ -47,5 +47,5 @@ export default function App(){
 /**
  * url of the Production environment
  */
-export const urlApi = "http://newboardapifr.swks7487.odns.fr/api/";
-export const urlLocal = "http://localhost:3001/api/"
+export const urlLocal = "http://newboardapifr.swks7487.odns.fr/api/";
+export const urlApi = "http://localhost:3001/api/"
