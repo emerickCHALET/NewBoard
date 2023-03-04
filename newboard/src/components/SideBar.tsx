@@ -75,13 +75,6 @@ const SideBar = () => {
                                         <span>Workspaces</span>
                                     </Link>
                                 </li> : <></>}
-                            {role! === "ROLE_USER"?
-                                <li className='nav-text'>
-                                    <Link to={'/chat'}>
-                                        <AiIcons.AiFillLayout />
-                                        <span>chat</span>
-                                    </Link>
-                                </li> : <></>}
                             {role! === "ROLE_ADMIN" &&  establishment != null?
                             <li className='nav-text'>
                                 <Link to={'/management'}>

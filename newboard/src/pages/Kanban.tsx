@@ -114,8 +114,8 @@ const Kanban = () => {
                 if (response.status === 200) {
                     if(response.data.data.content != null){
                         setColumns(JSON.parse(response.data.data.content))
-                        setIsLoading(false)
                     }
+                    setIsLoading(false)
                 }
             })
             .catch(function (error) {
