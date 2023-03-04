@@ -29,6 +29,7 @@ import {useLocation} from "react-router";
 import Student from "../Classes/Student";
 import io from 'socket.io-client';
 import column from "../components/Column";
+import * as AiIcons from "react-icons/ai";
 
 
 interface AddNewColumnProps {
@@ -235,6 +236,7 @@ const Kanban = () => {
 
         <div className="wrap">
             <SideBar/>
+
             <Modal show={show} onHide={handleClose}>
                 <Modal.Header closeButton>
                     <Modal.Title>Ajouter un élève au board</Modal.Title>
@@ -272,11 +274,14 @@ const Kanban = () => {
                     </Formik>
                 </Modal.Body>
             </Modal>
-            <Button className={"workspace-item workspace-item-add"} variant="primary" onClick={() => {
-                handleShow()
-            }}>
-                +
-            </Button>
+            <br/>
+            <div className={"addUser-item-div"}>
+                <Button type={"button"} className={"btn-light btn-outline-primary"}  onClick={() => {
+                    handleShow()
+                }}>
+                    <AiIcons.AiOutlineUserAdd />
+                </Button>
+            </div>
             <div className="App">
                 <DragDropContext onDragEnd={onDragEnd}>
                     <Droppable
