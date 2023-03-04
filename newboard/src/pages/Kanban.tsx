@@ -279,7 +279,7 @@ const Kanban = () => {
                 <Button type={"button"} className={"btn-light btn-outline-primary"}  onClick={() => {
                     handleShow()
                 }}>
-                    <AiIcons.AiOutlineUserAdd />
+                    <AiIcons.AiOutlineUserAdd /> Partager
                 </Button>
             </div>
             <div className="App">
