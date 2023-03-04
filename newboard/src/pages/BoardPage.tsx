@@ -218,24 +218,28 @@ const BoardPage = () => {
                 </Modal.Body>
 
             </Modal>
-            <h2>Tableaux</h2>
-            <div className={"workspace-container"}>
-                <div className={"workspace-list"}>
-                    {/* eslint-disable-next-line @typescript-eslint/no-unused-expressions */}
-                    <Button className={"workspace-item workspace-item-add"} variant="primary" onClick={() => {
-                        handleShow()
-                    }}>
-                        +
-                    </Button>
-                    {boards.map((board) => {
-                        return <div key={board.name.toString()} className={"workspace-item"} onClick={() => {
-                            console.log(board.id);
-                            navigate("/kanban",
-                                {state: {
-                                boardId: board.id
-                            }})
-                        }}> {board.name} </div>;
-                    })}
+            <div>
+                <h2>Tableaux</h2>
+                <br/>
+                <br/>
+                <div className={"workspace-container"}>
+                    <div className={"workspace-list"}>
+                        {/* eslint-disable-next-line @typescript-eslint/no-unused-expressions */}
+                        <Button className={"workspace-item workspace-item-add"} variant="primary" onClick={() => {
+                            handleShow()
+                        }}>
+                            +
+                        </Button>
+                        {boards.map((board) => {
+                            return <div key={board.name.toString()} className={"workspace-item"} onClick={() => {
+                                console.log(board.id);
+                                navigate("/kanban",
+                                    {state: {
+                                            boardId: board.id
+                                        }})
+                            }}> {board.name} </div>;
+                        })}
+                    </div>
                 </div>
             </div>
             <Footer/>

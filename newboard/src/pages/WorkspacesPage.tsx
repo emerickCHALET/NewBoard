@@ -152,18 +152,22 @@ const WorkspacesPage = () => {
                     </Formik>
                 </Modal.Body>
             </Modal>
-            <h2>Espaces de travail</h2>
-            <div className={"workspace-container"}>
-                <div className={"workspace-list"}>
-                    <Button className={"workspace-item workspace-item-add"} variant="primary" onClick={() => { handleShow() }}>
-                        +
-                    </Button>
-                    {workspaces.map((workspace) => { return <div key={workspace.name.toString()} className={"workspace-item"} onClick={() => {
-                        navigate("/board",
-                            {state: {
-                                    workspaceName: workspace.name,
-                                    workspaceId: workspace.id,
-                            }}) }}> {workspace.name} </div>; })}
+            <div className={"workspacePresentation"}>
+                <h2>Espaces de travail</h2>
+                <br/>
+                <br/>
+                <div className={"workspace-container"}>
+                    <div className={"workspace-list"}>
+                        <Button className={"workspace-item workspace-item-add"} variant="primary" onClick={() => { handleShow() }}>
+                            +
+                        </Button>
+                        {workspaces.map((workspace) => { return <div key={workspace.name.toString()} className={"workspace-item"} onClick={() => {
+                            navigate("/board",
+                                {state: {
+                                        workspaceName: workspace.name,
+                                        workspaceId: workspace.id,
+                                    }}) }}> {workspace.name} </div>; })}
+                    </div>
                 </div>
             </div>
             <Footer/>
