@@ -50,6 +50,7 @@
 .nav-menu.active {
     left: 0;
     transition: 450ms;
+    z-index: 1;
 }
 
 .nav-text {
