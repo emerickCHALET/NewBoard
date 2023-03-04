@@ -21,6 +21,11 @@ const Home = () => {
                                 Rejoignez nous !
                             </Button>}
                     </div>
+                    <div className={"featuresPresentation"}>
+                        <img className={"iconHome"} src="./groupChat.png"/>
+                        <img className={"iconHome"} src="./kanbanBoard.png"/>
+                        <img className={"iconHome"} src="./studentAttendance.png"/>
+                    </div>
                 </div>
     )
 }

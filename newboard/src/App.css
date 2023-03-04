@@ -125,3 +125,12 @@ span {
     text-align: center;
     color: white;
 }
+
+.iconHome{
+    width: 15%;
+}
+
+.featuresPresentation{
+    justify-content: space-evenly;
+    display: flex;
+}
