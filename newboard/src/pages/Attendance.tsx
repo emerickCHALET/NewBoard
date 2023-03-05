@@ -66,7 +66,7 @@ const AttendanceSheet: React.FC = () => {
                     });
                 }
             })
-        console.log(classrooms)
+        console.log(history)
 
     }
 
@@ -135,13 +135,13 @@ const AttendanceSheet: React.FC = () => {
         axios.post(urlLocal + 'attendance', myData)
             .then((response) => {
                 setIsLoading(false);
-                toast.success("Appel enregistré !", {
+                toast.success(response.data.message, {
                     position: toast.POSITION.TOP_RIGHT
                 });
             })
             .catch((error) => {
                 setIsLoading(false);
-                toast.error("Erreur lors de l'enregistrement !", {
+                toast.error(error.response.data.message, {
                     position: toast.POSITION.TOP_RIGHT
                 });
             });
@@ -158,7 +158,7 @@ const AttendanceSheet: React.FC = () => {
         setSelectedClassId("");
     }
 
-    const handleToggleAttendance = (index: number) => {
+    const handleTogglePresence = (index: number) => {
         setSelectedStudents(selectedStudents.map((student, i) => {
             if (i === index) {
                 return {
@@ -184,7 +184,7 @@ const AttendanceSheet: React.FC = () => {
                             <Form.Label>Classe</Form.Label>
                             <Form.Select onChange={handleClassSelection} value={selectedClassId} defaultValue="">
                                 <option value="" disabled>Choisissez une classe</option>
-                                {classrooms.map(classroom => (
+                                {classrooms && classrooms.map(classroom => (
                                     <option key={classroom.id} value={classroom.id}>
                                         {classroom.ClassroomName}
                                     </option>
@@ -243,7 +243,7 @@ const AttendanceSheet: React.FC = () => {
                                 {users.present ? 'Présent' : 'Absent'}
                                 <Button
                                     variant="link"
-                                    onClick={() => handleToggleAttendance(index)}
+                                    onClick={() => handleTogglePresence(index)}
                                 >
                                     Modifier
                                 </Button>
@@ -283,7 +283,7 @@ const AttendanceSheet: React.FC = () => {
                                 {users.present ? 'Présent' : 'Absent'}
                                 <Button
                                     variant="link"
-                                    onClick={() => handleToggleAttendance(index)}
+                                    onClick={() => handleTogglePresence(index)}
                                 >
                                     Modifier
                                 </Button>
@@ -297,7 +297,7 @@ const AttendanceSheet: React.FC = () => {
                         onClick={saveAttendance}
                         disabled={isLoading}
                     >
-                        {isLoading ? "Enregistrement en cours..." : "Sauvegarder"}
+                        {isLoading ? "Enregistrement en cours..." : "Mettre à jour"}
                     </Button>
 
                 </Table>
