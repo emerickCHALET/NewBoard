@@ -11,19 +11,14 @@ import {Link} from "react-router-dom";
 
 const Login = () => {
     const navigate = useNavigate();
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
 
     useEffect(() => {
         // vérifier si l'utilisateur est déjà connecté
         const isLoggedIn = localStorage.getItem("isLoggedIn");
         if (isLoggedIn === "true") {
-            setIsLoggedIn(true);
+            navigate('/workspaces');
         }
     }, []);
-
-    if (isLoggedIn) {
-        navigate('/workspaces');
-    }
 
     /**
      * function who check the identifiers of a user and connect him if that's good
@@ -46,7 +41,7 @@ const Login = () => {
                         localStorage.setItem('establishmentId', response.data.data.establishmentId);
                     }
                     localStorage.setItem("isLoggedIn", "true");
-                    setIsLoggedIn(true);
+                    navigate('/workspaces');
                 }
             })
             .catch(function (error) {

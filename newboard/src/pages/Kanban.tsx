@@ -29,6 +29,7 @@ import {useLocation, useNavigate} from "react-router";
 import Student from "../Classes/Student";
 import io from 'socket.io-client';
 import column from "../components/Column";
+import * as AiIcons from "react-icons/ai";
 
 
 interface AddNewColumnProps {
@@ -42,6 +43,7 @@ const config = {
 
 
 const Kanban = () => {
+    const [isLoading, setIsLoading] = useState<boolean>(true);
 
     const location = useLocation()
     // Initialize boardId here because the app crashes when we click on menu button, location.state.boardId would be null ??
@@ -54,7 +56,6 @@ const Kanban = () => {
 
     async function postBoardUser(userId: number): Promise<boolean> {
         let payload = {userID: userId, boardID: boardId};
-        console.log(payload)
         let result = false;
         await axios
             .post(urlApi + 'boardUsers', payload, config)
@@ -94,7 +95,7 @@ const Kanban = () => {
     }
 
     const [show, setShow] = useState(false);
-    const handleClose = () => {setShow(false); console.log("ok")}
+    const handleClose = () => {setShow(false);}
     const handleShow = () => setShow(true);
     const handleSubmit = async (values: {userId: number}) => {
         const result = await postBoardUser(values.userId);
@@ -117,6 +118,7 @@ const Kanban = () => {
                     if(response.data.data.content != null){
                         setColumns(JSON.parse(response.data.data.content))
                     }
+                    setIsLoading(false)
                 }
             })
             .catch(function (error) {
@@ -130,17 +132,11 @@ const Kanban = () => {
 
     const socket = io(urlApiSocket);
 
-    socket.on('kanban message', (msg) => {
-        console.log(`Message reçu : ${msg}`);
-    });
-
-    let [columns, setColumns] = useState<ColumnInterface[]>([
-    ]);
+    let [columns, setColumns] = useState<ColumnInterface[]>([]);
 
     const SendKanbanToSocket = () => {
         let json = JSON.stringify(columns)
         socket.emit("kanban message", json, boardId.toString(), { exceptSelf: true });
-        console.log('column send')
     }
 
     const AddNewColumn: React.FC<AddNewColumnProps> = ({ columns, setColumns }) => {
@@ -153,6 +149,8 @@ const Kanban = () => {
         const addColumn = (id: string, title: string) => {
             setColumns([...columns, { id, title, cards: [] }]);
             setIsAddingColumn(true);
+            sendKanban = false;
+            isSentToSocket(false);
         };
 
         if (isAddingColumn) {
@@ -163,14 +161,20 @@ const Kanban = () => {
 
     const updateColumn = (id: string, title: string) => {
         setColumns(updateColumnById(columns, { id, title }));
+        sendKanban = false;
+        isSentToSocket(false);
     };
 
     const updateCard = (newCard: Card, columnId: string) => {
         setColumns(updateCardById(columns, columnId, newCard));
+        sendKanban = false;
+        isSentToSocket(false);
     };
 
     const addCard = (newCard: Card, columnId: string) => {
         setColumns(addCardToColumn(columns, columnId, newCard));
+        sendKanban = false;
+        isSentToSocket(false);
     };
 
     const onCardDrag = (result: DropResult) => {
@@ -194,6 +198,8 @@ const Kanban = () => {
                 destinationCardIndex
             )
         );
+        sendKanban = false;
+        isSentToSocket(false);
     };
 
     const onColumnDrag = (result: DropResult) => {
@@ -204,6 +210,8 @@ const Kanban = () => {
                 (result.destination as DraggableLocation).index
             )
         );
+        sendKanban = false;
+        isSentToSocket(false);
     };
 
     const onDragEnd = (result: DropResult) => {
@@ -222,9 +230,15 @@ const Kanban = () => {
         }
     };
 
+    let [sendKanban, isSentToSocket] = useState<boolean>(true);
+
     useEffect( () => {
-        SendKanbanToSocket()
-    },[columns])
+        if(!sendKanban){
+            SendKanbanToSocket()
+            isSentToSocket(true)
+            sendKanban = true
+        }
+    },[sendKanban])
 
     useEffect(() => {
         getUsers()
@@ -235,11 +249,32 @@ const Kanban = () => {
     },[])
 
     const navigate = useNavigate();
+    useEffect(() => {
+        socket.on('connection', (msg: string) => {
+        });
+    }, []);
+
+    socket.on('kanban message', (message: string) => {
+        getBoard()
+    });
+
+    if (isLoading) {
+        return <div className="wrap">
+            <SideBar/>
+            <div className={"workspacePresentation"}>
+                <div className={"workspace-container"}>
+                    <img className={'iconLoading'} src={"./loading.gif"}/>
+                </div>
+            </div>
+            <Footer/>
+        </div>;
+    }
 
     return (
 
         <div className="wrap">
             <SideBar/>
+
             <Modal show={show} onHide={handleClose}>
                 <Modal.Header closeButton>
                     <Modal.Title>Ajouter un élève au board</Modal.Title>
@@ -277,11 +312,14 @@ const Kanban = () => {
                     </Formik>
                 </Modal.Body>
             </Modal>
-            <Button className={"workspace-item workspace-item-add"} variant="primary" onClick={() => {
-                handleShow()
-            }}>
-                +
-            </Button>
+            <br/>
+            <div className={"addUser-item-div"}>
+                <Button type={"button"} className={"btn-light btn-outline-primary"}  onClick={() => {
+                    handleShow()
+                }}>
+                    <AiIcons.AiOutlineUserAdd /> Partager
+                </Button>
+            </div>
             <Button className={"workspace-item workspace-item-add"} variant="primary" onClick={() => {
                 navigate("/chat", {state: {roomId}})
             }}>

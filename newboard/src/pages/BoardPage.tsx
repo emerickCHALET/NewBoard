@@ -16,6 +16,7 @@ const config = {
 };
 
 const BoardPage = () => {
+    const [isLoading, setIsLoading] = useState<boolean>(true);
 
     const location = useLocation();
 
@@ -151,6 +152,7 @@ const BoardPage = () => {
             .then((response) => {
                 if (response.status === 200) {
                     setBoards(response.data.data)
+                    setIsLoading(false);
                 }
             })
             .catch(function (error) {
@@ -189,6 +191,18 @@ const BoardPage = () => {
     }, [])
 
     const navigate = useNavigate();
+
+    if (isLoading) {
+        return <div className="wrap">
+            <SideBar/>
+            <div className={"workspacePresentation"}>
+                <div className={"workspace-container"}>
+                    <img className={'iconLoading'} src={"./loading.gif"}/>
+                </div>
+            </div>
+            <Footer/>
+        </div>;
+    }
 
     return (
 

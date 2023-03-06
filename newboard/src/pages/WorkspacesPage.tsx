@@ -61,6 +61,8 @@ async function postRoom(values: { name: string; }): Promise<number>{
 
 
 const WorkspacesPage = () => {
+    const [isLoading, setIsLoading] = useState<boolean>(true);
+
     const [show, setShow] = useState(false);
 
     const handleClose = () => setShow(false);
@@ -102,14 +104,12 @@ const WorkspacesPage = () => {
             .then((response) => {
                 if (response.status === 200) {
                     setWorkspaces(response.data.data)
+                    setIsLoading(false);
                 }
             })
             .catch(function (error) {
                 if (error.response) {
-                    toast.error(error.response.data.message.name + ". \nReconnexion requise", {
-                        position: toast.POSITION.TOP_RIGHT
-                    });
-                    console.log(error.response)
+
                 }
             })
     }
@@ -119,6 +119,18 @@ const WorkspacesPage = () => {
     }, [])
 
     const navigate = useNavigate();
+
+    if (isLoading) {
+        return <div className="wrap">
+            <SideBar/>
+            <div className={"workspacePresentation"}>
+                <div className={"workspace-container"}>
+                    <img className={'iconLoading'} src={"./loading.gif"}/>
+                </div>
+            </div>
+            <Footer/>
+        </div>;
+    }
 
     return (
 
@@ -159,20 +171,23 @@ const WorkspacesPage = () => {
                     </Formik>
                 </Modal.Body>
             </Modal>
-            <h2>Espaces de travail</h2>
-            <div className={"workspace-container"}>
-                <div className={"workspace-list"}>
-                    <Button className={"workspace-item workspace-item-add"} variant="primary" onClick={() => { handleShow() }}>
-                        +
-                    </Button>
-                    {workspaces.map((workspace) => { return <div key={workspace.name.toString()} className={"workspace-item"} onClick={() => {
-                        console.log(workspace.roomId)
-                        navigate("/board",
-                            {state: {
-                                    workspaceName: workspace.name,
-                                    workspaceId: workspace.id,
-                                    roomId: workspace.roomId
-                            }}) }}> {workspace.name} </div>; })}
+            <div className={"workspacePresentation"}>
+                <h2>Espaces de travail</h2>
+                <br/>
+                <br/>
+                <div className={"workspace-container"}>
+                    <div className={"workspace-list"}>
+                        <Button className={"workspace-item workspace-item-add"} variant="primary" onClick={() => { handleShow() }}>
+                            +
+                        </Button>
+                        {workspaces.map((workspace) => { return <div key={workspace.name.toString()} className={"workspace-item"} onClick={() => {
+                            navigate("/board",
+                                {state: {
+                                        workspaceName: workspace.name,
+                                        workspaceId: workspace.id,
+                                        roomId: workspace.roomId
+                                    }}) }}> {workspace.name} </div>; })}
+                    </div>
                 </div>
             </div>
             <Footer/>

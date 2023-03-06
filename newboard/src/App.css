@@ -50,6 +50,7 @@
 .nav-menu.active {
     left: 0;
     transition: 450ms;
+    z-index: 1;
 }
 
 .nav-text {
@@ -123,4 +124,21 @@ span {
 .management-title{
     text-align: center;
     color: white;
+}
+
+.iconHome{
+    width: 15%;
+}
+
+.featuresPresentation{
+    justify-content: space-evenly;
+    display: flex;
+}
+
+.workspacePresentation{
+
+}
+
+.iconLoading{
+    width: 40%;
 }
