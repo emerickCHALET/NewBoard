@@ -76,11 +76,9 @@ const WorkspacesPage = () => {
     };
 
     const handleSubmit = async (values: { name: string; }) => {
-        const result = await postWorkspace(values);
-        if (result) {
-            handleClose()
-            window.location.reload()
-        }
+        await postWorkspace(values);
+        handleClose()
+        window.location.reload()
     };
 
     const initialValues = {

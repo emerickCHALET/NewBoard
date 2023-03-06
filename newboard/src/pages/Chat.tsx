@@ -3,14 +3,13 @@ import * as io from "socket.io-client";
 import {toast} from "react-toastify";
 import SideBar from "../components/SideBar";
 import Footer from "../components/Footer";
-import {ErrorMessage, Field, Form, Formik} from "formik";
-import * as Yup from "yup";
-import {useLocation, useNavigate} from "react-router";
+import {useLocation} from "react-router";
 import "../Chat.css"
 import axios from "axios";
 import {urlApi} from "../App";
 // @ts-ignore
 import ScrollToBottom from "react-scroll-to-bottom";
+import Message from "../Classes/Message";
 
 const ChatPage = () => {
     const config = {
@@ -18,7 +17,12 @@ const ChatPage = () => {
     };
 
     const location = useLocation()
-    const room = location.state.roomId
+    let room = 0
+
+    if(location.state != null){
+        room = location.state.roomId
+    }
+
     let socket = io.connect("http://localhost:3001/");
     let userId = localStorage.getItem("userId")
 
@@ -45,15 +49,9 @@ const ChatPage = () => {
             })
     }
 
-
     const submitMessage = () => {
-        if (userId !== null && currentMessage != ""){
-            const messageData = {
-                roomId: room.toString(),
-                sentBy: userId.toString(),
-                message: currentMessage,
-            }
-            socket.emit("send_message", messageData)
+        if (userId !== null && currentMessage != "") {
+            socket.emit("send_message", new Message(room.toString(), userId.toString(), currentMessage, ""))
         }
     }
 
@@ -83,21 +81,21 @@ const ChatPage = () => {
                 </div>
                 <div className="chat-body">
                     <ScrollToBottom className="message-container">
-                        {messageList.map((messageContent) => {
-                            const {sentBy, message, created} = messageContent;
+                        {messageList.map((message: Message) => {
+
                             return (
 
                                 <div
                                     className="message"
-                                    id={userId == sentBy ? "you" : "other"}
+                                    id={userId == message.sentBy ? "you" : "other"}
                                 >
                                     <div>
                                         <div className="message-content">
-                                            <p>{message}</p>
+                                            <p>{message.message}</p>
                                         </div>
                                         <div className="message-meta">
-                                            <p id="time">{created}</p>
-                                            <p id="author">{sentBy}</p>
+                                            <p id="time">{message.created}</p>
+                                            <p id="author">{message.sentBy}</p>
                                         </div>
                                     </div>
                                 </div>
@@ -109,7 +107,7 @@ const ChatPage = () => {
                     <input
                         type="text"
                         value={currentMessage}
-                        placeholder="Hey..."
+                        placeholder="Type your message..."
                         onChange={(event) => {
                             setCurrentMessage(event.target.value);
                         }}
@@ -128,29 +126,3 @@ const ChatPage = () => {
 }
 
 export default ChatPage;
-
-
-/*
-<div className="chat-window">
-    <div className="chat-body">
-        {messageList.map((messageContent) => {
-            const {sentBy, message, created} = messageContent;
-            return (
-                <div className={"message-wrap"} id={userId === sentBy ? "you" : "other" }>
-                    <div className={"message-content"}>
-                        <h4>{message}</h4>
-                    </div>
-                    <div className={"message-meta"}>
-                        <p>{created}</p>
-                        <p>id sender: {sentBy}</p>
-                    </div>
-                </div>
-
-            )})}
-    </div>
-    <input id={"messageText"} type={"text"} placeholder={"message..."} onChange={(event) => {
-        setCurrentMessage(event.target.value)
-    }
-    }/>
-    <button onClick={submitMessage}>Send</button>
-</div>*/

@@ -25,7 +25,7 @@ import Button from "react-bootstrap/Button";
 import axios from "axios";
 import {urlApi, urlApiSocket} from "../App";
 import {toast} from "react-toastify";
-import {useLocation} from "react-router";
+import {useLocation, useNavigate} from "react-router";
 import Student from "../Classes/Student";
 import io from 'socket.io-client';
 import column from "../components/Column";
@@ -40,13 +40,16 @@ const config = {
     headers: {Authorization: `Bearer ${localStorage.getItem('token')}`}
 };
 
+
 const Kanban = () => {
 
     const location = useLocation()
     // Initialize boardId here because the app crashes when we click on menu button, location.state.boardId would be null ??
     let boardId = 0
+    let roomId = 0
     if(location.state != null){
         boardId = location.state.boardId
+        roomId = location.state.roomId
     }
 
     async function postBoardUser(userId: number): Promise<boolean> {
@@ -231,6 +234,8 @@ const Kanban = () => {
         getBoard()
     },[])
 
+    const navigate = useNavigate();
+
     return (
 
         <div className="wrap">
@@ -276,6 +281,11 @@ const Kanban = () => {
                 handleShow()
             }}>
                 +
+            </Button>
+            <Button className={"workspace-item workspace-item-add"} variant="primary" onClick={() => {
+                navigate("/chat", {state: {roomId}})
+            }}>
+                Chat
             </Button>
             <div className="App">
                 <DragDropContext onDragEnd={onDragEnd}>

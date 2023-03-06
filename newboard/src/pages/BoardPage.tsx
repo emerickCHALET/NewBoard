@@ -21,8 +21,10 @@ const BoardPage = () => {
 
     // Initialize workspaceId here because the app crashes when we click on menu button, location.state.workspaceId would be null ??
     let workspaceId = 0
+    let roomId = 0
     if(location.state != null){
         workspaceId = location.state.workspaceId;
+        roomId = location.state.roomId
     }
 /*
 
@@ -34,10 +36,6 @@ const BoardPage = () => {
 
 // get workspace ID from previous page
 */
-
-
-    let roomId = location.state.roomId
-
 
     async function postBoard(values: { name: string; }): Promise<boolean> {
         let payload = {name: values.name, workspaceID: workspaceId, roomId: 0};
@@ -119,11 +117,10 @@ const BoardPage = () => {
     };
 
     const handleSubmit = async (values: { name: string; }) => {
-        const result = await postBoard(values);
-        if (result) {
-            handleClose()
-            window.location.reload()
-        }
+        await postBoard(values);
+        handleClose()
+        window.location.reload()
+
     };
 
     const handleSubmitAddUsers = async (values: FormikValues) => {
@@ -252,7 +249,8 @@ const BoardPage = () => {
                             console.log(board.id);
                             navigate("/kanban",
                                 {state: {
-                                boardId: board.id
+                                        boardId: board.id,
+                                        roomId: board.roomId
                             }})
                         }}> {board.name} </div>;
                     })}

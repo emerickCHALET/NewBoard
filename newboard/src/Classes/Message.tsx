@@ -1,18 +1,16 @@
 import {date} from "yup";
 
 class Message {
-    id: number
+    roomId: string
+    sentBy: string
     message: string
-    idsender: number
+    created: string
 
-    sentAt: string
-
-    constructor(id : number,message : string,idsender : number, sentAt: string) {
-        this.id = id
-        this.message =message
-        this.idsender = idsender
-        this.sentAt = sentAt
-
+    constructor(roomId: string, sentBy: string, message: string, created: string) {
+        this.roomId = roomId;
+        this.sentBy = sentBy;
+        this.message = message;
+        this.created = created;
     }
 }
 export default Message
