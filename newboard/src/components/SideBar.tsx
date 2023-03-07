@@ -30,12 +30,7 @@ const SideBar = () => {
      * @constructor
      */
     function Logout() {
-        localStorage.removeItem('permissions_role');
-        localStorage.removeItem('token');
-        localStorage.removeItem('establishmentId');
-        localStorage.removeItem('userId');
-        localStorage.removeItem('email');
-        localStorage.removeItem("isLoggedIn");
+        localStorage.clear();
         navigate('/');
     }
 

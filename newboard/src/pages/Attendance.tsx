@@ -96,27 +96,6 @@ const AttendanceSheet: React.FC = () => {
             })
     }
 
-    // const getStudentByHistory = () => {
-    //     const id = {
-    //         params: {
-    //             call_date: selectedHistory
-    //         }
-    //     }
-    //     axios.get(urlLocal + 'usersByClassroom', id)
-    //         .then((response) => {
-    //             if (response.status === 200) {
-    //                 setSelectedStudents(response.data.data)
-    //             }
-    //         })
-    //         .catch(function (error) {
-    //             if (error.response) {
-    //                 toast.error("Erreur Student", {
-    //                     position: toast.POSITION.TOP_RIGHT
-    //                 });
-    //             }
-    //         })
-    // }
-
     const saveAttendance = () => {
         const myData = {
             classroomId: selectedClassId,
@@ -137,6 +116,7 @@ const AttendanceSheet: React.FC = () => {
                 toast.success(response.data.message, {
                     position: toast.POSITION.TOP_RIGHT
                 });
+                getHistory();
             })
             .catch((error) => {
                 setIsLoading(false);

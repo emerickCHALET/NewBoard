@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect} from 'react';
 import Footer from "../components/Footer";
 import * as Yup from 'yup';
 import {Formik, ErrorMessage, Form, Field} from 'formik';
@@ -12,7 +12,7 @@ import useProtectedLogin from "../components/ProtectedLogin";
 
 const Login = () => {
     const navigate = useNavigate();
-    const { loading } = useProtectedLogin()
+    const {loading} = useProtectedLogin()
 
     useEffect(() => {
         // vérifier si l'utilisateur est déjà connecté
@@ -26,21 +26,22 @@ const Login = () => {
      * function who check the identifiers of a user and connect him if that's good
      * @param values necessary for Login a user
      */
-    async function postLogin(values: { email: string; password: string; }){
+    async function postLogin(values: { email: string; password: string; }) {
         let result = false;
-        let payload = { email: values.email, password: values.password };
+        let payload = {email: values.email, password: values.password};
         await axios
-            .post(urlApi + 'login',payload)
+            .post(urlApi + 'login', payload)
             .then((response) => {
-                if(response.status === 200){
+                if (response.status === 200 && response.data) {
                     toast.success("Bienvenue!", {
                         position: toast.POSITION.TOP_RIGHT,
                     });
                     localStorage.setItem('permissions_role', response.data.data.role);
-                    localStorage.setItem('token', response.data.token);
+                    localStorage.setItem('token', response.data.data.token);
                     localStorage.setItem('userId', response.data.data.id);
                     localStorage.setItem('userClass', response.data.data.class)
-                    if(response.data.data.role === "ROLE_ADMIN"){
+                    localStorage.setItem('email', response.data.data.email)
+                    if (response.data.data.role === "ROLE_ADMIN") {
                         localStorage.setItem('establishmentId', response.data.data.establishmentId);
                     }
                     localStorage.setItem("isLoggedIn", "true");
@@ -49,8 +50,8 @@ const Login = () => {
                 }
             })
             .catch(function (error) {
-                if(error.response) {
-                    toast.error(error.response.data.message,{
+                if (error.response) {
+                    toast.error(error.response.data.message, {
                         position: toast.POSITION.TOP_RIGHT
                     });
                 }
@@ -62,7 +63,7 @@ const Login = () => {
         let result = false;
         const email = localStorage.getItem('email')
         await axios
-            .post(urlApi + 'token', { email })
+            .post(urlApi + 'token', {email})
             .then((response) => {
                 if (response.status === 200) {
                     localStorage.setItem('token', response.data.data.token);
@@ -70,7 +71,7 @@ const Login = () => {
                 }
             })
             .catch((error) => {
-                toast.error(error.response.data.message,{
+                toast.error(error.response.data.message, {
                     position: toast.POSITION.TOP_RIGHT
                 });
             })
@@ -93,13 +94,12 @@ const Login = () => {
     const handleSubmit = async (values: { email: string; password: string; }) => {
         const loginResult = await postLogin(values);
         const tokenResult = await postToken();
-
         if (loginResult && tokenResult) {
             navigate('/workspaces');
         }
 
     };
-    if (loading){
+    if (loading) {
         return <div>Loading...</div>
     }
     return (
