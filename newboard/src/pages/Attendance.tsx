@@ -34,6 +34,7 @@ const AttendanceSheet: React.FC = () => {
     const [selectedHistory, setSelectedHistory] = useState<string>('');
     const [classrooms, setClassrooms] = useState<Classrooms[]>([]);
     const [history, setHistory] = useState<Attendance[]>([]);
+    //const [history, setHistory] = useState<AttendanceGrouped[]>([]);
     const [selectedStudents, setSelectedStudents] = useState<Student[]>([]);
     const [isLoading, setIsLoading] = useState<boolean>(false);
 
@@ -126,7 +127,7 @@ const AttendanceSheet: React.FC = () => {
                     id: student.id,
                     firstname: student.firstname,
                     lastname: student.lastname,
-                    present: student.present
+                    present: student.present ? student.present : false
                 }
             })
         }
@@ -159,7 +160,7 @@ const AttendanceSheet: React.FC = () => {
     }
 
     const handleTogglePresence = (index: number) => {
-        setSelectedStudents(selectedStudents.map((student, i) => {
+        setSelectedStudents(prevState => prevState.map((student, i) => {
             if (i === index) {
                 return {
                     ...student,
@@ -182,9 +183,9 @@ const AttendanceSheet: React.FC = () => {
                     <div className="col">
                         <Form.Group>
                             <Form.Label>Classe</Form.Label>
-                            <Form.Select onChange={handleClassSelection} value={selectedClassId} defaultValue="">
+                            <Form.Select onChange={handleClassSelection} defaultValue={selectedClassId}>
                                 <option value="" disabled>Choisissez une classe</option>
-                                {classrooms && classrooms.map(classroom => (
+                                {classrooms.map(classroom => (
                                     <option key={classroom.id} value={classroom.id}>
                                         {classroom.ClassroomName}
                                     </option>
