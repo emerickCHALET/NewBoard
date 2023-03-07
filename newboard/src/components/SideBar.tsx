@@ -35,6 +35,7 @@ const SideBar = () => {
         localStorage.removeItem('establishmentId');
         localStorage.removeItem('userId');
         localStorage.removeItem('email');
+        localStorage.removeItem("isLoggedIn");
         navigate('/');
     }
 

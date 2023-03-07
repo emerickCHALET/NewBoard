@@ -11,6 +11,7 @@ import Forgot from "./pages/Forgot";
 import ResetPassword from "./pages/ResetPassword";
 import BoardPage from "./pages/BoardPage";
 import Management from "./pages/Management";
+import Chat from "./pages/Chat";
 import Kanban from "./pages/Kanban";
 import AttendanceSheet from "./pages/Attendance";
 import {toast} from "react-toastify";
@@ -74,6 +75,7 @@ export default function App() {
                 <Route path="board" element={<BoardPage/>}/>
                 <Route path="kanban" element={<Kanban/>}/>
                 <Route path="management" element={<Management/>}/>
+                <Route path="chat" element={<Chat/>}/>
                 <Route path="attendance" element={<AttendanceSheet/>}/>
             </Routes>
         </BrowserRouter>
@@ -82,5 +84,11 @@ export default function App() {
 /**
  * url of the Production environment
  */
-export const urlApi = "http://newboardapifr.swks7487.odns.fr/api/";
-export const urlLocal = "http://localhost:3001/api/"
+//export const urlApi = "http://newboardapifr.swks7487.odns.fr/api/";
+//export const urlApiSocket = "http://newboardapifr.swks7487.odns.fr";
+
+/**
+ * url of the Development environment
+ */
+export const urlApi = "http://localhost:3001/api/"
+export const urlApiSocket = "http://localhost:3001";

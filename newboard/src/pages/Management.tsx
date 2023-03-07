@@ -6,7 +6,7 @@ import Button from "react-bootstrap/Button";
 import {ErrorMessage, Field, Form, Formik, FormikValues} from "formik";
 import * as Yup from "yup";
 import axios from "axios";
-import {urlApi, urlLocal} from "../App";
+import {urlApi} from "../App";
 import {toast} from "react-toastify";
 import Papa from "papaparse";
 import { Table } from 'react-bootstrap';
@@ -175,7 +175,7 @@ const Management = () => {
             complete: async (results) => { // La fonction complete sera appelée une fois que le fichier a été lu
                 console.log(results.data)
                 await axios
-                    .post(urlLocal + 'usersByFile', results.data, config)
+                    .post(urlApi + 'usersByFile', results.data, config)
                     .then((response) => {
                         if (response.status === 200) {
                             toast.success("Etudiants créer!", {

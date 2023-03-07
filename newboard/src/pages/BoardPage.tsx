@@ -11,14 +11,23 @@ import {ErrorMessage, Field, Form, Formik, FormikValues} from "formik";
 import Button from "react-bootstrap/Button";
 import Board from "../Classes/Board";
 
-
 const config = {
     headers: {Authorization: `Bearer ${localStorage.getItem('token')}`}
 };
 
 const BoardPage = () => {
+    const [isLoading, setIsLoading] = useState<boolean>(true);
 
     const location = useLocation();
+
+    // Initialize workspaceId here because the app crashes when we click on menu button, location.state.workspaceId would be null ??
+    let workspaceId = 0
+    let roomId = 0
+    if(location.state != null){
+        workspaceId = location.state.workspaceId;
+        roomId = location.state.roomId
+    }
+/*
 
 //get workspace name from previous page
     let workspaceName = location.state.workspaceName;
@@ -27,10 +36,11 @@ const BoardPage = () => {
     let classroomName = location.state.classroomName;
 
 // get workspace ID from previous page
-    let workspaceId = location.state.workspaceId;
+*/
 
     async function postBoard(values: { name: string; }): Promise<boolean> {
-        let payload = {name: values.name, workspaceID: workspaceId};
+        let payload = {name: values.name, workspaceID: workspaceId, roomId: 0};
+        payload.roomId = await postRoom(payload)
         let result = false;
         await axios
             .post(urlApi + 'boards',payload, config)
@@ -58,9 +68,20 @@ const BoardPage = () => {
             })
         return result;
     }
+    async function postRoom(values: { name: string; }): Promise<number>{
+        let payload = {name: values.name}
+        let result = 0
+        await axios
+            .post(urlApi + 'rooms', payload,  config)
+            .then((response) => {
+                if (response.status === 200) {
+                    result = response.data.data.id
+                }
+            });
+        return result
+    }
 
     async function postWorkspaceUser(values: FormikValues): Promise<boolean> {
-        // voir pour récupérer l'id d'user
         let payload = {userId: values.userId, workspaceID: workspaceId};
         let result = false;
         await axios
@@ -90,17 +111,17 @@ const BoardPage = () => {
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
     const [value, setValue] = useState("default");
+    const [room, setRoom] = useState(0);
 
     const handleChange = (e: { target: { value: React.SetStateAction<string>; }; }) => {
         setValue(e.target.value);
     };
 
     const handleSubmit = async (values: { name: string; }) => {
-        const result = await postBoard(values);
-        if (result) {
-            handleClose()
-            window.location.reload()
-        }
+        await postBoard(values);
+        handleClose()
+        window.location.reload()
+
     };
 
     const handleSubmitAddUsers = async (values: FormikValues) => {
@@ -131,6 +152,7 @@ const BoardPage = () => {
             .then((response) => {
                 if (response.status === 200) {
                     setBoards(response.data.data)
+                    setIsLoading(false);
                 }
             })
             .catch(function (error) {
@@ -139,8 +161,6 @@ const BoardPage = () => {
                         position: toast.POSITION.TOP_RIGHT
                     });
                 }
-
-
             })
     }
 
@@ -172,6 +192,17 @@ const BoardPage = () => {
 
     const navigate = useNavigate();
 
+    if (isLoading) {
+        return <div className="wrap">
+            <SideBar/>
+            <div className={"workspacePresentation"}>
+                <div className={"workspace-container"}>
+                    <img className={'iconLoading'} src={"./loading.gif"}/>
+                </div>
+            </div>
+            <Footer/>
+        </div>;
+    }
 
     return (
 
@@ -214,6 +245,11 @@ const BoardPage = () => {
 
             </Modal>
             <h2>Tableaux</h2>
+            <Button className={"workspace-item workspace-item-add"} variant="primary" onClick={() => {
+                navigate("/chat", {state: {roomId}})
+            }}>
+                Chat
+            </Button>
             <div className={"workspace-container"}>
                 <div className={"workspace-list"}>
                     {/* eslint-disable-next-line @typescript-eslint/no-unused-expressions */}
@@ -224,7 +260,12 @@ const BoardPage = () => {
                     </Button>
                     {boards.map((board) => {
                         return <div key={board.name.toString()} className={"workspace-item"} onClick={() => {
-                            navigate("/kanban")
+                            console.log(board.id);
+                            navigate("/kanban",
+                                {state: {
+                                        boardId: board.id,
+                                        roomId: board.roomId
+                            }})
                         }}> {board.name} </div>;
                     })}
                 </div>
