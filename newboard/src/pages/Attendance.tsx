@@ -34,7 +34,6 @@ const AttendanceSheet: React.FC = () => {
     const [selectedHistory, setSelectedHistory] = useState<string>('');
     const [classrooms, setClassrooms] = useState<Classrooms[]>([]);
     const [history, setHistory] = useState<Attendance[]>([]);
-    //const [history, setHistory] = useState<AttendanceGrouped[]>([]);
     const [selectedStudents, setSelectedStudents] = useState<Student[]>([]);
     const [isLoading, setIsLoading] = useState<boolean>(false);
 
@@ -122,7 +121,6 @@ const AttendanceSheet: React.FC = () => {
         const myData = {
             classroomId: selectedClassId,
             attendance: selectedStudents.map(student => {
-                // attendance: selectedStudents && selectedStudents.map(student => {
                 return {
                     id: student.id,
                     firstname: student.firstname,
@@ -198,11 +196,6 @@ const AttendanceSheet: React.FC = () => {
                             <Form.Label>Historique</Form.Label>
                             <Form.Select onChange={handleHistorySelection} value={selectedHistory} defaultValue="">
                                 <option value="" disabled>Choisissez un appel</option>
-                                {/*{history && history.map(attendance => (*/}
-                                {/*    <option key={attendance.call_date} value={attendance.call_date}>*/}
-                                {/*        Classe : {attendance.classroomsId} le {new Date(attendance.call_date).toLocaleDateString("fr-FR")}*/}
-                                {/*    </option>*/}
-                                {/*))}*/}
                                 {history && history.map((attendance) => {
                                     const date = new Date(attendance.call_date);
                                     const options: Intl.DateTimeFormatOptions = {
