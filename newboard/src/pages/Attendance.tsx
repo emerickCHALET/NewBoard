@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {Form, Table, Button} from 'react-bootstrap';
 import SideBar from '../components/SideBar';
-import {urlLocal} from "../App";
+import {urlApi} from "../App";
 import axios from "axios";
 import {toast} from "react-toastify";
 import useProtectedPO from "../components/ProtectedPO";
@@ -38,7 +38,7 @@ const AttendanceSheet: React.FC = () => {
     const [isLoading, setIsLoading] = useState<boolean>(false);
 
     const getClassrooms = () => {
-        axios.get(urlLocal + 'classrooms')
+        axios.get(urlApi + 'classrooms')
             .then((response) => {
                 if (response.status === 200) {
                     setClassrooms(response.data.data)
@@ -53,7 +53,7 @@ const AttendanceSheet: React.FC = () => {
             })
     }
     const getHistory = () => {
-        axios.get(urlLocal + 'attendanceHistory')
+        axios.get(urlApi + 'attendanceHistory')
             .then((response) => {
                 if (response.status === 200) {
                     setHistory(response.data.data)
@@ -81,7 +81,7 @@ const AttendanceSheet: React.FC = () => {
                 classroomsId: selectedClassId
             }
         }
-        axios.get(urlLocal + 'usersByClassroom', id)
+        axios.get(urlApi + 'usersByClassroom', id)
             .then((response) => {
                 if (response.status === 200) {
                     setSelectedStudents(response.data.data)
@@ -131,7 +131,7 @@ const AttendanceSheet: React.FC = () => {
         }
         setIsLoading(true);
         console.log(myData);
-        axios.post(urlLocal + 'attendance', myData)
+        axios.post(urlApi + 'attendance', myData)
             .then((response) => {
                 setIsLoading(false);
                 toast.success(response.data.message, {
