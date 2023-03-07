@@ -27,6 +27,7 @@ const Login = () => {
      * @param values necessary for Login a user
      */
     async function postLogin(values: { email: string; password: string; }){
+        let result = false;
         let payload = { email: values.email, password: values.password };
         await axios
             .post(urlApi + 'login',payload)
@@ -43,6 +44,7 @@ const Login = () => {
                         localStorage.setItem('establishmentId', response.data.data.establishmentId);
                     }
                     localStorage.setItem("isLoggedIn", "true");
+                    result = true
                     navigate('/workspaces');
                 }
             })
@@ -53,6 +55,7 @@ const Login = () => {
                     });
                 }
             })
+        return result;
     }
 
     async function postToken() {
