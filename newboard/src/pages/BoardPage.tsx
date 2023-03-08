@@ -57,6 +57,17 @@ const BoardPage = () => {
                                 result = true
                             }
                         })
+                        .catch(function (error) {
+                            if(error.response) {
+                                toast.error(error.response.data.message,{
+                                    position: toast.POSITION.TOP_RIGHT
+                                });
+                                if(error.response.data.disconnect === true){
+                                    localStorage.clear()
+                                    navigate('/login');
+                                }
+                            }
+                        })
                 }
             })
             .catch(function (error) {
@@ -64,6 +75,10 @@ const BoardPage = () => {
                     toast.error(error.response.data.message,{
                         position: toast.POSITION.TOP_RIGHT
                     });
+                    if(error.response.data.disconnect === true){
+                        localStorage.clear()
+                        navigate('/login');
+                    }
                 }
             })
         return result;
@@ -77,7 +92,18 @@ const BoardPage = () => {
                 if (response.status === 200) {
                     result = response.data.data.id
                 }
-            });
+            })
+            .catch(function (error) {
+                if (error.response) {
+                    toast.error(error.response.data.message, {
+                        position: toast.POSITION.TOP_RIGHT
+                    });
+                    if(error.response.data.disconnect === true){
+                        localStorage.clear()
+                        navigate('/login');
+                    }
+                }
+            })
         return result
     }
 
@@ -101,6 +127,10 @@ const BoardPage = () => {
                     toast.error(error.response.data.message, {
                         position: toast.POSITION.TOP_RIGHT
                     });
+                    if(error.response.data.disconnect === true){
+                        localStorage.clear()
+                        navigate('/login');
+                    }
                 }
             })
         return result;
@@ -160,6 +190,10 @@ const BoardPage = () => {
                     toast.error(error.response.data.message.name + ". \nReconnexion requise", {
                         position: toast.POSITION.TOP_RIGHT
                     });
+                    if(error.response.data.disconnect === true){
+                        localStorage.clear()
+                        navigate('/login');
+                    }
                 }
             })
     }
@@ -260,7 +294,6 @@ const BoardPage = () => {
                     </Button>
                     {boards.map((board) => {
                         return <div key={board.name.toString()} className={"workspace-item"} onClick={() => {
-                            console.log(board.id);
                             navigate("/kanban",
                                 {state: {
                                         boardId: board.id,

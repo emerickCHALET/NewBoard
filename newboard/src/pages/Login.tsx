@@ -27,7 +27,6 @@ const Login = () => {
      * @param values necessary for Login a user
      */
     async function postLogin(values: { email: string; password: string; }) {
-        let result = false;
         let payload = {email: values.email, password: values.password};
         await axios
             .post(urlApi + 'login', payload)
@@ -37,7 +36,7 @@ const Login = () => {
                         position: toast.POSITION.TOP_RIGHT,
                     });
                     localStorage.setItem('permissions_role', response.data.data.role);
-                    localStorage.setItem('token', response.data.data.token);
+                    localStorage.setItem('token', response.data.token);
                     localStorage.setItem('userId', response.data.data.id);
                     localStorage.setItem('userClass', response.data.data.class)
                     localStorage.setItem('email', response.data.data.email)
@@ -45,7 +44,6 @@ const Login = () => {
                         localStorage.setItem('establishmentId', response.data.data.establishmentId);
                     }
                     localStorage.setItem("isLoggedIn", "true");
-                    result = true
                     navigate('/workspaces');
                 }
             })
@@ -56,26 +54,6 @@ const Login = () => {
                     });
                 }
             })
-        return result;
-    }
-
-    async function postToken() {
-        let result = false;
-        const email = localStorage.getItem('email')
-        await axios
-            .post(urlApi + 'token', {email})
-            .then((response) => {
-                if (response.status === 200) {
-                    localStorage.setItem('token', response.data.data.token);
-                    result = true
-                }
-            })
-            .catch((error) => {
-                toast.error(error.response.data.message, {
-                    position: toast.POSITION.TOP_RIGHT
-                });
-            })
-        return result;
     }
 
     const validationSchema = Yup.object().shape({
@@ -92,12 +70,7 @@ const Login = () => {
     };
 
     const handleSubmit = async (values: { email: string; password: string; }) => {
-        const loginResult = await postLogin(values);
-        const tokenResult = await postToken();
-        if (loginResult && tokenResult) {
-            navigate('/workspaces');
-        }
-
+        await postLogin(values)
     };
     if (loading) {
         return <div>Loading...</div>

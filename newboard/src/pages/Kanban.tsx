@@ -43,8 +43,8 @@ const config = {
 
 
 const Kanban = () => {
-    const [isLoading, setIsLoading] = useState<boolean>(true);
 
+    const [isLoading, setIsLoading] = useState<boolean>(true);
     const location = useLocation()
     // Initialize boardId here because the app crashes when we click on menu button, location.state.boardId would be null ??
     let boardId = 0
@@ -69,6 +69,10 @@ const Kanban = () => {
                     toast.error(error.response.data.message, {
                         position: toast.POSITION.TOP_RIGHT
                     });
+                    if(error.response.data.disconnect === true){
+                        localStorage.clear()
+                        navigate('/login');
+                    }
                 }
             })
         return result;
@@ -90,6 +94,10 @@ const Kanban = () => {
                     toast.error(error.response.data.message.name + ". \nReconnexion requise", {
                         position: toast.POSITION.TOP_RIGHT
                     });
+                    if(error.response.data.disconnect === true){
+                        localStorage.clear()
+                        navigate('/login');
+                    }
                 }
             })
     }
@@ -126,6 +134,10 @@ const Kanban = () => {
                     toast.error(error.response.data.message.name + ". \nReconnexion requise", {
                         position: toast.POSITION.TOP_RIGHT
                     });
+                    if(error.response.data.disconnect === true){
+                        localStorage.clear()
+                        navigate('/login');
+                    }
                 }
             })
     }

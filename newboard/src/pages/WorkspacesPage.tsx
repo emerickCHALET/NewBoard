@@ -17,52 +17,77 @@ const config = {
     headers: {Authorization: `Bearer ${localStorage.getItem('token')}`}
 };
 
-async function postWorkspace(values: { name: string; }): Promise<boolean> {
-    // voir pour récupérer l'id d'user
-    let payload = {name: values.name, roomId: 0};
-    let result = false;
-    payload.roomId = await postRoom(payload)
-    await axios
-        .post(urlApi + 'workspaces', payload, config)
-        .then((response) => {
-            if (response.status === 200) {
-                let payload2 = {userID: localStorage.getItem('userId'), workspaceID: response.data.data.id};
-                axios
-                    .post(urlApi + 'workspacesUser', payload2, config)
-                    .then((response) => {
-                        if (response.status === 200) {
-                            result = true
-                        }
-                    })
-            }
-        })
-        .catch(function (error) {
-            if (error.response) {
-                toast.error(error.response.data.message, {
-                    position: toast.POSITION.TOP_RIGHT
-                });
-            }
-        })
-    return result;
-}
-
-async function postRoom(values: { name: string; }): Promise<number>{
-    let payload = {name: values.name}
-    let result = 0
-     await axios
-        .post(urlApi + 'rooms', payload,  config)
-        .then((response) => {
-            if (response.status === 200) {
-                result = response.data.data.id
-            }
-        });
-    return result
-}
-
-
 const WorkspacesPage = () => {
-    const [isLoading, setIsLoading] = useState<boolean>(true);
 
+    async function postWorkspace(values: { name: string; }): Promise<boolean> {
+        // voir pour récupérer l'id d'user
+        let payload = {name: values.name, roomId: 0};
+        let result = false;
+        payload.roomId = await postRoom(payload)
+        await axios
+            .post(urlApi + 'workspaces', payload, config)
+            .then((response) => {
+                if (response.status === 200) {
+                    let payload2 = {userID: localStorage.getItem('userId'), workspaceID: response.data.data.id};
+                    axios
+                        .post(urlApi + 'workspacesUser', payload2, config)
+                        .then((response) => {
+                            if (response.status === 200) {
+                                result = true
+                            }
+                        })
+                        .catch(function (error) {
+                            if (error.response) {
+                                toast.error(error.response.data.message, {
+                                    position: toast.POSITION.TOP_RIGHT
+                                });
+                                if(error.response.data.disconnect === true){
+                                    localStorage.clear()
+                                    navigate('/login');
+                                }
+                            }
+                        })
+                }
+            })
+            .catch(function (error) {
+                if (error.response) {
+                    toast.error(error.response.data.message, {
+                        position: toast.POSITION.TOP_RIGHT
+                    });
+                    if(error.response.data.disconnect === true){
+                        localStorage.clear()
+                        navigate('/login');
+                    }
+                }
+            })
+        return result;
+    }
+
+    async function postRoom(values: { name: string; }): Promise<number>{
+        let payload = {name: values.name}
+        let result = 0
+        await axios
+            .post(urlApi + 'rooms', payload,  config)
+            .then((response) => {
+                if (response.status === 200) {
+                    result = response.data.data.id
+                }
+            })
+            .catch(function (error) {
+                if (error.response) {
+                    toast.error(error.response.data.message, {
+                        position: toast.POSITION.TOP_RIGHT
+                    });
+                    if(error.response.data.disconnect === true){
+                        localStorage.clear()
+                        navigate('/login');
+                    }
+                }
+            })
+        return result
+    }
+
+    const [isLoading, setIsLoading] = useState<boolean>(true);
     const [show, setShow] = useState(false);
 
     const handleClose = () => setShow(false);
@@ -111,6 +136,10 @@ const WorkspacesPage = () => {
                 if (error.response) {
 
                 }
+                /*if(error.response.data.disconnect === true){
+                    localStorage.clear()
+                    navigate('/login');
+                }*/
             })
     }
 

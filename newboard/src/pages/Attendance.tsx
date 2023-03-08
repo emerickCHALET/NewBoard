@@ -5,6 +5,7 @@ import {urlApi} from "../App";
 import axios from "axios";
 import {toast} from "react-toastify";
 import useProtectedPO from "../components/ProtectedPO";
+import {useNavigate} from "react-router";
 
 interface Student {
     id: number;
@@ -28,7 +29,12 @@ interface Attendance {
 
 }
 
+const config = {
+    headers: {Authorization: `Bearer ${localStorage.getItem('token')}`}
+};
+
 const AttendanceSheet: React.FC = () => {
+    const navigate = useNavigate();
     const {loading} = useProtectedPO()
     const [selectedClassId, setSelectedClassId] = useState<string>('');
     const [selectedHistory, setSelectedHistory] = useState<string>('');
@@ -38,7 +44,7 @@ const AttendanceSheet: React.FC = () => {
     const [isLoading, setIsLoading] = useState<boolean>(false);
 
     const getClassrooms = () => {
-        axios.get(urlApi + 'classrooms')
+        axios.get(urlApi + 'classrooms',config)
             .then((response) => {
                 if (response.status === 200) {
                     setClassrooms(response.data.data)
@@ -49,11 +55,15 @@ const AttendanceSheet: React.FC = () => {
                     toast.error(error.response.data.message.name + ". \nErreur Classroom", {
                         position: toast.POSITION.TOP_RIGHT
                     });
+                    if(error.response.data.disconnect === true){
+                        localStorage.clear()
+                        navigate('/login');
+                    }
                 }
             })
     }
     const getHistory = () => {
-        axios.get(urlApi + 'attendanceHistory')
+        axios.get(urlApi + 'attendanceHistory',config)
             .then((response) => {
                 if (response.status === 200) {
                     setHistory(response.data.data)
@@ -64,9 +74,12 @@ const AttendanceSheet: React.FC = () => {
                     toast.error(error.response.data.message.name + ". \nErreur History", {
                         position: toast.POSITION.TOP_RIGHT
                     });
+                    if(error.response.data.disconnect === true){
+                        localStorage.clear()
+                        navigate('/login');
+                    }
                 }
             })
-        console.log(history)
 
     }
 
@@ -81,7 +94,7 @@ const AttendanceSheet: React.FC = () => {
                 classroomsId: selectedClassId
             }
         }
-        axios.get(urlApi + 'usersByClassroom', id)
+        axios.get(urlApi + 'usersByClassroom/' + id,config)
             .then((response) => {
                 if (response.status === 200) {
                     setSelectedStudents(response.data.data)
@@ -92,6 +105,10 @@ const AttendanceSheet: React.FC = () => {
                     toast.error("Erreur Student", {
                         position: toast.POSITION.TOP_RIGHT
                     });
+                    if(error.response.data.disconnect === true){
+                        localStorage.clear()
+                        navigate('/login');
+                    }
                 }
             })
     }
@@ -109,8 +126,7 @@ const AttendanceSheet: React.FC = () => {
             })
         }
         setIsLoading(true);
-        console.log(myData);
-        axios.post(urlApi + 'attendance', myData)
+        axios.post(urlApi + 'attendance', myData,config)
             .then((response) => {
                 setIsLoading(false);
                 toast.success(response.data.message, {
@@ -123,6 +139,10 @@ const AttendanceSheet: React.FC = () => {
                 toast.error(error.response.data.message, {
                     position: toast.POSITION.TOP_RIGHT
                 });
+                if(error.response.data.disconnect === true){
+                    localStorage.clear()
+                    navigate('/login');
+                }
             });
     };
 

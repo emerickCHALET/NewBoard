@@ -11,6 +11,7 @@ import {toast} from "react-toastify";
 import Papa from "papaparse";
 import { Table } from 'react-bootstrap';
 import * as AiIcons from "react-icons/ai";
+import {useNavigate} from "react-router";
 
 /**
  * const who created a headers with the token for authenticated a request to API
@@ -23,126 +24,148 @@ const config = {
  */
 const establishmentId = parseInt(localStorage.getItem('establishmentId')!);
 
-/**
- * Register a new User
- * @param values necessary for register a new user
- */
-async function postRegister(values: { lastname: string; firstname: string; email: string; password: string, class: string }): Promise<any> {
-    let payload = { firstname: values.firstname, lastname: values.lastname, email: values.email, password: values.password, class: values.class, establishmentId: establishmentId };
-    await axios
-        .post(urlApi + 'users',payload)
-        .then((response) => {
-            if(response.status === 200){
-                toast.success("Elève ajouter avec succès !", {
-                    position: toast.POSITION.TOP_RIGHT,
-                });
-            }
-        })
-        .catch(function (error) {
-            if(error.response) {
-                toast.error(error.response.data.message,{
-                    position: toast.POSITION.TOP_RIGHT
-                });
-            }
-        })
-}
-
-/**
- * Register a new classroom who is assigned to the establishment ID of the admin connected
- * @param values necessary for register a new classroom
- */
-async function postClassrom(values: { ClassroomName: string; }): Promise<any> {
-    let payload = { ClassroomName: values.ClassroomName , EstablishmentId: establishmentId};
-    await axios
-        .post(urlApi + 'classroom',payload,config)
-        .then((response) => {
-            if(response.status === 200){
-                toast.success("Classe crée avec succès !", {
-                    position: toast.POSITION.TOP_RIGHT,
-                });
-            }
-        })
-        .catch(function (error) {
-            if(error.response) {
-                toast.error(error.response.data.message,{
-                    position: toast.POSITION.TOP_RIGHT
-                });
-            }
-        })
-}
-
-/**
- * Update details of a student who exist already
- * @param values necessary for update a student
- */
-async function putUser(values: {id:string; lastname: string; firstname: string; email: string; class: string }): Promise<any> {
-    let payload = { firstname: values.firstname, lastname: values.lastname, email: values.email, class: values.class };
-    await axios
-        .put(urlApi + 'studentUpdateByAdmin/' + values.id,payload,config)
-        .then((response) => {
-            if(response.status === 200){
-                toast.success("Elève mis a jour avec succès !", {
-                    position: toast.POSITION.TOP_RIGHT,
-                });
-            }
-        })
-        .catch(function (error) {
-            if(error.response) {
-                toast.error(error.response.data.message,{
-                    position: toast.POSITION.TOP_RIGHT
-                });
-            }
-        })
-}
-
-/**
- *
- * @param values contains the id of the student to delete
- * @constructor
- */
-async function DeleteStudent(values: { idStudent: string}): Promise<void> {
-    await axios
-        .delete(urlApi + 'users/' + values.idStudent,config)
-        .then((response) => {
-            if(response.status === 200){
-                toast.success("Etudiant supprimé !", {
-                    position: toast.POSITION.TOP_RIGHT,
-                });
-            }
-        })
-        .catch(function (error) {
-            if(error.response) {
-                toast.error(error.response.data.message,{
-                    position: toast.POSITION.TOP_RIGHT
-                });
-            }
-        })
-}
-
-/**
- *
- * @param values contains the id of the classroom to delete
- * @constructor
- */
-async function DeleteClassroom(values: { idClassroom: string}): Promise<void> {
-    await axios
-        .delete(urlApi + 'classroom/' + values.idClassroom,config)
-        .then((response) => {
-            if(response.status === 200){
-                toast.success("Classe supprimée !", {
-                    position: toast.POSITION.TOP_RIGHT,
-                });
-            }
-        })
-        .catch(function (error) {
-            if(error.response) {
-                toast.error(error.response.data.message,{
-                    position: toast.POSITION.TOP_RIGHT
-                });
-            }
-        })
-}
 const Management = () => {
+    const navigate = useNavigate();
+
+    /**
+     * Register a new User
+     * @param values necessary for register a new user
+     */
+    async function postRegister(values: { lastname: string; firstname: string; email: string; password: string, class: string }): Promise<any> {
+        let payload = { firstname: values.firstname, lastname: values.lastname, email: values.email, password: values.password, class: values.class, establishmentId: establishmentId };
+        await axios
+            .post(urlApi + 'users',payload)
+            .then((response) => {
+                if(response.status === 200){
+                    toast.success("Elève ajouter avec succès !", {
+                        position: toast.POSITION.TOP_RIGHT,
+                    });
+                }
+            })
+            .catch(function (error) {
+                if(error.response) {
+                    toast.error(error.response.data.message,{
+                        position: toast.POSITION.TOP_RIGHT
+                    });
+                    if(error.response.data.disconnect === true){
+                        localStorage.clear()
+                        navigate('/login');
+                    }
+                }
+            })
+    }
+
+    /**
+     * Register a new classroom who is assigned to the establishment ID of the admin connected
+     * @param values necessary for register a new classroom
+     */
+    async function postClassrom(values: { ClassroomName: string; }): Promise<any> {
+        let payload = { ClassroomName: values.ClassroomName , EstablishmentId: establishmentId};
+        await axios
+            .post(urlApi + 'classroom',payload,config)
+            .then((response) => {
+                if(response.status === 200){
+                    toast.success("Classe crée avec succès !", {
+                        position: toast.POSITION.TOP_RIGHT,
+                    });
+                }
+            })
+            .catch(function (error) {
+                if(error.response) {
+                    toast.error(error.response.data.message,{
+                        position: toast.POSITION.TOP_RIGHT
+                    });
+                    if(error.response.data.disconnect === true){
+                        localStorage.clear()
+                        navigate('/login');
+                    }
+                }
+            })
+    }
+
+    /**
+     * Update details of a student who exist already
+     * @param values necessary for update a student
+     */
+    async function putUser(values: {id:string; lastname: string; firstname: string; email: string; class: string }): Promise<any> {
+        let payload = { firstname: values.firstname, lastname: values.lastname, email: values.email, class: values.class };
+        await axios
+            .put(urlApi + 'studentUpdateByAdmin/' + values.id,payload,config)
+            .then((response) => {
+                if(response.status === 200){
+                    toast.success("Elève mis a jour avec succès !", {
+                        position: toast.POSITION.TOP_RIGHT,
+                    });
+                }
+            })
+            .catch(function (error) {
+                if(error.response) {
+                    toast.error(error.response.data.message,{
+                        position: toast.POSITION.TOP_RIGHT
+                    });
+                    if(error.response.data.disconnect === true){
+                        localStorage.clear()
+                        navigate('/login');
+                    }
+                }
+            })
+    }
+
+    /**
+     *
+     * @param values contains the id of the student to delete
+     * @constructor
+     */
+    async function DeleteStudent(values: { idStudent: string}): Promise<void> {
+        await axios
+            .delete(urlApi + 'users/' + values.idStudent,config)
+            .then((response) => {
+                if(response.status === 200){
+                    toast.success("Etudiant supprimé !", {
+                        position: toast.POSITION.TOP_RIGHT,
+                    });
+                }
+            })
+            .catch(function (error) {
+                if(error.response) {
+                    toast.error(error.response.data.message,{
+                        position: toast.POSITION.TOP_RIGHT
+                    });
+                    if(error.response.data.disconnect === true){
+                        localStorage.clear()
+                        navigate('/login');
+                    }
+                }
+            })
+    }
+
+    /**
+     *
+     * @param values contains the id of the classroom to delete
+     * @constructor
+     */
+    async function DeleteClassroom(values: { idClassroom: string}): Promise<void> {
+        await axios
+            .delete(urlApi + 'classroom/' + values.idClassroom,config)
+            .then((response) => {
+                if(response.status === 200){
+                    toast.success("Classe supprimée !", {
+                        position: toast.POSITION.TOP_RIGHT,
+                    });
+                }
+            })
+            .catch(function (error) {
+                if(error.response) {
+                    toast.error(error.response.data.message,{
+                        position: toast.POSITION.TOP_RIGHT
+                    });
+                    if(error.response.data.disconnect === true){
+                        localStorage.clear()
+                        navigate('/login');
+                    }
+                }
+            })
+    }
 
     //Ajout en masse via CSV
     const [show, setShow] = useState(false);
@@ -173,7 +196,6 @@ const Management = () => {
             encoding: 'UTF-8', // Spécifiez que le fichier doit être encodé en UTF-8
             header: true,
             complete: async (results) => { // La fonction complete sera appelée une fois que le fichier a été lu
-                console.log(results.data)
                 await axios
                     .post(urlApi + 'usersByFile', results.data, config)
                     .then((response) => {
@@ -184,11 +206,14 @@ const Management = () => {
                         }
                     })
                     .catch(function (error) {
-                        console.log(error)
                         if (error.response) {
                             toast.error(error.response.data.message, {
                                 position: toast.POSITION.TOP_RIGHT
                             });
+                            if(error.response.data.disconnect === true){
+                                localStorage.clear()
+                                navigate('/login');
+                            }
                         }
                     })
             }
@@ -203,7 +228,6 @@ const Management = () => {
             .get(urlApi + 'classroomsByEstablishmentId/' + establishmentId, config)
             .then((response) => {
                 if (response.status === 200) {
-                    console.log(response.data.data)
                     setClassrooms(response.data.data)
                 }
             })
@@ -212,6 +236,10 @@ const Management = () => {
                     toast.error(error.response.data.message.name + ". \nReconnexion requise", {
                         position: toast.POSITION.TOP_RIGHT
                     });
+                    if(error.response.data.disconnect === true){
+                        localStorage.clear()
+                        navigate('/login');
+                    }
                 }
             })
     }
