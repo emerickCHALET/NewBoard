@@ -25,6 +25,7 @@ const ChatPage = () => {
 
     let socket = io.connect("http://localhost:3001/");
     let userId = localStorage.getItem("userId")
+    let userFullName = localStorage.getItem("userFullName")
 
     const [currentMessage, setCurrentMessage] = useState("");
     const [messageList, setMessageList] = useState([]);
@@ -51,7 +52,8 @@ const ChatPage = () => {
 
     const submitMessage = () => {
         if (userId !== null && currentMessage != "") {
-            socket.emit("send_message", new Message(room.toString(), userId.toString(), currentMessage, ""))
+            // @ts-ignore
+            socket.emit("send_message", new Message(room.toString(), userFullName, userId, currentMessage, ""))
         }
     }
 
@@ -95,7 +97,7 @@ const ChatPage = () => {
                                         </div>
                                         <div className="message-meta">
                                             <p id="time">{message.created}</p>
-                                            <p id="author">{message.sentBy}</p>
+                                            <p id="author">{message.fullNameSender}</p>
                                         </div>
                                     </div>
                                 </div>

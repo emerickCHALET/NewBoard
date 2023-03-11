@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import SideBar from "../components/SideBar";
 import Footer from "../components/Footer";
-import {useLocation, useNavigate} from "react-router";
+import {useLocation, useNavigate, useParams} from "react-router";
 import axios from "axios";
 import {urlApi} from "../App";
 import {toast} from "react-toastify";
@@ -10,33 +10,24 @@ import Modal from "react-bootstrap/Modal";
 import {ErrorMessage, Field, Form, Formik, FormikValues} from "formik";
 import Button from "react-bootstrap/Button";
 import Board from "../Classes/Board";
+import Student from "../Classes/Student";
 
 const config = {
     headers: {Authorization: `Bearer ${localStorage.getItem('token')}`}
 };
 
-const BoardPage = () => {
+function BoardPage(){
     const [isLoading, setIsLoading] = useState<boolean>(true);
 
     const location = useLocation();
 
     // Initialize workspaceId here because the app crashes when we click on menu button, location.state.workspaceId would be null ??
-    let workspaceId = 0
+    const {workspaceId} = useParams<{ workspaceId: string}>()
+
     let roomId = 0
     if(location.state != null){
-        workspaceId = location.state.workspaceId;
         roomId = location.state.roomId
     }
-/*
-
-//get workspace name from previous page
-    let workspaceName = location.state.workspaceName;
-
-//we get the classroom selected in the form from workspacePage, must be replaced by classroom assigned to workspace
-    let classroomName = location.state.classroomName;
-
-// get workspace ID from previous page
-*/
 
     async function postBoard(values: { name: string; }): Promise<boolean> {
         let payload = {name: values.name, workspaceID: workspaceId, roomId: 0};
@@ -166,11 +157,13 @@ const BoardPage = () => {
 
     /*const [users, setUsers] = useState<Student[]>([])
 
+    const className = localStorage.getItem("userClass")
     const getUsers = () => {
         axios
-            .get(urlApi + 'users', config)
+            .get(urlApi + "workspaceByClassIdAndWorkspaceId/"+ className + "/" + boardId, config)
             .then((response) => {
                 if (response.status === 200) {
+                    console.log(response.data.data)
                     setUsers(response.data.data);
                 }
             })
@@ -180,8 +173,6 @@ const BoardPage = () => {
                         position: toast.POSITION.TOP_RIGHT
                     });
                 }
-
-
             })
     }*/
 
@@ -260,10 +251,9 @@ const BoardPage = () => {
                     </Button>
                     {boards.map((board) => {
                         return <div key={board.name.toString()} className={"workspace-item"} onClick={() => {
-                            console.log(board.id);
-                            navigate("/kanban",
+                            const boardId = board.id.toString()
+                            navigate(`/kanban/${boardId}`,
                                 {state: {
-                                        boardId: board.id,
                                         roomId: board.roomId
                             }})
                         }}> {board.name} </div>;

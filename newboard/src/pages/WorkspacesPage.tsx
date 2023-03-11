@@ -61,6 +61,7 @@ async function postRoom(values: { name: string; }): Promise<number>{
 
 
 const WorkspacesPage = () => {
+    let userId = localStorage.getItem("userId")
     const [isLoading, setIsLoading] = useState<boolean>(true);
 
     const [show, setShow] = useState(false);
@@ -100,7 +101,7 @@ const WorkspacesPage = () => {
 
     const getWorkspaces = () => {
         axios
-            .get(urlApi + 'workspaces', config)
+            .get(urlApi + 'workspacesByUserId/' + userId, config)
             .then((response) => {
                 if (response.status === 200) {
                     setWorkspaces(response.data.data)
@@ -119,7 +120,7 @@ const WorkspacesPage = () => {
     }, [])
 
     const navigate = useNavigate();
-
+//
     if (isLoading) {
         return <div className="wrap">
             <SideBar/>
@@ -181,10 +182,10 @@ const WorkspacesPage = () => {
                             +
                         </Button>
                         {workspaces.map((workspace) => { return <div key={workspace.name.toString()} className={"workspace-item"} onClick={() => {
-                            navigate("/board",
+                            const workspaceId = workspace.id.toString()
+                            navigate(`/board/${workspaceId}`,
                                 {state: {
                                         workspaceName: workspace.name,
-                                        workspaceId: workspace.id,
                                         roomId: workspace.roomId
                                     }}) }}> {workspace.name} </div>; })}
                     </div>

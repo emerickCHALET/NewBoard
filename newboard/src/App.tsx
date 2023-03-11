@@ -13,6 +13,7 @@ import BoardPage from "./pages/BoardPage";
 import Management from "./pages/Management";
 import Chat from "./pages/Chat";
 import Kanban from "./pages/Kanban";
+import {useParams} from "react-router";
 
 const MainPage = () => {
   return (
@@ -26,6 +27,7 @@ const MainPage = () => {
 }
 
 export default function App(){
+
     return (
         <BrowserRouter>
         <Routes>
@@ -37,7 +39,9 @@ export default function App(){
             <Route path="inscription" element={<InscriptionPage/>}/>
             <Route path="workspaces" element={<WorkspacesPage/>}/>
             <Route path="board" element={<BoardPage/>}/>
+            <Route path="board/:workspaceId" element={<BoardPage/>}/>
             <Route path="kanban" element={<Kanban/>}/>
+            <Route path="kanban/:boardId" element={<Kanban/>}/>
             <Route path="management" element={<Management/>}/>
             <Route path="chat" element={<Chat/>}/>
         </Routes>

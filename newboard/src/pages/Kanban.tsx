@@ -25,7 +25,7 @@ import Button from "react-bootstrap/Button";
 import axios from "axios";
 import {urlApi, urlApiSocket} from "../App";
 import {toast} from "react-toastify";
-import {useLocation, useNavigate} from "react-router";
+import {useLocation, useNavigate, useParams} from "react-router";
 import Student from "../Classes/Student";
 import io from 'socket.io-client';
 import column from "../components/Column";
@@ -47,10 +47,10 @@ const Kanban = () => {
 
     const location = useLocation()
     // Initialize boardId here because the app crashes when we click on menu button, location.state.boardId would be null ??
-    let boardId = 0
     let roomId = 0
+    const {boardId} = useParams<{ boardId: string}>()
+
     if(location.state != null){
-        boardId = location.state.boardId
         roomId = location.state.roomId
     }
 
@@ -82,6 +82,7 @@ const Kanban = () => {
             .get(urlApi + "boardByClassIdAndBoardId/"+ className + "/" + boardId, config)
             .then((response) => {
                 if (response.status === 200) {
+                    console.log(response.data.data)
                     setUsers(response.data.data);
                 }
             })
@@ -136,7 +137,7 @@ const Kanban = () => {
 
     const SendKanbanToSocket = () => {
         let json = JSON.stringify(columns)
-        socket.emit("kanban message", json, boardId.toString(), { exceptSelf: true });
+        socket.emit("kanban message", json, boardId, { exceptSelf: true });
     }
 
     const AddNewColumn: React.FC<AddNewColumnProps> = ({ columns, setColumns }) => {
