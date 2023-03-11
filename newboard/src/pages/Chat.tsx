@@ -3,7 +3,7 @@ import * as io from "socket.io-client";
 import {toast} from "react-toastify";
 import SideBar from "../components/SideBar";
 import Footer from "../components/Footer";
-import {useLocation} from "react-router";
+import {useLocation, useNavigate} from "react-router";
 import "../Chat.css"
 import axios from "axios";
 import {urlApi} from "../App";
@@ -15,7 +15,7 @@ const ChatPage = () => {
     const config = {
         headers: {Authorization: `Bearer ${localStorage.getItem('token')}`}
     };
-
+    const navigate = useNavigate();
     const location = useLocation()
     let room = 0
 
@@ -36,7 +36,6 @@ const ChatPage = () => {
             .then((response) => {
                 if (response.status === 200) {
                     setMessageList(response.data.data)
-                    console.log(messageList)
                 }
             })
             .catch(function (error) {
@@ -44,6 +43,10 @@ const ChatPage = () => {
                     toast.error(error.response.data.message.name + ". \nReconnexion requise", {
                         position: toast.POSITION.TOP_RIGHT
                     });
+                    if(error.response.data.disconnect === true){
+                        localStorage.clear()
+                        navigate('/login');
+                    }
                 }
 
 
@@ -66,7 +69,6 @@ const ChatPage = () => {
     useEffect(() => {
 // @ts-ignore
         socket.on("message_received", (data) => {
-            console.log(data)
             // @ts-ignore
             setMessageList((list) => [...list, data])
         })

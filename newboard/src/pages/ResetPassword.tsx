@@ -64,7 +64,6 @@ const ResetPassword = () => {
         if (!searchParams.get('check')) {
             navigate('/')
         } else {
-            console.log("Existing token")
         }
     }, []);
 

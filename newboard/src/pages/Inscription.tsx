@@ -5,7 +5,7 @@ import * as Yup from 'yup';
 import {Formik, ErrorMessage, Form, Field} from 'formik';
 import axios from 'axios';
 import {urlApi} from "../App";
-import { toast } from 'react-toastify';
+import {toast} from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import {useNavigate} from "react-router";
 import SideBar from "../components/SideBar";
@@ -15,12 +15,17 @@ import SideBar from "../components/SideBar";
  * @param values - all the values necessary for register the user
  */
 async function postRegister(values: { lastname: string; firstname: string; email: string; password: string }): Promise<boolean> {
-    let payload = { firstname: values.firstname, lastname: values.lastname, email: values.email, password: values.password };
+    let payload = {
+        firstname: values.firstname,
+        lastname: values.lastname,
+        email: values.email,
+        password: values.password
+    };
     let result = false;
     await axios
-        .post(urlApi + 'users',payload)
+        .post(urlApi + 'users', payload)
         .then((response) => {
-            if(response.status === 200){
+            if (response.status === 200) {
                 toast.success("Inscription réussite !", {
                     position: toast.POSITION.TOP_RIGHT,
                 });
@@ -28,14 +33,15 @@ async function postRegister(values: { lastname: string; firstname: string; email
             }
         })
         .catch(function (error) {
-            if(error.response) {
-                toast.error(error.response.data.message,{
+            if (error.response) {
+                toast.error(error.response.data.message, {
                     position: toast.POSITION.TOP_RIGHT
                 });
             }
         })
     return result;
 }
+
 const InscriptionPage = () => {
     const validationSchema = Yup.object().shape({
         lastname: Yup.string()
@@ -56,7 +62,7 @@ const InscriptionPage = () => {
 
     const initialValues = {
         lastname: "",
-        firstname:"",
+        firstname: "",
         email: "",
         password: "",
     };

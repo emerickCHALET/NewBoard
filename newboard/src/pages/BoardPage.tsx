@@ -48,6 +48,17 @@ function BoardPage(){
                                 result = true
                             }
                         })
+                        .catch(function (error) {
+                            if(error.response) {
+                                toast.error(error.response.data.message,{
+                                    position: toast.POSITION.TOP_RIGHT
+                                });
+                                if(error.response.data.disconnect === true){
+                                    localStorage.clear()
+                                    navigate('/login');
+                                }
+                            }
+                        })
                 }
             })
             .catch(function (error) {
@@ -55,6 +66,10 @@ function BoardPage(){
                     toast.error(error.response.data.message,{
                         position: toast.POSITION.TOP_RIGHT
                     });
+                    if(error.response.data.disconnect === true){
+                        localStorage.clear()
+                        navigate('/login');
+                    }
                 }
             })
         return result;
@@ -68,7 +83,18 @@ function BoardPage(){
                 if (response.status === 200) {
                     result = response.data.data.id
                 }
-            });
+            })
+            .catch(function (error) {
+                if (error.response) {
+                    toast.error(error.response.data.message, {
+                        position: toast.POSITION.TOP_RIGHT
+                    });
+                    if(error.response.data.disconnect === true){
+                        localStorage.clear()
+                        navigate('/login');
+                    }
+                }
+            })
         return result
     }
 
@@ -92,6 +118,10 @@ function BoardPage(){
                     toast.error(error.response.data.message, {
                         position: toast.POSITION.TOP_RIGHT
                     });
+                    if(error.response.data.disconnect === true){
+                        localStorage.clear()
+                        navigate('/login');
+                    }
                 }
             })
         return result;
@@ -151,6 +181,10 @@ function BoardPage(){
                     toast.error(error.response.data.message.name + ". \nReconnexion requise", {
                         position: toast.POSITION.TOP_RIGHT
                     });
+                    if(error.response.data.disconnect === true){
+                        localStorage.clear()
+                        navigate('/login');
+                    }
                 }
             })
     }

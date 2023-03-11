@@ -1,10 +1,10 @@
-import React, { useState } from "react";
+import React, {useState} from "react";
 import 'bootstrap/dist/css/bootstrap.min.css'
 import {Link, useNavigate} from "react-router-dom";
 import * as FaIcons from "react-icons/fa";
 import * as AiIcons from "react-icons/ai";
 import "../App.css";
-import { IconContext } from "react-icons";
+import {IconContext} from "react-icons";
 import Navbar from "react-bootstrap/Navbar";
 import {Button} from "react-bootstrap";
 import Container from "react-bootstrap/Container";
@@ -30,21 +30,17 @@ const SideBar = () => {
      * @constructor
      */
     function Logout() {
-        localStorage.removeItem('permissions_role');
-        localStorage.removeItem('token');
-        localStorage.removeItem('establishmentId');
-        localStorage.removeItem('userId');
-        localStorage.removeItem("isLoggedIn");
+        localStorage.clear();
         navigate('/');
     }
 
     return (
         <>
-            <IconContext.Provider value={{ color: "undefined" }}>
+            <IconContext.Provider value={{color: "undefined"}}>
                 <div className="navbar">
                     {token ?
                         <Link to="#" className="menu-bars">
-                            <FaIcons.FaBars onClick={showSidebar} />
+                            <FaIcons.FaBars onClick={showSidebar}/>
                         </Link>
                         : <></>}
                     <Container>
@@ -65,25 +61,34 @@ const SideBar = () => {
                         <ul className="nav-menu-items" onClick={showSidebar}>
                             <li className="navbar-toggle">
                                 <Link to="#" className="menu-bars">
-                                    <AiIcons.AiOutlineClose />
+                                    <AiIcons.AiOutlineClose/>
                                 </Link>
                             </li>
-                            {role! === "ROLE_USER"?
+                            {role! === "ROLE_USER" ?
                                 <li className='nav-text'>
                                     <Link to={'/workspaces'}>
-                                        <AiIcons.AiFillLayout />
+                                        <AiIcons.AiFillLayout/>
                                         <span>Workspaces</span>
                                     </Link>
                                 </li> : <></>}
-                            {role! === "ROLE_ADMIN" &&  establishment != null?
-                            <li className='nav-text'>
-                                <Link to={'/management'}>
-                                    <AiIcons.AiOutlineTeam />
-                                    <span>Gestion</span>
-                                </Link>
-                            </li> : <></>}
+                            {role! === "ROLE_ADMIN" && establishment != null ?
+                                <>
+                                    <li className='nav-text'>
+                                        <Link to={'/management'}>
+                                            <AiIcons.AiOutlineTeam/>
+                                            <span>Gestion</span>
+                                        </Link>
+                                    </li>
+                                    <li className='nav-text'>
+                                        <Link to={'/attendance'}>
+                                            <AiIcons.AiOutlineIdcard/>
+                                            <span>Présence</span>
+                                        </Link>
+                                    </li>
+                                </>
+                                : <></>}
                             <li className='nav-text' onClick={Logout}>
-                                <a className='nav-text'><AiIcons.AiOutlineLogout />
+                                <a className='nav-text'><AiIcons.AiOutlineLogout/>
                                     <span>Se déconnecter</span></a>
                             </li>
                         </ul>
@@ -91,7 +96,7 @@ const SideBar = () => {
                     : <></>}
             </IconContext.Provider>
         </>
-)
+    )
 }
 
 export default SideBar;

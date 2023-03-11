@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect} from 'react';
 import Footer from "../components/Footer";
 import * as Yup from 'yup';
 import {Formik, ErrorMessage, Form, Field} from 'formik';
@@ -8,9 +8,11 @@ import {urlApi} from "../App";
 import {toast} from "react-toastify";
 import SideBar from "../components/SideBar";
 import {Link} from "react-router-dom";
+import useProtectedLogin from "../components/ProtectedLogin";
 
 const Login = () => {
     const navigate = useNavigate();
+    const {loading} = useProtectedLogin()
 
     useEffect(() => {
         // vérifier si l'utilisateur est déjà connecté
@@ -24,12 +26,12 @@ const Login = () => {
      * function who check the identifiers of a user and connect him if that's good
      * @param values necessary for Login a user
      */
-    function postLogin(values: { email: string; password: string; }){
-        let payload = { email: values.email, password: values.password };
-        axios
-            .post(urlApi + 'login',payload)
+    async function postLogin(values: { email: string; password: string; }) {
+        let payload = {email: values.email, password: values.password};
+        await axios
+            .post(urlApi + 'login', payload)
             .then((response) => {
-                if(response.status === 200){
+                if (response.status === 200 && response.data) {
                     toast.success("Bienvenue!", {
                         position: toast.POSITION.TOP_RIGHT,
                     });
@@ -37,8 +39,9 @@ const Login = () => {
                     localStorage.setItem('token', response.data.token);
                     localStorage.setItem('userId', response.data.data.id);
                     localStorage.setItem('userClass', response.data.data.class)
+                    localStorage.setItem('email', response.data.data.email)
                     localStorage.setItem('userFullName', response.data.data.firstname + " " + response.data.data.lastname)
-                    if(response.data.data.role === "ROLE_ADMIN"){
+                    if (response.data.data.role === "ROLE_ADMIN") {
                         localStorage.setItem('establishmentId', response.data.data.establishmentId);
                     }
                     localStorage.setItem("isLoggedIn", "true");
@@ -46,8 +49,8 @@ const Login = () => {
                 }
             })
             .catch(function (error) {
-                if(error.response) {
-                    toast.error(error.response.data.message,{
+                if (error.response) {
+                    toast.error(error.response.data.message, {
                         position: toast.POSITION.TOP_RIGHT
                     });
                 }
@@ -68,9 +71,11 @@ const Login = () => {
     };
 
     const handleSubmit = async (values: { email: string; password: string; }) => {
-        await postLogin(values);
+        await postLogin(values)
     };
-
+    if (loading) {
+        return <div>Loading...</div>
+    }
     return (
         <div className="wrap">
             <SideBar/>

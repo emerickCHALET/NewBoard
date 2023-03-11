@@ -112,8 +112,6 @@ body {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    background: var(--background-color);
-    background: var(--background-gradient);
     background-size:cover;
     min-height: 100%;
 }
