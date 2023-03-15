@@ -56,7 +56,7 @@ const ChatPage = () => {
     const submitMessage = () => {
         if (userId !== null && currentMessage != "") {
             // @ts-ignore
-            socket.emit("send_message", new Message(room.toString(), userFullName, userId, currentMessage, ""))
+            socket.emit("send_message", new Message(userId, userFullName, currentMessage, room.toString()))
         }
     }
 
