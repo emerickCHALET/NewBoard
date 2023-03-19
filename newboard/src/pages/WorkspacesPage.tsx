@@ -29,7 +29,7 @@ const WorkspacesPage = () => {
             .post(urlApi + 'workspaces', payload, config)
             .then((response) => {
                 if (response.status === 200) {
-                    let payload2 = {userID: localStorage.getItem('userId'), workspaceID: response.data.data.id};
+                    let payload2 = {userID: userId, workspaceID: response.data.data.id};
                     axios
                         .post(urlApi + 'workspacesUser', payload2, config)
                         .then((response) => {
