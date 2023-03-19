@@ -89,7 +89,7 @@ const AttendanceSheet: React.FC = () => {
     }, []);
 
     const getStudentByClass = () => {
-        axios.get(urlApi + 'usersByClassroom/' + selectedClassId, config)
+        axios.get(urlApi + 'usersByClassroom/' + selectedClassId.toString(), config)
             .then((response) => {
                 if (response.status === 200) {
                     setSelectedStudents(response.data.data)
@@ -295,7 +295,6 @@ const AttendanceSheet: React.FC = () => {
                     <br/>
                     <Button
                         variant="light"
-                        onClick={saveAttendance}
                         disabled={isLoading}
                     >
                         {isLoading ? "Enregistrement en cours..." : "Mettre à jour"}
