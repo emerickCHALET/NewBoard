@@ -44,7 +44,7 @@ const AttendanceSheet: React.FC = () => {
     const [isLoading, setIsLoading] = useState<boolean>(false);
 
     const getClassrooms = () => {
-        axios.get(urlApi + 'classrooms',config)
+        axios.get(urlApi + 'classrooms', config)
             .then((response) => {
                 if (response.status === 200) {
                     setClassrooms(response.data.data)
@@ -55,7 +55,7 @@ const AttendanceSheet: React.FC = () => {
                     toast.error(error.response.data.message.name + ". \nErreur Classroom", {
                         position: toast.POSITION.TOP_RIGHT
                     });
-                    if(error.response.data.disconnect === true){
+                    if (error.response.data.disconnect === true) {
                         localStorage.clear()
                         navigate('/login');
                     }
@@ -63,7 +63,7 @@ const AttendanceSheet: React.FC = () => {
             })
     }
     const getHistory = () => {
-        axios.get(urlApi + 'attendanceHistory',config)
+        axios.get(urlApi + 'attendanceHistory', config)
             .then((response) => {
                 if (response.status === 200) {
                     setHistory(response.data.data)
@@ -74,7 +74,7 @@ const AttendanceSheet: React.FC = () => {
                     toast.error(error.response.data.message.name + ". \nErreur History", {
                         position: toast.POSITION.TOP_RIGHT
                     });
-                    if(error.response.data.disconnect === true){
+                    if (error.response.data.disconnect === true) {
                         localStorage.clear()
                         navigate('/login');
                     }
@@ -89,12 +89,7 @@ const AttendanceSheet: React.FC = () => {
     }, []);
 
     const getStudentByClass = () => {
-        const id = {
-            params: {
-                classroomsId: selectedClassId
-            }
-        }
-        axios.get(urlApi + 'usersByClassroom/' + id,config)
+        axios.get(urlApi + 'usersByClassroom/' + selectedClassId, config)
             .then((response) => {
                 if (response.status === 200) {
                     setSelectedStudents(response.data.data)
@@ -105,7 +100,7 @@ const AttendanceSheet: React.FC = () => {
                     toast.error("Erreur Student", {
                         position: toast.POSITION.TOP_RIGHT
                     });
-                    if(error.response.data.disconnect === true){
+                    if (error.response.data.disconnect === true) {
                         localStorage.clear()
                         navigate('/login');
                     }
@@ -126,20 +121,24 @@ const AttendanceSheet: React.FC = () => {
             })
         }
         setIsLoading(true);
-        axios.post(urlApi + 'attendance', myData,config)
+        axios.post(urlApi + 'attendance', myData, config)
             .then((response) => {
-                setIsLoading(false);
+                setTimeout(() => {
+                    setIsLoading(false);
+                }, 3000);
                 toast.success(response.data.message, {
                     position: toast.POSITION.TOP_RIGHT
                 });
                 getHistory();
             })
             .catch((error) => {
-                setIsLoading(false);
+                setTimeout(() => {
+                    setIsLoading(false);
+                }, 3000);
                 toast.error(error.response.data.message, {
                     position: toast.POSITION.TOP_RIGHT
                 });
-                if(error.response.data.disconnect === true){
+                if (error.response.data.disconnect === true) {
                     localStorage.clear()
                     navigate('/login');
                 }

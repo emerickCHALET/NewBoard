@@ -85,6 +85,12 @@ const SideBar = () => {
                                             <span>Présence</span>
                                         </Link>
                                     </li>
+                                    <li className='nav-text'>
+                                        <Link to={'/workspaces'}>
+                                            <AiIcons.AiFillLayout/>
+                                            <span>Workspaces</span>
+                                        </Link>
+                                    </li>
                                 </>
                                 : <></>}
                             <li className='nav-text' onClick={Logout}>

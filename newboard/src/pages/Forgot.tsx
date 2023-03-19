@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import Footer from "../components/Footer";
 import * as Yup from 'yup';
 import {Formik, ErrorMessage, Form, Field} from 'formik';
@@ -32,6 +32,7 @@ async function postForgot(values: { email: string }): Promise<boolean> {
 }
 
 const Forgot = () => {
+    const [isLoading, setIsLoading] = useState<boolean>(false);
 
     const validationSchema = Yup.object().shape({
         email: Yup.string()
@@ -46,6 +47,7 @@ const Forgot = () => {
     const handleSubmit = async (values: { email: string }) => {
         const result = await postForgot(values);
         if (result) {
+            setIsLoading(true);
             setTimeout(() => {
                 navigate('/');
             }, 5000);
@@ -72,7 +74,10 @@ const Forgot = () => {
                                 className="text-danger"
                             />
                         </fieldset>
-                        <button type="submit" className="form-button">Envoyer le lien</button>
+                        <button type="submit" className="form-button"
+                                disabled={isLoading}>
+                            {isLoading ? "Traitement en cours..." : "Envoyer le lien"}
+                        </button>
                     </Form>
                 </div>
             </Formik>

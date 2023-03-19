@@ -40,6 +40,7 @@ async function putReset(values: { password: string }): Promise<boolean> {
 }
 
 const ResetPassword = () => {
+    const [isLoading, setIsLoading] = useState<boolean>(false);
 
     const validationSchema = Yup.object().shape({
         password: Yup.string()
@@ -54,7 +55,10 @@ const ResetPassword = () => {
     const handleSubmit = async (values: { password: string }) => {
         const result = await putReset(values);
         if (result) {
-            navigate('/login');
+            setIsLoading(true);
+            setTimeout(() => {
+                navigate('/login');
+            }, 1000);
         }
     };
     const [searchParams, setSearchParams] = useState(new URLSearchParams(window.location.search));
@@ -86,7 +90,10 @@ const ResetPassword = () => {
                                 className="text-danger"
                             />
                         </fieldset>
-                        <button className={"form-button"} type="submit">Sauvegarder</button>
+                        <button className={"form-button"} type="submit"
+                                disabled={isLoading}>
+                            {isLoading ? "Sauvegarde en cours..." : "Sauvegarder"}
+                        </button>
                     </Form>
                 </div>
             </Formik>
@@ -94,6 +101,5 @@ const ResetPassword = () => {
         </div>
     )
 }
-
 
 export default ResetPassword;
