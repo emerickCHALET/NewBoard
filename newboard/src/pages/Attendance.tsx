@@ -109,6 +109,14 @@ const AttendanceSheet: React.FC = () => {
     }
 
     const saveAttendance = () => {
+
+        if (selectedStudents.length === 0) {
+            toast.error('Aucune donnée est présente', {
+                position: toast.POSITION.TOP_RIGHT
+            });
+            return;
+        }
+
         const myData = {
             classroomId: selectedClassId,
             attendance: selectedStudents.map(student => {
