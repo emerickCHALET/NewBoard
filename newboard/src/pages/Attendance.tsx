@@ -89,10 +89,12 @@ const AttendanceSheet: React.FC = () => {
     }, []);
 
     const getStudentByClass = () => {
-        axios.get(urlApi + 'usersByClassroom/' + selectedClassId, config)
+        console.log(selectedClassId)
+        axios.get(urlApi + 'usersByClassroom/' + selectedClassId.toString(), config)
             .then((response) => {
                 if (response.status === 200) {
                     setSelectedStudents(response.data.data)
+                    console.log(response.data)
                 }
             })
             .catch(function (error) {

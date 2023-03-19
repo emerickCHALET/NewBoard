@@ -361,7 +361,7 @@ const Management = () => {
 
     useEffect(() => {
         axios
-            .get(urlApi + 'classroomsByEstablishmentId//' + establishmentId,config)
+            .get(urlApi + 'classroomsByEstablishmentId/' + establishmentId,config)
             .then((response) => {
                 if (response.status === 200) {
                     setDataClassroom(response.data.data);
