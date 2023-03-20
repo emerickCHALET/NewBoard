@@ -7,16 +7,19 @@ import {urlApi} from "../App";
 import {toast} from "react-toastify";
 import * as Yup from "yup";
 import Modal from "react-bootstrap/Modal";
-import {ErrorMessage, Field, Form, Formik, FormikValues} from "formik";
+import {ErrorMessage, Field, Form, Formik, FormikProps, FormikValues} from "formik";
 import Button from "react-bootstrap/Button";
 import Board from "../Classes/Board";
 import Student from "../Classes/Student";
+import * as AiIcons from "react-icons/ai";
+import {selectOptions} from "@testing-library/user-event/dist/select-options";
 
 const config = {
     headers: {Authorization: `Bearer ${localStorage.getItem('token')}`}
 };
 
 function BoardPage(){
+    let userId = localStorage.getItem("userId")
     const [isLoading, setIsLoading] = useState<boolean>(true);
 
     const location = useLocation();
@@ -98,15 +101,17 @@ function BoardPage(){
         return result
     }
 
+
     async function postWorkspaceUser(values: FormikValues): Promise<boolean> {
-        let payload = {userId: values.userId, workspaceID: workspaceId};
+        console.log(value)
+        let payload = {userID: values.userId, workspaceID: workspaceId};
         let result = false;
         await axios
             .post(urlApi + 'workspacesUser', payload, config)
             .then((response) => {
                 if (response.status === 200) {
                     if (response.status === 200) {
-                        toast.success("Workspace crée avec succès !", {
+                        toast.success("WorkspaceUser crée avec succès !", {
                             position: toast.POSITION.TOP_RIGHT,
                         });
                         result = true
@@ -128,9 +133,12 @@ function BoardPage(){
     }
     
     const [show, setShow] = useState(false);
+    const [showAddUser, setShowAddUser] = useState(false);
 
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
+    const handleShowAddUser = () => setShowAddUser(true);
+    const handleCloseAddUser = () => setShowAddUser(false)
     const [value, setValue] = useState("default");
     const [room, setRoom] = useState(0);
 
@@ -147,6 +155,7 @@ function BoardPage(){
 
     const handleSubmitAddUsers = async (values: FormikValues) => {
         const result = await postWorkspaceUser(values);
+        console.log(values)
         if (result) {
             window.location.reload()
         }
@@ -169,7 +178,7 @@ function BoardPage(){
 
     const getBoard = () => {
         axios
-            .get(urlApi + "boardByWorkspaceId/" + workspaceId, config)
+            .get(urlApi + "boardByWorkspaceIdAndUserId/" + workspaceId + "/" + userId, config)
             .then((response) => {
                 if (response.status === 200) {
                     setBoards(response.data.data)
@@ -189,12 +198,13 @@ function BoardPage(){
             })
     }
 
-    /*const [users, setUsers] = useState<Student[]>([])
+    const [users, setUsers] = useState<Student[]>([])
 
     const className = localStorage.getItem("userClass")
     const getUsers = () => {
+        console.log(className)
         axios
-            .get(urlApi + "workspaceByClassIdAndWorkspaceId/"+ className + "/" + boardId, config)
+            .get(urlApi + "userByClassIdAndWorkspaceId/"+ className + "/" + workspaceId, config)
             .then((response) => {
                 if (response.status === 200) {
                     console.log(response.data.data)
@@ -208,11 +218,11 @@ function BoardPage(){
                     });
                 }
             })
-    }*/
+    }
 
     useEffect(() => {
         getBoard()
-        //getUsers()
+        getUsers()
     }, [])
 
     const navigate = useNavigate();
@@ -228,6 +238,15 @@ function BoardPage(){
             <Footer/>
         </div>;
     }
+
+    const forceSelectOnlyOption = (options: Student[], values: FormikValues): void => {
+        console.log(options)
+        if (options.length == 1) {
+            values.userId = options[0].id;
+            console.log(values)
+        }
+        handleSubmitAddUsers(values)
+    };
 
     return (
 
@@ -269,6 +288,55 @@ function BoardPage(){
                 </Modal.Body>
 
             </Modal>
+            <Modal show={showAddUser} onHide={handleCloseAddUser}>
+                <Modal.Header closeButton>
+                    <Modal.Title>Ajouter un élève au Workspace</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <Formik
+                        initialValues={{userId: 'null'}}
+                        onSubmit={(values) => forceSelectOnlyOption(users, values)}
+                        validateOnBlur={false}
+                        validateOnChange={false}
+                    >
+                        {({ isSubmitting, errors }) => (
+                        <Form>
+                            <fieldset className={"field-area"}>
+                                <label htmlFor="name">User:</label>
+                                <Field as="select" name="userId" className="form-control" type="userId">
+                                    <option value="" disabled>Choisissez un Elève</option>
+                                    {users.map((user, index) => (
+                                        <option key={index} value={user.id}>
+                                            {user.email}
+                                        </option>
+                                    ))}
+                                </Field>
+                                <ErrorMessage
+                                    name="name"
+                                    component="small"
+                                    className="text-danger"
+                                />
+                            </fieldset>
+                            <Modal.Footer>
+                                <Button variant="secondary" onClick={handleCloseAddUser}>
+                                    Fermer
+                                </Button>
+                                <Button variant="primary" type={"submit"}>
+                                    Ajouter
+                                </Button>
+                            </Modal.Footer>
+                        </Form>
+                        )}
+                    </Formik>
+                </Modal.Body>
+            </Modal>
+            <div className={"addUser-item-div"}>
+                <Button type={"button"} className={"btn-light btn-outline-primary"}  onClick={() => {
+                    handleShowAddUser()
+                }}>
+                    <AiIcons.AiOutlineUserAdd /> Partager
+                </Button>
+            </div>
             <h2>Tableaux</h2>
             <Button className={"workspace-item workspace-item-add"} variant="primary" onClick={() => {
                 navigate("/chat", {state: {roomId}})

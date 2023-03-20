@@ -282,6 +282,7 @@ const Management = () => {
     const handleSubmit = async (values: { lastname: string; firstname: string; email: string; password: string, class: string }) => {
         await postRegister(values);
         handleCloseSecond();
+        window.location.reload()
     };
 
     //Ajout d'une classe
@@ -302,6 +303,7 @@ const Management = () => {
     const handleSubmitThird = async (values: { ClassroomName: string;}) => {
         await postClassrom(values);
         handleCloseThird();
+        window.location.reload()
     };
 
     //Modification d'un élève
@@ -312,6 +314,7 @@ const Management = () => {
     const handleShowFourth = (item: { id: React.Key | null | undefined; lastname: string | number | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | React.ReactFragment | React.ReactPortal | null | undefined; firstname: string | number | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | React.ReactFragment | React.ReactPortal | null | undefined; class: string | number | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | React.ReactFragment | React.ReactPortal | null | undefined; email: string | number | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | React.ReactFragment | React.ReactPortal | null | undefined }) => {
         setinitialValuesFourth({id: item.id!.toString() ,lastname: item.lastname!.toString(), firstname:item.firstname!.toString(), email:item.email!.toString(), class:item.class!.toString()})
         setShowFourth(true);
+
     };
 
     const validationSchemaFourth = Yup.object().shape({
@@ -327,13 +330,13 @@ const Management = () => {
             .email("Email invalide")
             .required("L'email est obligatoire"),
         class: Yup.string()
-            .min(2, "La classe doit contenir au moins 2 caractères")
             .required("La classe est obligatoire")
     });
 
     const handleSubmitFourth = async (values: {id:string; lastname: string; firstname: string; email: string; class: string }) => {
-       await putUser(values);
+        await putUser(values);
         handleCloseFourth();
+        window.location.reload()
     };
 
     //Affichage Table Student
@@ -437,7 +440,7 @@ const Management = () => {
                                     <label htmlFor={"class"}>Classe :</label>
                                     <Field as="select" name="class" className="form-control" type="class">
                                         {classrooms.map(classroom => (
-                                            <option key={classroom.id} value={classroom.ClassroomName}>
+                                            <option key={classroom.id} value={classroom.id}>
                                                 {classroom.ClassroomName}
                                             </option>
                                         ))}
@@ -549,7 +552,7 @@ const Management = () => {
                                     <label htmlFor={"class"}>Classe :</label>
                                     <Field as="select" name="class" className="form-control" type="class">
                                         {classrooms.map(classroom => (
-                                            <option key={classroom.id} value={classroom.ClassroomName}>
+                                            <option key={classroom.id} value={classroom.id}>
                                                 {classroom.ClassroomName}
                                             </option>
                                         ))}

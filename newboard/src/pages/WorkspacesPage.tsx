@@ -125,6 +125,7 @@ const WorkspacesPage = () => {
     const [workspaces, setWorkspaces] = useState<Workspace[]>([])
 
     const getWorkspaces = () => {
+        console.log(userId)
         axios
             .get(urlApi + 'workspacesByUserId/' + userId, config)
             .then((response) => {

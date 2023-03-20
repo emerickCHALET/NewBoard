@@ -20,7 +20,7 @@ import AddColumnButton from "../components/AddColumnButton";
 
 import { Card, Column as ColumnInterface } from "../types";
 import Modal from "react-bootstrap/Modal";
-import {ErrorMessage, Field, Form, Formik} from "formik";
+import {ErrorMessage, Field, Form, Formik, FormikValues} from "formik";
 import Button from "react-bootstrap/Button";
 import axios from "axios";
 import {urlApi, urlApiSocket} from "../App";
@@ -30,6 +30,7 @@ import Student from "../Classes/Student";
 import io from 'socket.io-client';
 import column from "../components/Column";
 import * as AiIcons from "react-icons/ai";
+import board from "../Classes/Board";
 
 
 interface AddNewColumnProps {
@@ -78,10 +79,20 @@ const Kanban = () => {
         return result;
     }
 
+    const forceSelectOnlyOption = (options: Student[], values: FormikValues): void => {
+        console.log(options)
+        if (options.length == 1) {
+            values.userId = options[0].id;
+            console.log(values)
+        }
+        handleSubmit(values)
+    };
+
     const [users, setUsers] = useState<Student[]>([])
 
     const className = localStorage.getItem("userClass")
     const getUsers = () => {
+        console.log(className + " " + boardId)
         axios
             .get(urlApi + "boardByClassIdAndBoardId/"+ className + "/" + boardId, config)
             .then((response) => {
@@ -106,7 +117,9 @@ const Kanban = () => {
     const [show, setShow] = useState(false);
     const handleClose = () => {setShow(false);}
     const handleShow = () => setShow(true);
-    const handleSubmit = async (values: {userId: number}) => {
+    const handleSubmit = async (values: FormikValues) => {
+        console.log(values)
+        console.log(values.userId)
         const result = await postBoardUser(values.userId);
         if (result) {
             handleClose()
@@ -295,7 +308,7 @@ const Kanban = () => {
                 <Modal.Body>
                     <Formik
                         initialValues={initialValues}
-                        onSubmit={(values) => handleSubmit(values)}
+                        onSubmit={(values) => forceSelectOnlyOption(users, values)}
                     >
                         <Form>
                             <fieldset className={"field-area"}>
