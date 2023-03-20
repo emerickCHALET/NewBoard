@@ -79,6 +79,7 @@ export default function App() {
                 <Route path="kanban/:boardId" element={<Kanban/>}/>
                 <Route path="management" element={<Management/>}/>
                 <Route path="chat" element={<Chat/>}/>
+                <Route path="chat/:roomId" element={<Chat/>}/>
                 <Route path="attendance" element={<AttendanceSheet/>}/>
             </Routes>
         </BrowserRouter>

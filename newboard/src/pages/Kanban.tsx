@@ -397,7 +397,7 @@ const Kanban = () => {
                 </Button>
             </div>
             <Button className={"workspace-item workspace-item-add"} variant="primary" onClick={() => {
-                navigate("/chat", {state: {roomId}})
+                navigate(`/chat/${roomId}`)
             }}>
                 Chat
             </Button>

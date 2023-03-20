@@ -3,7 +3,7 @@ import * as io from "socket.io-client";
 import {toast} from "react-toastify";
 import SideBar from "../components/SideBar";
 import Footer from "../components/Footer";
-import {useLocation, useNavigate} from "react-router";
+import {useLocation, useNavigate, useParams} from "react-router";
 import "../Chat.css"
 import axios from "axios";
 import {urlApi} from "../App";
@@ -12,16 +12,13 @@ import ScrollToBottom from "react-scroll-to-bottom";
 import Message from "../Classes/Message";
 
 const ChatPage = () => {
+    const {roomId} = useParams<{ roomId: string}>()
     const config = {
         headers: {Authorization: `Bearer ${localStorage.getItem('token')}`}
     };
     const navigate = useNavigate();
     const location = useLocation()
-    let room = 0
 
-    if(location.state != null){
-        room = location.state.roomId
-    }
 
     let socket = io.connect("http://localhost:3001/");
     let userId = localStorage.getItem("userId")
@@ -32,7 +29,7 @@ const ChatPage = () => {
 
     async function getMessages() {
         await axios
-            .get(urlApi + "messagesByRoomId/" + room, config)
+            .get(urlApi + "messagesByRoomId/" + roomId, config)
             .then((response) => {
                 if (response.status === 200) {
                     setMessageList(response.data.data)
@@ -53,24 +50,34 @@ const ChatPage = () => {
             })
     }
 
+    /**
+     * submitMessage sends an event on socketIo to tell every listeners that a new message has been sent so they can receive it
+     */
     const submitMessage = () => {
         if (userId !== null && currentMessage != "") {
             // @ts-ignore
-            socket.emit("send_message", new Message(userId, userFullName, currentMessage, room.toString()))
+            socket.emit("send_message", new Message(userId, userFullName, currentMessage, roomId.toString()))
         }
     }
 
+    /**
+     * When we arrive at the page, we notify that we joined the room and get all messages in DB
+     */
     useEffect(() => {
-        socket.emit("join_room", room)
+        socket.emit("join_room", roomId)
         getMessages()
     },[])
 
 
+    /**
+     * when we receive a new message, we add it to the message list
+     */
     useEffect(() => {
-// @ts-ignore
         socket.on("message_received", (data) => {
             // @ts-ignore
-            setMessageList((list) => [...list, data])
+            setMessageList((list) => {
+                return [...list, data];
+            })
         })
 
     }, [socket])

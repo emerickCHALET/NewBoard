@@ -339,7 +339,7 @@ function BoardPage(){
             </div>
             <h2>Tableaux</h2>
             <Button className={"workspace-item workspace-item-add"} variant="primary" onClick={() => {
-                navigate("/chat", {state: {roomId}})
+                navigate(`/chat/${roomId}`)
             }}>
                 Chat
             </Button>
