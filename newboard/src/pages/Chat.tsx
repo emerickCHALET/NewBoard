@@ -90,6 +90,7 @@ const ChatPage = () => {
                                 <div
                                     className="message"
                                     id={userId == message.sentBy ? "you" : "other"}
+                                    data-testid="message"
                                 >
                                     <div>
                                         <div className="message-content">
@@ -117,7 +118,7 @@ const ChatPage = () => {
                             event.key === "Enter" && submitMessage();
                         }}
                     />
-                    <button onClick={submitMessage}>&#9658;</button>
+                    <button onClick={submitMessage} aria-label="Send">&#9658;</button>
                 </div>
             </div>
 
