@@ -33,16 +33,22 @@ const config = {
     headers: {Authorization: `Bearer ${localStorage.getItem('token')}`}
 };
 
+/**
+ * AttendanceSheet is the page where the PO can see the attendance of a classroom
+ */
 const AttendanceSheet: React.FC = () => {
     const navigate = useNavigate();
     const {loading} = useProtectedPO()
-    const [selectedClassId, setSelectedClassId] = useState<string>('');
+    const [selectedClassroomId, setSelectedClassroomId] = useState<number | null>(null);
     const [selectedHistory, setSelectedHistory] = useState<string>('');
     const [classrooms, setClassrooms] = useState<Classrooms[]>([]);
     const [history, setHistory] = useState<Attendance[]>([]);
     const [selectedStudents, setSelectedStudents] = useState<Student[]>([]);
     const [isLoading, setIsLoading] = useState<boolean>(false);
 
+    /**
+     * getClassrooms get all the classrooms when the page is loaded
+     */
     const getClassrooms = () => {
         axios.get(urlApi + 'classrooms', config)
             .then((response) => {
@@ -62,6 +68,11 @@ const AttendanceSheet: React.FC = () => {
                 }
             })
     }
+
+    /**
+     * getHistory get all attendance history of a class when getClassroom is called
+     * @param classroomId
+     */
     const getHistory = () => {
         axios.get(urlApi + 'attendanceHistory', config)
             .then((response) => {
@@ -83,14 +94,20 @@ const AttendanceSheet: React.FC = () => {
 
     }
 
+    /**
+     * useEffect is called after the render is committed to the screen.
+     */
     useEffect(() => {
         getClassrooms();
         getHistory();
     }, []);
 
-    const getStudentByClass = () => {
-        console.log(selectedClassId)
-        axios.get(urlApi + 'usersByClassroom/' + selectedClassId.toString(), config)
+    /**
+     * getStudentByClass get all the students of a classroom when the user select a classroom
+     * @param classroomId
+     */
+    const getStudentByClass = (classroomId: string) => {
+        axios.get(urlApi + 'usersByClassroom/' + classroomId, config)
             .then((response) => {
                 if (response.status === 200) {
                     setSelectedStudents(response.data.data)
@@ -110,9 +127,24 @@ const AttendanceSheet: React.FC = () => {
             })
     }
 
+    /**
+     * saveAttendance save the attendance of the students in the database when the user click on the button "Enregistrer"
+     */
     const saveAttendance = () => {
+
+        if (selectedStudents.length === 0) {
+            toast.error('Aucune donnée est présente', {
+                position: toast.POSITION.TOP_RIGHT
+            });
+            return;
+        }
+
+        /**
+         * myData is the data that will be sent to the API
+         * @type {{classroomId: number | null, attendance: {id: number, firstname: string, lastname: string, present: boolean}[]}}
+         */
         const myData = {
-            classroomId: selectedClassId,
+            classroomId: selectedClassroomId,
             attendance: selectedStudents.map(student => {
                 return {
                     id: student.id,
@@ -147,17 +179,38 @@ const AttendanceSheet: React.FC = () => {
             });
     };
 
+    /**
+     * handleClassSelection is a function that is called when the user select a classroom in the select.
+     * It will update the state of the selectedClassroomId and call the function getStudentByClass to get all the students of the selected classroom.
+     * @param event
+     */
     const handleClassSelection = (event: React.ChangeEvent<HTMLSelectElement>) => {
-        setSelectedClassId(event.target.value);
-        setSelectedHistory("");
-        getStudentByClass();
-    };
-
-    const handleHistorySelection = (event: React.ChangeEvent<HTMLSelectElement>) => {
-        setSelectedHistory(event.target.value);
-        setSelectedClassId("");
+        const selectedValue = event.target.value;
+        const selectedClassroom = classrooms.find((classroom) => classroom.id.toString() === selectedValue);
+        const selectedClassroomId = selectedClassroom ? selectedClassroom.id : null;
+        if (selectedClassroomId !== null) {
+            setSelectedClassroomId(parseInt(selectedClassroomId));
+            getStudentByClass(selectedClassroomId);
+        } else {
+            console.log("Aucune classe trouvé depuis selectedValue: ", selectedValue);
+        }
+        setSelectedHistory('');
     }
 
+    /**
+     * handleHistorySelection is a function that is called when the user select a history in the select.
+     * @param event
+     */
+    const handleHistorySelection = (event: React.ChangeEvent<HTMLSelectElement>) => {
+        setSelectedHistory(event.target.value);
+        setSelectedClassroomId(null);
+    }
+
+    /**
+     * handleTogglePresence is a function that is called when the user click on the button "Présent" or "Absent" of a student.
+     * It will update the state of the selectedStudents.
+     * @param index
+     */
     const handleTogglePresence = (index: number) => {
         setSelectedStudents(prevState => prevState.map((student, i) => {
             if (i === index) {
@@ -182,7 +235,7 @@ const AttendanceSheet: React.FC = () => {
                     <div className="col">
                         <Form.Group>
                             <Form.Label>Classe</Form.Label>
-                            <Form.Select onChange={handleClassSelection} defaultValue={selectedClassId}>
+                            <Form.Select onChange={handleClassSelection} defaultValue="">
                                 <option value="" disabled>Choisissez une classe</option>
                                 {classrooms.map(classroom => (
                                     <option key={classroom.id} value={classroom.id}>
@@ -220,7 +273,7 @@ const AttendanceSheet: React.FC = () => {
                     </div>
                 </div>
             </Form>
-            {selectedClassId && (
+            {selectedClassroomId && (
                 <Table responsive bordered variant="light">
                     <thead>
                     <tr>
@@ -289,7 +342,6 @@ const AttendanceSheet: React.FC = () => {
                     <br/>
                     <Button
                         variant="light"
-                        onClick={saveAttendance}
                         disabled={isLoading}
                     >
                         {isLoading ? "Enregistrement en cours..." : "Mettre à jour"}
