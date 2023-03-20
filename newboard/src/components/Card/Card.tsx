@@ -1,10 +1,12 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { Draggable } from "react-beautiful-dnd";
 import { v4 as uuidv4 } from "uuid";
-
 import { useClickOutside } from "../../hooks";
 import { Container, Title, Input, EditTitleButton } from "./styles";
 
+/**
+ * interface who contains props of a card
+ */
 interface CardProps {
   id: string;
   title: string;
@@ -12,11 +14,19 @@ interface CardProps {
   currentIndex: number;
 }
 
+/**
+ * interface of props about a new card
+ */
 interface NewCardProps {
   onSuccess: (id: string, title: string) => void;
   onDismiss: () => void;
 }
 
+/**
+ * Container of a new Card
+ * @param onSuccess
+ * @param onDismiss
+ */
 export const NewCard: React.FC<NewCardProps> = ({ onSuccess, onDismiss }) => {
   const [currentTitle, setCurrentTitle] = useState("");
 
@@ -55,6 +65,13 @@ export const NewCard: React.FC<NewCardProps> = ({ onSuccess, onDismiss }) => {
   );
 };
 
+/**
+ * Container of a card
+ * @param title
+ * @param id
+ * @param editCard
+ * @param currentIndex
+ */
 const Card: React.FC<CardProps> = ({ title, id, editCard, currentIndex }) => {
   const [currentTitle, setCurrentTitle] = useState(title);
   const [isEditing, setIsEditing] = useState(false);

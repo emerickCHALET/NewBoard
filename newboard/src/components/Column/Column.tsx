@@ -17,6 +17,9 @@ import {
   EditTitleButton
 } from "./styles";
 
+/**
+ * Props of column object
+ */
 interface ColumnProps {
   id: string;
   title: string;
@@ -27,11 +30,20 @@ interface ColumnProps {
   currentIndex: number;
 }
 
+/**
+ * Props of New Column
+ */
 interface NewColumnProps {
   onSuccess: (id: string, title: string) => void;
   onDismiss: () => void;
 }
 
+/**
+ * Container of a new Column
+ * @param onSuccess
+ * @param onDismiss
+ * @constructor
+ */
 export const NewColumn: React.FC<NewColumnProps> = ({
   onSuccess,
   onDismiss
@@ -74,6 +86,17 @@ export const NewColumn: React.FC<NewColumnProps> = ({
 
 let cardListRef: HTMLDivElement | null = null;
 
+/**
+ * Container of a Column
+ * @param id
+ * @param title
+ * @param cards
+ * @param addCard
+ * @param updateCard
+ * @param editColumn
+ * @param currentIndex
+ * @constructor
+ */
 const Column: React.FC<ColumnProps> = ({
   id,
   title,

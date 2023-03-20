@@ -1,5 +1,9 @@
 import styled from "styled-components";
 
+/**
+ * Css of Column
+ */
+
 interface InputProps {
   readonly isEditing: boolean;
 }

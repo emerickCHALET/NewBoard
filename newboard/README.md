@@ -1,15 +1,29 @@
 # New Board Project
 
+## API Required
+
+In order to make the NewBoard site work, you will need to launch the NewBoard API
+
+You can download it here
+[Github NewBoardAPI](https://github.com/emerickCHALET/NewBoardApi.git)
+
+## Node Modules
+
+Before launch the web site, you need install node modules.
+You can run :
+
+### `npm install`
 
 
 ## Available Scripts
 
+When launching the site, you can choose to make requests on the API in production or in development by choosing in the App.tsx file
 In the project directory, you can run:
 
 ### `npm start`
 
 Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+Open [http://localhost:3001](http://localhost:3001) to view it in the browser.
 
 The page will reload if you make edits.\
 You will also see any lint errors in the console.

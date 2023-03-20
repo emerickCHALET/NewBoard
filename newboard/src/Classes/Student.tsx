@@ -1,3 +1,6 @@
+/**
+ * Class of object Student
+ */
 class Student {
     id: number;
     firstName: string;

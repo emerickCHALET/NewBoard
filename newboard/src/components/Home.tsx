@@ -1,7 +1,6 @@
 import React from 'react';
 import {Button} from "react-bootstrap";
-import {Link, useNavigate} from "react-router-dom";
-import * as AiIcons from "react-icons/ai";
+import {useNavigate} from "react-router-dom";
 
 /**
  * Home Page when the user is not authenticated

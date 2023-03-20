@@ -1,5 +1,6 @@
-import {date} from "yup";
-
+/**
+ * Class of object Message
+ */
 class Message {
 
     sentBy: string

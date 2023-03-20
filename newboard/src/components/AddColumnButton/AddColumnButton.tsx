@@ -1,7 +1,9 @@
 import React from "react";
-
 import { Container } from "./styles";
 
+/**
+ * Component "Add Button" of Kanban Page
+ */
 interface Props {
   onClick: () => void;
 }
