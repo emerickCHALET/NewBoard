@@ -1,7 +1,9 @@
 import React from 'react';
-import { render, fireEvent, waitFor } from '@testing-library/react';
-import InscriptionPage, { postRegister } from './InscriptionPage';
+import { render, fireEvent, waitFor, screen } from '@testing-library/react';
+import InscriptionPage, { postRegister } from "./Inscription";
+import { BrowserRouter } from 'react-router-dom';
 import axios from 'axios';
+import '@testing-library/jest-dom';
 
 jest.mock('axios');
 const mockedAxios = axios as jest.Mocked<typeof axios>;
@@ -11,25 +13,44 @@ describe('InscriptionPage', () => {
         jest.clearAllMocks();
     });
 
-    it('renders correctly', () => {
-        const { getByLabelText, getByText } = render(<InscriptionPage />);
-        expect(getByLabelText('Nom')).toBeInTheDocument();
-        expect(getByLabelText('Prénom:')).toBeInTheDocument();
-        expect(getByLabelText('Email')).toBeInTheDocument();
-        expect(getByLabelText('Password')).toBeInTheDocument();
-        expect(getByText('Inscription')).toBeInTheDocument();
+    it('simulation test api', () => {
+        render(
+            <BrowserRouter>
+                <InscriptionPage />
+            </BrowserRouter>
+        );
+
+        const nomElement = screen.getByLabelText(/^Nom$/i);
+        expect(nomElement).toBeInTheDocument();
+
+        const prenomElement = screen.getByLabelText(/^Prénom:$/i);
+        expect(prenomElement).toBeInTheDocument();
+
+        const emailElement = screen.getByLabelText(/Email/i);
+        expect(emailElement).toBeInTheDocument();
+
+        const passwordElement = screen.getByLabelText(/Password/i);
+        expect(passwordElement).toBeInTheDocument();
+
+        const submitButton = screen.getByText(/Inscription/i);
+        expect(submitButton).toBeInTheDocument();
     });
 
-    it('should submit form with valid data', async () => {
+    it('test formulaire ', async () => {
         mockedAxios.post.mockResolvedValue({ status: 200 });
 
-        const { getByLabelText, getByText } = render(<InscriptionPage />);
-        fireEvent.change(getByLabelText('Nom'), { target: { value: 'Doe' } });
-        fireEvent.change(getByLabelText('Prénom:'), { target: { value: 'John' } });
-        fireEvent.change(getByLabelText('Email'), { target: { value: 'john.doe@example.com' } });
-        fireEvent.change(getByLabelText('Password'), { target: { value: 'password123' } });
+        render(
+            <BrowserRouter>
+                <InscriptionPage />
+            </BrowserRouter>
+        );
 
-        fireEvent.click(getByText('Inscription'));
+        fireEvent.change(screen.getByLabelText('Nom'), { target: { value: 'vaudeleau' } });
+        fireEvent.change(screen.getByLabelText('Prénom:'), { target: { value: 'quentin' } });
+        fireEvent.change(screen.getByLabelText('Email'), { target: { value: 'qvaudeleau@gmail.com' } });
+        fireEvent.change(screen.getByLabelText('Password'), { target: { value: 'password123' } });
+
+        fireEvent.click(screen.getByText('Inscription'));
 
         await waitFor(() => {
             expect(mockedAxios.post).toHaveBeenCalledTimes(1);
