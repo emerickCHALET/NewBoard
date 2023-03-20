@@ -27,7 +27,7 @@ const WorkspacesPage = () => {
      * @param values
      */
     async function postWorkspace(values: { name: string; }): Promise<boolean> {
-       
+
         let payload = {name: values.name, roomId: 0};
         let result = false;
         payload.roomId = await postRoom(payload)
@@ -137,10 +137,6 @@ const WorkspacesPage = () => {
             .catch(function (error) {
                 if (error.response) {
 
-                }
-                if(error.response.data.disconnect === true){
-                    localStorage.clear()
-                    navigate('/login');
                 }
             })
     }
