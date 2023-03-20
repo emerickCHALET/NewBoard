@@ -36,7 +36,7 @@ const config = {
 const AttendanceSheet: React.FC = () => {
     const navigate = useNavigate();
     const {loading} = useProtectedPO()
-    const [selectedClassId, setSelectedClassId] = useState<string>('');
+    const [selectedClassroomId, setSelectedClassroomId] = useState<number | null>(null);
     const [selectedHistory, setSelectedHistory] = useState<string>('');
     const [classrooms, setClassrooms] = useState<Classrooms[]>([]);
     const [history, setHistory] = useState<Attendance[]>([]);
@@ -88,8 +88,8 @@ const AttendanceSheet: React.FC = () => {
         getHistory();
     }, []);
 
-    const getStudentByClass = () => {
-        axios.get(urlApi + 'usersByClassroom/' + selectedClassId.toString(), config)
+    const getStudentByClass = (classroomId: string) => {
+        axios.get(urlApi + 'usersByClassroom/' + classroomId, config)
             .then((response) => {
                 if (response.status === 200) {
                     setSelectedStudents(response.data.data)
@@ -118,7 +118,7 @@ const AttendanceSheet: React.FC = () => {
         }
 
         const myData = {
-            classroomId: selectedClassId,
+            classroomId: selectedClassroomId,
             attendance: selectedStudents.map(student => {
                 return {
                     id: student.id,
@@ -154,14 +154,21 @@ const AttendanceSheet: React.FC = () => {
     };
 
     const handleClassSelection = (event: React.ChangeEvent<HTMLSelectElement>) => {
-        setSelectedClassId(event.target.value);
-        setSelectedHistory("");
-        getStudentByClass();
-    };
+        const selectedValue = event.target.value;
+        const selectedClassroom = classrooms.find((classroom) => classroom.id.toString() === selectedValue);
+        const selectedClassroomId = selectedClassroom ? selectedClassroom.id : null;
+        if (selectedClassroomId !== null) {
+            setSelectedClassroomId(parseInt(selectedClassroomId));
+            getStudentByClass(selectedClassroomId);
+        } else {
+            console.log("Aucune classe trouvé depuis selectedValue: ", selectedValue);
+        }
+        setSelectedHistory('');
+    }
 
     const handleHistorySelection = (event: React.ChangeEvent<HTMLSelectElement>) => {
         setSelectedHistory(event.target.value);
-        setSelectedClassId("");
+        setSelectedClassroomId(null);
     }
 
     const handleTogglePresence = (index: number) => {
@@ -188,7 +195,7 @@ const AttendanceSheet: React.FC = () => {
                     <div className="col">
                         <Form.Group>
                             <Form.Label>Classe</Form.Label>
-                            <Form.Select onChange={handleClassSelection} defaultValue={selectedClassId}>
+                            <Form.Select onChange={handleClassSelection} defaultValue="">
                                 <option value="" disabled>Choisissez une classe</option>
                                 {classrooms.map(classroom => (
                                     <option key={classroom.id} value={classroom.id}>
@@ -226,7 +233,7 @@ const AttendanceSheet: React.FC = () => {
                     </div>
                 </div>
             </Form>
-            {selectedClassId && (
+            {selectedClassroomId && (
                 <Table responsive bordered variant="light">
                     <thead>
                     <tr>
