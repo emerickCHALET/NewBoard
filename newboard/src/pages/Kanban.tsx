@@ -29,7 +29,6 @@ import {useLocation, useNavigate, useParams} from "react-router";
 import Student from "../Classes/Student";
 import io from 'socket.io-client';
 import * as AiIcons from "react-icons/ai";
-import board from "../Classes/Board";
 
 /**
  * Props of new Column
@@ -89,6 +88,11 @@ const Kanban = () => {
         return result;
     }
 
+    /**
+     * forceSelectOnlyOption is used to avoid a bug when our select only has 1 option and would take initial values instead of the only option available
+     * @param options
+     * @param values
+     */
     const forceSelectOnlyOption = (options: Student[], values: FormikValues): void => {
         console.log(options)
         if (options.length == 1) {
@@ -339,7 +343,7 @@ const Kanban = () => {
             <SideBar/>
             <div className={"workspacePresentation"}>
                 <div className={"workspace-container"}>
-                    <img className={'iconLoading'} src={"./loading.gif"}/>
+                    <img alt={"loading"} className={'iconLoading'} src={"./loading.gif"}/>
                 </div>
             </div>
             <Footer/>

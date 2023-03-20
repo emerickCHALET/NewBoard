@@ -7,12 +7,11 @@ import {urlApi} from "../App";
 import {toast} from "react-toastify";
 import * as Yup from "yup";
 import Modal from "react-bootstrap/Modal";
-import {ErrorMessage, Field, Form, Formik, FormikProps, FormikValues} from "formik";
+import {ErrorMessage, Field, Form, Formik, FormikValues} from "formik";
 import Button from "react-bootstrap/Button";
 import Board from "../Classes/Board";
 import Student from "../Classes/Student";
 import * as AiIcons from "react-icons/ai";
-import {selectOptions} from "@testing-library/user-event/dist/select-options";
 
 const config = {
     headers: {Authorization: `Bearer ${localStorage.getItem('token')}`}
@@ -31,6 +30,13 @@ function BoardPage(){
     if(location.state != null){
         roomId = location.state.roomId
     }
+
+    /**
+     * when we create a new board, first we create a chat room, so we can associate its id to the board,
+     * then, we create the board with the roomId we just created,
+     * and then we create a boardUser to associate the user to the board
+     * @param values
+     */
 
     async function postBoard(values: { name: string; }): Promise<boolean> {
         let payload = {name: values.name, workspaceID: workspaceId, roomId: 0};
@@ -103,7 +109,6 @@ function BoardPage(){
 
 
     async function postWorkspaceUser(values: FormikValues): Promise<boolean> {
-        console.log(value)
         let payload = {userID: values.userId, workspaceID: workspaceId};
         let result = false;
         await axios
@@ -139,12 +144,6 @@ function BoardPage(){
     const handleShow = () => setShow(true);
     const handleShowAddUser = () => setShowAddUser(true);
     const handleCloseAddUser = () => setShowAddUser(false)
-    const [value, setValue] = useState("default");
-    const [room, setRoom] = useState(0);
-
-    const handleChange = (e: { target: { value: React.SetStateAction<string>; }; }) => {
-        setValue(e.target.value);
-    };
 
     const handleSubmit = async (values: { name: string; }) => {
         await postBoard(values);
@@ -155,7 +154,6 @@ function BoardPage(){
 
     const handleSubmitAddUsers = async (values: FormikValues) => {
         const result = await postWorkspaceUser(values);
-        console.log(values)
         if (result) {
             window.location.reload()
         }
@@ -202,12 +200,10 @@ function BoardPage(){
 
     const className = localStorage.getItem("userClass")
     const getUsers = () => {
-        console.log(className)
         axios
             .get(urlApi + "userByClassIdAndWorkspaceId/"+ className + "/" + workspaceId, config)
             .then((response) => {
                 if (response.status === 200) {
-                    console.log(response.data.data)
                     setUsers(response.data.data);
                 }
             })
@@ -232,15 +228,19 @@ function BoardPage(){
             <SideBar/>
             <div className={"workspacePresentation"}>
                 <div className={"workspace-container"}>
-                    <img className={'iconLoading'} src={"./loading.gif"}/>
+                    <img alt={"loading"} className={'iconLoading'} src={"./loading.gif"}/>
                 </div>
             </div>
             <Footer/>
         </div>;
     }
 
+    /**
+     * forceSelectOnlyOption is used to avoid a bug when our select only has 1 option and would take initial values instead of the only option available
+     * @param options
+     * @param values
+     */
     const forceSelectOnlyOption = (options: Student[], values: FormikValues): void => {
-        console.log(options)
         if (options.length == 1) {
             values.userId = options[0].id;
             console.log(values)
@@ -299,7 +299,6 @@ function BoardPage(){
                         validateOnBlur={false}
                         validateOnChange={false}
                     >
-                        {({ isSubmitting, errors }) => (
                         <Form>
                             <fieldset className={"field-area"}>
                                 <label htmlFor="name">User:</label>
@@ -326,7 +325,6 @@ function BoardPage(){
                                 </Button>
                             </Modal.Footer>
                         </Form>
-                        )}
                     </Formik>
                 </Modal.Body>
             </Modal>

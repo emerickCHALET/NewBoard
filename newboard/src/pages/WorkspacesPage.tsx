@@ -4,7 +4,7 @@ import '../index.css';
 import Workspace from "../Classes/Workspace";
 import Button from 'react-bootstrap/Button';
 import Modal from "react-bootstrap/Modal";
-import {Formik, ErrorMessage, Form, Field, FormikValues} from 'formik';
+import {Formik, ErrorMessage, Form, Field} from 'formik';
 import * as Yup from "yup";
 import SideBar from "../components/SideBar";
 import axios from "axios";
@@ -20,6 +20,12 @@ const config = {
 const WorkspacesPage = () => {
     let userId = localStorage.getItem("userId")
 
+    /**
+     * when we create a new workspace, first we create a chat room, so we can associate its id to the workspace,
+     * then, we create the workspace with the roomId we just created,
+     * and then we create a workspaceUser to associate the user to the workspace
+     * @param values
+     */
     async function postWorkspace(values: { name: string; }): Promise<boolean> {
        
         let payload = {name: values.name, roomId: 0};
@@ -64,6 +70,7 @@ const WorkspacesPage = () => {
         return result;
     }
 
+    //code dupliqué à refacto
     async function postRoom(values: { name: string; }): Promise<number>{
         let payload = {name: values.name}
         let result = 0
@@ -93,16 +100,6 @@ const WorkspacesPage = () => {
 
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
-
-    const handleCloseAddUser = () => setShow(false);
-    const handleShowAddUser = () => setShow(true);
-
-    const [value, setValue] = useState("default");
-
-    const handleChange = (e: { target: { value: React.SetStateAction<string>; }; }) => {
-        setValue(e.target.value);
-    };
-
     const handleSubmit = async (values: { name: string; }) => {
         await postWorkspace(values);
         handleClose()
@@ -124,6 +121,9 @@ const WorkspacesPage = () => {
 
     const [workspaces, setWorkspaces] = useState<Workspace[]>([])
 
+    /**
+     * we get all workspaces that user has access to
+     */
     const getWorkspaces = () => {
         console.log(userId)
         axios
@@ -138,10 +138,10 @@ const WorkspacesPage = () => {
                 if (error.response) {
 
                 }
-                /*if(error.response.data.disconnect === true){
+                if(error.response.data.disconnect === true){
                     localStorage.clear()
                     navigate('/login');
-                }*/
+                }
             })
     }
 
@@ -150,13 +150,13 @@ const WorkspacesPage = () => {
     }, [])
 
     const navigate = useNavigate();
-//
+
     if (isLoading) {
         return <div className="wrap">
             <SideBar/>
             <div className={"workspacePresentation"}>
                 <div className={"workspace-container"}>
-                    <img className={'iconLoading'} src={"./loading.gif"}/>
+                    <img alt={"loading"} className={'iconLoading'} src={"./loading.gif"}/>
                 </div>
             </div>
             <Footer/>

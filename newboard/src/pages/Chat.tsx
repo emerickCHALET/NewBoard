@@ -3,7 +3,7 @@ import * as io from "socket.io-client";
 import {toast} from "react-toastify";
 import SideBar from "../components/SideBar";
 import Footer from "../components/Footer";
-import {useLocation, useNavigate, useParams} from "react-router";
+import { useNavigate, useParams} from "react-router";
 import "../Chat.css"
 import axios from "axios";
 import {urlApi} from "../App";
@@ -17,8 +17,6 @@ const ChatPage = () => {
         headers: {Authorization: `Bearer ${localStorage.getItem('token')}`}
     };
     const navigate = useNavigate();
-    const location = useLocation()
-
 
     let socket = io.connect("http://localhost:3001/");
     let userId = localStorage.getItem("userId")
@@ -51,7 +49,7 @@ const ChatPage = () => {
     }
 
     /**
-     * submitMessage sends an event on socketIo to tell every listeners that a new message has been sent so they can receive it
+     * submitMessage sends an event on socketIo to tell every listener that a new message has been sent, so they can receive it
      */
     const submitMessage = () => {
         if (userId !== null && currentMessage != "") {
