@@ -1,5 +1,8 @@
 import styled from "styled-components";
 
+/**
+ * Css of Card
+ */
 export const Container = styled.div`
   position: relative;
   display: flex;

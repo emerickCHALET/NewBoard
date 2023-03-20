@@ -1,5 +1,10 @@
 import { Card, Column } from "../types";
 
+/**
+ * Function who update the column by her Id
+ * @param columns
+ * @param updatedColumn
+ */
 export function updateColumnById(
   columns: Column[],
   updatedColumn: Omit<Column, "cards">
@@ -11,6 +16,12 @@ export function updateColumnById(
   );
 }
 
+/**
+ * Function who add a card to a column
+ * @param columns
+ * @param columnId
+ * @param newCard
+ */
 export function addCardToColumn(
   columns: Column[],
   columnId: string,
@@ -26,6 +37,12 @@ export function addCardToColumn(
   );
 }
 
+/**
+ * Function who update a card dy her id
+ * @param columns
+ * @param columnId
+ * @param newCard
+ */
 export function updateCardById(
   columns: Column[],
   columnId: string,
@@ -43,6 +60,12 @@ export function updateCardById(
   );
 }
 
+/**
+ * Function who reoerder the list of cards
+ * @param list
+ * @param startIndex
+ * @param endIndex
+ */
 export function reorderList<T>(
   list: T[],
   startIndex: number,
@@ -55,6 +78,14 @@ export function reorderList<T>(
   return result;
 }
 
+/**
+ * Function who switch cards of a column
+ * @param columns
+ * @param sourceColumnIndex
+ * @param sourceCardIndex
+ * @param destinationColumnIndex
+ * @param destinationCardIndex
+ */
 export const switchCards = (
   columns: Column[],
   sourceColumnIndex: number,

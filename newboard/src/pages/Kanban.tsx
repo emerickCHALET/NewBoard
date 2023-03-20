@@ -28,20 +28,26 @@ import {toast} from "react-toastify";
 import {useLocation, useNavigate, useParams} from "react-router";
 import Student from "../Classes/Student";
 import io from 'socket.io-client';
-import column from "../components/Column";
 import * as AiIcons from "react-icons/ai";
 
-
+/**
+ * Props of new Column
+ */
 interface AddNewColumnProps {
     columns: ColumnInterface[];
     setColumns: React.Dispatch<React.SetStateAction<ColumnInterface[]>>;
 }
 
+/**
+ * Header of API Request
+ */
 const config = {
     headers: {Authorization: `Bearer ${localStorage.getItem('token')}`}
 };
 
-
+/**
+ * Kanban Page Contructor
+ */
 const Kanban = () => {
 
     const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -54,6 +60,10 @@ const Kanban = () => {
         roomId = location.state.roomId
     }
 
+    /**
+     * Request who add assign a user to a board
+     * @param userId
+     */
     async function postBoardUser(userId: number): Promise<boolean> {
         let payload = {userID: userId, boardID: boardId};
         let result = false;
@@ -81,6 +91,10 @@ const Kanban = () => {
     const [users, setUsers] = useState<Student[]>([])
 
     const className = localStorage.getItem("userClass")
+
+    /**
+     * Request who get Users who can be assigned to a board
+     */
     const getUsers = () => {
         axios
             .get(urlApi + "boardByClassIdAndBoardId/"+ className + "/" + boardId, config)
@@ -118,7 +132,9 @@ const Kanban = () => {
         userId: 0
     };
 
-    // Kanban
+    /**
+     * Request who get the content of a board where the page is initialized
+     */
     const getBoard = () => {
         axios
             .get(urlApi + "boards/"+ boardId, config)
@@ -147,11 +163,19 @@ const Kanban = () => {
 
     let [columns, setColumns] = useState<ColumnInterface[]>([]);
 
+    /**
+     * Send via socket io a changement of the content of the board to the others users
+     */
     const SendKanbanToSocket = () => {
         let json = JSON.stringify(columns)
         socket.emit("kanban message", json, boardId, { exceptSelf: true });
     }
 
+    /**
+     * Function who add a column to the kanban
+     * @param columns
+     * @param setColumns
+     */
     const AddNewColumn: React.FC<AddNewColumnProps> = ({ columns, setColumns }) => {
         const [isAddingColumn, setIsAddingColumn] = useState(false);
 
@@ -172,24 +196,43 @@ const Kanban = () => {
         return <AddColumnButton onClick={() => setIsAddingColumn(true)} />;
     };
 
+    /**
+     * Function who update column properties
+     * @param id
+     * @param title
+     */
     const updateColumn = (id: string, title: string) => {
         setColumns(updateColumnById(columns, { id, title }));
         sendKanban = false;
         isSentToSocket(false);
     };
 
+    /**
+     * Function who update card properties
+     * @param newCard
+     * @param columnId
+     */
     const updateCard = (newCard: Card, columnId: string) => {
         setColumns(updateCardById(columns, columnId, newCard));
         sendKanban = false;
         isSentToSocket(false);
     };
 
+    /**
+     * Function who add card
+     * @param newCard
+     * @param columnId
+     */
     const addCard = (newCard: Card, columnId: string) => {
         setColumns(addCardToColumn(columns, columnId, newCard));
         sendKanban = false;
         isSentToSocket(false);
     };
 
+    /**
+     * Function who change the properties after a drag of a card
+     * @param result
+     */
     const onCardDrag = (result: DropResult) => {
         const sourceColumnIndex = columns.findIndex(
             (column) => column.id === result.source.droppableId
@@ -215,6 +258,10 @@ const Kanban = () => {
         isSentToSocket(false);
     };
 
+    /**
+     * Function who change the properties after a drag of a Column
+     * @param result
+     */
     const onColumnDrag = (result: DropResult) => {
         setColumns(
             reorderList<ColumnInterface>(
@@ -271,6 +318,9 @@ const Kanban = () => {
         getBoard()
     });
 
+    /**
+     * Loading animation
+     */
     if (isLoading) {
         return <div className="wrap">
             <SideBar/>

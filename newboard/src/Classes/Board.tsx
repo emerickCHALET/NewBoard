@@ -1,3 +1,6 @@
+/**
+ * Class of object Board
+ */
 class Board {
     id: number;
     name: String;

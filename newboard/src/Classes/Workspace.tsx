@@ -1,5 +1,6 @@
-import Classroom from "./Classroom";
-
+/**
+ * Class of object Workspace
+ */
 class Workspace {
     name: String;
     classroom: string;

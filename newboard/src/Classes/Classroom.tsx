@@ -1,5 +1,8 @@
 import Student from "./Student";
 
+/**
+ * Class of object Classroom
+ */
 class Classroom {
     name: string;
     studentsList: Array<Student>;
