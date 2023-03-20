@@ -14,7 +14,7 @@ import SideBar from "../components/SideBar";
  * Register a new User
  * @param values - all the values necessary for register the user
  */
-async function postRegister(values: { lastname: string; firstname: string; email: string; password: string }): Promise<boolean> {
+export async function postRegister(values: { lastname: string; firstname: string; email: string; password: string }): Promise<boolean> {
     let payload = {
         firstname: values.firstname,
         lastname: values.lastname,
@@ -77,6 +77,7 @@ const InscriptionPage = () => {
     return (
         <div className="wrap">
             <SideBar/>
+            <label id="nom">nom</label>
             <Formik
                 initialValues={initialValues}
                 validationSchema={validationSchema}
@@ -84,26 +85,32 @@ const InscriptionPage = () => {
                 <div className="container-wrap">
                     <Form className="form-wrap">
                         <fieldset className={"field-area"}>
-                            <label htmlFor="lastname">Nom:</label>
-                            <Field name="lastname" className="form-control" type="text"/>
+                            <label htmlFor="lastname">Nom</label>
+                            <Field id="lastname" name="lastname" className="form-control" type="text"/>
                             <ErrorMessage
                                 name="lastname"
                                 component="small"
                                 className="text-danger"
                             />
                         </fieldset>
+
+
                         <fieldset className={"field-area"}>
                             <label htmlFor="firstname">Prénom:</label>
-                            <Field name="firstname" className="form-control" type="text"/>
+                            <Field id="firstname" name="firstname" className="form-control" type="text"/>
                             <ErrorMessage
                                 name="firstname"
                                 component="small"
                                 className="text-danger"
                             />
                         </fieldset>
+
+
+
+
                         <fieldset className={"field-area"}>
                             <label htmlFor={"email"}>Email</label>
-                            <Field name="email" className="form-control" type="email"/>
+                            <Field name="email" id="email" className="form-control" type="email"/>
                             <ErrorMessage
                                 name="email"
                                 component="small"
@@ -112,7 +119,7 @@ const InscriptionPage = () => {
                         </fieldset>
                         <fieldset className={"field-area"}>
                             <label htmlFor={"password"}>Password</label>
-                            <Field name="password" className="form-control" type="password"/>
+                            <Field name="password" id="password" className="form-control" type="password"/>
                             <ErrorMessage
                                 name="password"
                                 component="small"
