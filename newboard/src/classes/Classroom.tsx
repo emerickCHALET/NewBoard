@@ -1,19 +1,18 @@
-import Student from "./Student";
 
 /**
  * Class of object Classroom
  */
 class Classroom {
-    name: string;
-    studentsList: Array<Student>;
+    id: string;
+    ClassroomName: string;
+    EstablishmentId: string;
+    created: Date;
 
-    constructor(name:  string, studentsList: Array<Student>) {
-        this.name = name;
-        this.studentsList = studentsList;
-    }
-
-    public toString(){
-        return this.name;
+    constructor(id: string, ClassroomName: string, EstablishmentId: string, created: Date) {
+        this.id = id;
+        this.ClassroomName = ClassroomName;
+        this.EstablishmentId = EstablishmentId;
+        this.created = created;
     }
 }
 

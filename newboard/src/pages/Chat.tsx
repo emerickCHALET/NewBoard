@@ -9,7 +9,7 @@ import axios from "axios";
 import {urlApi} from "../App";
 // @ts-ignore
 import ScrollToBottom from "react-scroll-to-bottom";
-import Message from "../classes/Message";
+import Messages from "../classes/Messages";
 
 const ChatPage = () => {
     const {roomId} = useParams<{ roomId: string}>()
@@ -54,7 +54,7 @@ const ChatPage = () => {
     const submitMessage = () => {
         if (userId !== null && currentMessage != "") {
             // @ts-ignore
-            socket.emit("send_message", new Message(userId, userFullName, currentMessage, roomId.toString()))
+            socket.emit("send_message", new Messages(userId, userFullName, currentMessage, roomId.toString()))
         }
     }
 
@@ -90,7 +90,7 @@ const ChatPage = () => {
                 </div>
                 <div className="chat-body">
                     <ScrollToBottom className="message-container">
-                        {messageList.map((message: Message) => {
+                        {messageList.map((message: Messages) => {
 
                             return (
 

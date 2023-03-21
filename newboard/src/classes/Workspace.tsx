@@ -2,16 +2,15 @@
  * Class of object Workspace
  */
 class Workspace {
-    name: String;
-    classroom: string;
     id: number;
-    roomId: String;
-
-    constructor(name: string, classroom: string, id: number, roomId: String) {
-        this.name = name;
-        this.classroom = classroom;
+    name: string;
+    roomId: string;
+    created: Date;
+    constructor(id: number, name: string, roomId: string, created: Date) {
         this.id = id;
+        this.name = name;
         this.roomId = roomId;
+        this.created = created;
     }
 }
 

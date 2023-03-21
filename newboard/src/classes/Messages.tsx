@@ -1,15 +1,15 @@
 /**
- * Class of object Message
+ * Class of object Messages
  */
-class Message {
-
-    sentBy: string
+class Messages {
+    id: number;
+    sentBy: number;
     fullNameSender: string
     message: string
     roomId: string
     created: string
-
-    constructor(sentBy: string, fullNameSender: string, message: string, roomId: string, created: string) {
+    constructor(id: number, sentBy: number, fullNameSender: string, message: string, roomId: string, created: string) {
+        this.id = id;
         this.sentBy = sentBy;
         this.fullNameSender = fullNameSender;
         this.message = message;
@@ -17,4 +17,4 @@ class Message {
         this.created = created;
     }
 }
-export default Message
+export default Messages

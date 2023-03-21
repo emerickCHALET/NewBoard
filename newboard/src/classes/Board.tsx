@@ -3,7 +3,7 @@
  */
 class Board {
     id: number;
-    name: String;
+    name: string;
     workspaceID: number;
     content: string;
 

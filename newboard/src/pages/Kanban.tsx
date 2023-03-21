@@ -26,7 +26,7 @@ import axios from "axios";
 import {urlApi, urlApiSocket} from "../App";
 import {toast} from "react-toastify";
 import {useLocation, useNavigate, useParams} from "react-router";
-import Student from "../classes/Student";
+import Users from "../classes/Users";
 import io from 'socket.io-client';
 import * as AiIcons from "react-icons/ai";
 
@@ -93,7 +93,7 @@ const Kanban = () => {
      * @param options
      * @param values
      */
-    const forceSelectOnlyOption = (options: Student[], values: FormikValues): void => {
+    const forceSelectOnlyOption = (options: Users[], values: FormikValues): void => {
         console.log(options)
         if (options.length == 1) {
             values.userId = options[0].id;
@@ -102,7 +102,7 @@ const Kanban = () => {
         handleSubmit(values)
     };
 
-    const [users, setUsers] = useState<Student[]>([])
+    const [users, setUsers] = useState<Users[]>([])
 
     const className = localStorage.getItem("userClass")
 

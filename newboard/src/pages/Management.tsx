@@ -339,7 +339,7 @@ const Management = () => {
         window.location.reload()
     };
 
-    //Affichage Table Student
+    //Affichage Table Users
     const [data, setData] = useState<any>([]);
 
     useEffect(() => {

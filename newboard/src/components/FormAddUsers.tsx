@@ -5,7 +5,7 @@ import React, {useEffect, useState} from "react";
 import axios from "axios";
 import {urlApi} from "../App";
 import {toast} from "react-toastify";
-import Student from "../classes/Student";
+import Users from "../classes/Users";
 import * as Yup from "yup";
 
 
@@ -47,7 +47,7 @@ const FormAddUsers = () => {
     });
 
 
-    const [users, setUsers] = useState<Student[]>([])
+    const [users, setUsers] = useState<Users[]>([])
 
     //We get all users now, must get users by classroom later
     const getUsers = () => {

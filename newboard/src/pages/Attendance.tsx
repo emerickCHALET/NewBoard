@@ -6,27 +6,14 @@ import axios from "axios";
 import {toast} from "react-toastify";
 import useProtectedPO from "../components/ProtectedPO";
 import {useNavigate} from "react-router";
+import Attendance from "../classes/Attendance";
+import Classroom from "../classes/Classroom";
 
 interface Student {
     id: number;
     firstname: string;
     lastname: string;
     present: boolean;
-}
-
-interface Classrooms {
-    id: string;
-    users: Student[];
-    ClassroomName: string;
-}
-
-interface Attendance {
-    id: string;
-    classroomsId: string;
-    call_date: string;
-    present: boolean;
-    students: Student[];
-
 }
 
 const config = {
@@ -41,7 +28,7 @@ const AttendanceSheet: React.FC = () => {
     const {loading} = useProtectedPO()
     const [selectedClassroomId, setSelectedClassroomId] = useState<number | null>(null);
     const [selectedHistory, setSelectedHistory] = useState<string>('');
-    const [classrooms, setClassrooms] = useState<Classrooms[]>([]);
+    const [classrooms, setClassrooms] = useState<Classroom[]>([]);
     const [history, setHistory] = useState<Attendance[]>([]);
     const [selectedStudents, setSelectedStudents] = useState<Student[]>([]);
     const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -116,7 +103,7 @@ const AttendanceSheet: React.FC = () => {
             })
             .catch(function (error) {
                 if (error.response) {
-                    toast.error("Erreur Student", {
+                    toast.error("Erreur Users", {
                         position: toast.POSITION.TOP_RIGHT
                     });
                     if (error.response.data.disconnect === true) {

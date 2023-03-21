@@ -10,7 +10,7 @@ import Modal from "react-bootstrap/Modal";
 import {ErrorMessage, Field, Form, Formik, FormikValues} from "formik";
 import Button from "react-bootstrap/Button";
 import Boards from "../classes/Board";
-import Student from "../classes/Student";
+import Users from "../classes/Users";
 import * as AiIcons from "react-icons/ai";
 
 const config = {
@@ -196,7 +196,7 @@ function Board(){
             })
     }
 
-    const [users, setUsers] = useState<Student[]>([])
+    const [users, setUsers] = useState<Users[]>([])
 
     const className = localStorage.getItem("userClass")
     const getUsers = () => {
@@ -240,7 +240,7 @@ function Board(){
      * @param options
      * @param values
      */
-    const forceSelectOnlyOption = (options: Student[], values: FormikValues): void => {
+    const forceSelectOnlyOption = (options: Users[], values: FormikValues): void => {
         if (options.length == 1) {
             values.userId = options[0].id;
             console.log(values)
