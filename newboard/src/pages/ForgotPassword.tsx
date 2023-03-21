@@ -31,7 +31,7 @@ async function postForgot(values: { email: string }): Promise<boolean> {
     return result;
 }
 
-const Forgot = () => {
+const ForgotPassword = () => {
     const [isLoading, setIsLoading] = useState<boolean>(false);
 
     const validationSchema = Yup.object().shape({
@@ -86,4 +86,4 @@ const Forgot = () => {
     )
 }
 
-export default Forgot
+export default ForgotPassword

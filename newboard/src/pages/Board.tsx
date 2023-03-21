@@ -9,15 +9,15 @@ import * as Yup from "yup";
 import Modal from "react-bootstrap/Modal";
 import {ErrorMessage, Field, Form, Formik, FormikValues} from "formik";
 import Button from "react-bootstrap/Button";
-import Board from "../Classes/Board";
-import Student from "../Classes/Student";
+import Boards from "../classes/Board";
+import Student from "../classes/Student";
 import * as AiIcons from "react-icons/ai";
 
 const config = {
     headers: {Authorization: `Bearer ${localStorage.getItem('token')}`}
 };
 
-function BoardPage(){
+function Board(){
     let userId = localStorage.getItem("userId")
     const [isLoading, setIsLoading] = useState<boolean>(true);
 
@@ -172,7 +172,7 @@ function BoardPage(){
 
     });
 
-    const [boards, setBoards] = useState<Board[]>([])
+    const [boards, setBoards] = useState<Boards[]>([])
 
     const getBoard = () => {
         axios
@@ -367,4 +367,4 @@ function BoardPage(){
 
 }
 
-export default BoardPage;
+export default Board;

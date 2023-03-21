@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import Footer from "../components/Footer";
 import '../index.css';
-import Workspace from "../Classes/Workspace";
+import Workspace from "../classes/Workspace";
 import Button from 'react-bootstrap/Button';
 import Modal from "react-bootstrap/Modal";
 import {Formik, ErrorMessage, Form, Field} from 'formik';
@@ -17,7 +17,7 @@ const config = {
     headers: {Authorization: `Bearer ${localStorage.getItem('token')}`}
 };
 
-const WorkspacesPage = () => {
+const Workspaces = () => {
     let userId = localStorage.getItem("userId")
 
     /**
@@ -223,5 +223,5 @@ const WorkspacesPage = () => {
 
 
 }
-export default WorkspacesPage;
+export default Workspaces;
 

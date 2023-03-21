@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Draggable } from "react-beautiful-dnd";
 import { v4 as uuidv4 } from "uuid";
-import { useClickOutside } from "../../hooks";
+import { useClickOutside } from "../hooks";
 import { Container, Title, Input, EditTitleButton } from "./styles";
 
 /**
@@ -23,7 +23,7 @@ interface NewCardProps {
 }
 
 /**
- * Container of a new Card
+ * Container of a new card
  * @param onSuccess
  * @param onDismiss
  */

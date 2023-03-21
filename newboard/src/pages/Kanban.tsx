@@ -14,11 +14,11 @@ import {
     updateColumnById,
     addCardToColumn,
     updateCardById
-} from "../utils/listUtils";
-import Column, { NewColumn } from "../components/Column";
-import AddColumnButton from "../components/AddColumnButton";
+} from "../components/utils/listUtils";
+import Column, { NewColumn } from "../components/column";
+import AddColumnButton from "../components/addColumnButton";
 
-import { Card, Column as ColumnInterface } from "../types";
+import { Card, Column as ColumnInterface } from "../components/types";
 import Modal from "react-bootstrap/Modal";
 import {ErrorMessage, Field, Form, Formik, FormikValues} from "formik";
 import Button from "react-bootstrap/Button";
@@ -26,12 +26,12 @@ import axios from "axios";
 import {urlApi, urlApiSocket} from "../App";
 import {toast} from "react-toastify";
 import {useLocation, useNavigate, useParams} from "react-router";
-import Student from "../Classes/Student";
+import Student from "../classes/Student";
 import io from 'socket.io-client';
 import * as AiIcons from "react-icons/ai";
 
 /**
- * Props of new Column
+ * Props of new column
  */
 interface AddNewColumnProps {
     columns: ColumnInterface[];
@@ -276,7 +276,7 @@ const Kanban = () => {
     };
 
     /**
-     * Function who change the properties after a drag of a Column
+     * Function who change the properties after a drag of a column
      * @param result
      */
     const onColumnDrag = (result: DropResult) => {

@@ -5,11 +5,11 @@ import {BrowserRouter, Route, Routes} from "react-router-dom";
 import InscriptionPage from "./pages/Inscription";
 import ErrorPage from "./pages/Error";
 import Login from "./pages/Login";
-import WorkspacesPage from "./pages/WorkspacesPage";
+import Workspaces from "./pages/Workspaces";
 import SideBar from "./components/SideBar";
-import Forgot from "./pages/Forgot";
+import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
-import BoardPage from "./pages/BoardPage";
+import Board from "./pages/Board";
 import Management from "./pages/Management";
 import Chat from "./pages/Chat";
 import Kanban from "./pages/Kanban";
@@ -68,13 +68,13 @@ export default function App() {
             <Routes>
                 <Route path="/" element={<MainPage/>}/>
                 <Route path="login" element={<Login/>}/>
-                <Route path="forgot" element={<Forgot/>}/>
+                <Route path="forgot" element={<ForgotPassword/>}/>
                 <Route path="reset" element={<ResetPassword/>}/>
                 <Route path="*" element={<ErrorPage/>}/>
                 <Route path="inscription" element={<InscriptionPage/>}/>
-                <Route path="workspaces" element={<WorkspacesPage/>}/>
-                <Route path="board" element={<BoardPage/>}/>
-                <Route path="board/:workspaceId" element={<BoardPage/>}/>
+                <Route path="workspaces" element={<Workspaces/>}/>
+                <Route path="board" element={<Board/>}/>
+                <Route path="board/:workspaceId" element={<Board/>}/>
                 <Route path="kanban" element={<Kanban/>}/>
                 <Route path="kanban/:boardId" element={<Kanban/>}/>
                 <Route path="management" element={<Management/>}/>

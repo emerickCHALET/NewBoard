@@ -1,7 +1,7 @@
 import styled from "styled-components";
 
 /**
- * Css of Card
+ * Css of card
  */
 export const Container = styled.div`
   position: relative;

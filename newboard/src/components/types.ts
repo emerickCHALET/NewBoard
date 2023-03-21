@@ -1,5 +1,5 @@
 /**
- * Properties of Card object
+ * Properties of card object
  */
 export interface Card {
   id: string;
@@ -7,7 +7,7 @@ export interface Card {
 }
 
 /**
- * Properties of Column object
+ * Properties of column object
  */
 export interface Column {
   id: string;

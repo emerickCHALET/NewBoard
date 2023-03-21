@@ -1,7 +1,7 @@
 import styled from "styled-components";
 
 /**
- * Css of Column
+ * Css of column
  */
 
 interface InputProps {

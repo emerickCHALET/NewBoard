@@ -1,8 +1,8 @@
 import React from 'react';
 import { render, screen, fireEvent, act ,waitFor  } from '@testing-library/react';
 import '@testing-library/jest-dom/extend-expect';
-import ChatPage from './Chat';
-import Message from '../Classes/Message';
+import ChatPage from '../pages/Chat';
+import Message from '../classes/Message';
 import { BrowserRouter } from 'react-router-dom';
 import axios from 'axios';
 import { io, Socket } from 'socket.io-client';

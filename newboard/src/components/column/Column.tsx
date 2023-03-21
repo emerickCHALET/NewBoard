@@ -2,10 +2,10 @@ import React, { useState, useEffect, useRef, useCallback } from "react";
 import { v4 as uuidv4 } from "uuid";
 import { Draggable, Droppable } from "react-beautiful-dnd";
 
-import Card, { NewCard } from "../Card";
-import { useClickOutside } from "../../hooks";
+import Card, { NewCard } from "../card";
+import { useClickOutside } from "../hooks";
 
-import { Card as CardInterface } from "../../types";
+import { Card as CardInterface } from "../types";
 
 import {
   Container,
@@ -31,7 +31,7 @@ interface ColumnProps {
 }
 
 /**
- * Props of New Column
+ * Props of New column
  */
 interface NewColumnProps {
   onSuccess: (id: string, title: string) => void;
@@ -39,7 +39,7 @@ interface NewColumnProps {
 }
 
 /**
- * Container of a new Column
+ * Container of a new column
  * @param onSuccess
  * @param onDismiss
  * @constructor
@@ -87,7 +87,7 @@ export const NewColumn: React.FC<NewColumnProps> = ({
 let cardListRef: HTMLDivElement | null = null;
 
 /**
- * Container of a Column
+ * Container of a column
  * @param id
  * @param title
  * @param cards

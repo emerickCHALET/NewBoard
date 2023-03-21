@@ -9,7 +9,7 @@ import axios from "axios";
 import {urlApi} from "../App";
 // @ts-ignore
 import ScrollToBottom from "react-scroll-to-bottom";
-import Message from "../Classes/Message";
+import Message from "../classes/Message";
 
 const ChatPage = () => {
     const {roomId} = useParams<{ roomId: string}>()

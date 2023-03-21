@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, fireEvent, waitFor, screen } from '@testing-library/react';
-import InscriptionPage, { postRegister } from "./Inscription";
+import InscriptionPage, { postRegister } from "../pages/Inscription";
 import { BrowserRouter } from 'react-router-dom';
 import axios from 'axios';
 import '@testing-library/jest-dom';

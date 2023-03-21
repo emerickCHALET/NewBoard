@@ -5,7 +5,7 @@ import React, {useEffect, useState} from "react";
 import axios from "axios";
 import {urlApi} from "../App";
 import {toast} from "react-toastify";
-import Student from "../Classes/Student";
+import Student from "../classes/Student";
 import * as Yup from "yup";
 
 
