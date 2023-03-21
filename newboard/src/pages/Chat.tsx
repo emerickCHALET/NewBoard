@@ -54,7 +54,7 @@ const ChatPage = () => {
     const submitMessage = () => {
         if (userId !== null && currentMessage != "") {
             // @ts-ignore
-            socket.emit("send_message", new Messages(userId, userFullName, currentMessage, roomId.toString()))
+            socket.emit("send_message", new Messages(null, userId, userFullName, currentMessage, roomId.toString()))
         }
     }
 
@@ -96,7 +96,7 @@ const ChatPage = () => {
 
                                 <div
                                     className="message"
-                                    id={userId == message.sentBy ? "you" : "other"}
+                                    id={userId == message.sentBy.toString() ? "you" : "other"}
                                     data-testid="message"
                                 >
                                     <div>
