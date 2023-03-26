@@ -98,7 +98,6 @@ const AttendanceSheet: React.FC = () => {
             .then((response) => {
                 if (response.status === 200) {
                     setSelectedStudents(response.data.data)
-                    console.log(response.data)
                 }
             })
             .catch(function (error) {
@@ -179,7 +178,6 @@ const AttendanceSheet: React.FC = () => {
             setSelectedClassroomId(parseInt(selectedClassroomId));
             getStudentByClass(selectedClassroomId);
         } else {
-            console.log("Aucune classe trouvé depuis selectedValue: ", selectedValue);
         }
         setSelectedHistory('');
     }

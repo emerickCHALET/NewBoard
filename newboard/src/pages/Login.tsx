@@ -38,7 +38,7 @@ const Login = () => {
                     localStorage.setItem('permissions_role', response.data.data.role);
                     localStorage.setItem('token', response.data.token);
                     localStorage.setItem('userId', response.data.data.id);
-                    localStorage.setItem('userClass', response.data.data.class)
+                    localStorage.setItem('userClass', response.data.data.classId)
                     localStorage.setItem('email', response.data.data.email)
                     localStorage.setItem('userFullName', response.data.data.firstname + " " + response.data.data.lastname)
                     if (response.data.data.role === "ROLE_ADMIN") {

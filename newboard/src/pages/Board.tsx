@@ -55,6 +55,7 @@ function Board(){
                                     position: toast.POSITION.TOP_RIGHT,
                                 });
                                 result = true
+                                window.location.reload()
                             }
                         })
                         .catch(function (error) {
@@ -147,9 +148,6 @@ function Board(){
 
     const handleSubmit = async (values: { name: string; }) => {
         await postBoard(values);
-        handleClose()
-        window.location.reload()
-
     };
 
     const handleSubmitAddUsers = async (values: FormikValues) => {
@@ -243,7 +241,6 @@ function Board(){
     const forceSelectOnlyOption = (options: Users[], values: FormikValues): void => {
         if (options.length == 1) {
             values.userId = options[0].id;
-            console.log(values)
         }
         handleSubmitAddUsers(values)
     };

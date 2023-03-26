@@ -27,7 +27,6 @@ const Workspaces = () => {
      * @param values
      */
     async function postWorkspace(values: { name: string; }): Promise<boolean> {
-
         let payload = {name: values.name, roomId: 0};
         let result = false;
         payload.roomId = await postRoom(payload)
@@ -41,6 +40,7 @@ const Workspaces = () => {
                         .then((response) => {
                             if (response.status === 200) {
                                 result = true
+                                window.location.reload()
                             }
                         })
                         .catch(function (error) {
@@ -102,8 +102,7 @@ const Workspaces = () => {
     const handleShow = () => setShow(true);
     const handleSubmit = async (values: { name: string; }) => {
         await postWorkspace(values);
-        handleClose()
-        window.location.reload()
+        //handleClose()
     };
 
     const initialValues = {
@@ -125,7 +124,6 @@ const Workspaces = () => {
      * we get all workspaces that user has access to
      */
     const getWorkspaces = () => {
-        console.log(userId)
         axios
             .get(urlApi + 'workspacesByUserId/' + userId, config)
             .then((response) => {

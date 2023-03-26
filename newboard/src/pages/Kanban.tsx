@@ -94,10 +94,8 @@ const Kanban = () => {
      * @param values
      */
     const forceSelectOnlyOption = (options: Users[], values: FormikValues): void => {
-        console.log(options)
         if (options.length == 1) {
             values.userId = options[0].id;
-            console.log(values)
         }
         handleSubmit(values)
     };
@@ -110,12 +108,10 @@ const Kanban = () => {
      * Request who get Users who can be assigned to a board
      */
     const getUsers = () => {
-        console.log(className + " " + boardId)
         axios
             .get(urlApi + "boardByClassIdAndBoardId/"+ className + "/" + boardId, config)
             .then((response) => {
                 if (response.status === 200) {
-                    console.log(response.data.data)
                     setUsers(response.data.data);
                 }
             })
@@ -136,8 +132,6 @@ const Kanban = () => {
     const handleClose = () => {setShow(false);}
     const handleShow = () => setShow(true);
     const handleSubmit = async (values: FormikValues) => {
-        console.log(values)
-        console.log(values.userId)
         const result = await postBoardUser(values.userId);
         if (result) {
             handleClose()

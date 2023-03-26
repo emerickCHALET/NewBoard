@@ -6,7 +6,7 @@ import Footer from "../components/Footer";
 import { useNavigate, useParams} from "react-router";
 import "../Chat.css"
 import axios from "axios";
-import {urlApi} from "../App";
+import {urlApi, urlApiSocket} from "../App";
 // @ts-ignore
 import ScrollToBottom from "react-scroll-to-bottom";
 import Messages from "../classes/Messages";
@@ -18,7 +18,7 @@ const ChatPage = () => {
     };
     const navigate = useNavigate();
 
-    let socket = io.connect("http://localhost:3001/");
+    let socket = io.connect(urlApiSocket);
     let userId = localStorage.getItem("userId")
     let userFullName = localStorage.getItem("userFullName")
 
