@@ -9,6 +9,8 @@ import {toast} from "react-toastify";
 import SideBar from "../components/SideBar";
 import {Link} from "react-router-dom";
 import useProtectedLogin from "../components/ProtectedLogin";
+import ApiService from "../services/ApiService";
+import LoginUser from "../classes/LoginUser";
 
 const Login = () => {
     const navigate = useNavigate();
@@ -21,41 +23,6 @@ const Login = () => {
             navigate('/workspaces');
         }
     }, []);
-
-    /**
-     * function who check the identifiers of a user and connect him if that's good
-     * @param values necessary for Login a user
-     */
-    async function postLogin(values: { email: string; password: string; }) {
-        let payload = {email: values.email, password: values.password};
-        await axios
-            .post(urlApi + 'login', payload)
-            .then((response) => {
-                if (response.status === 200 && response.data) {
-                    toast.success("Bienvenue!", {
-                        position: toast.POSITION.TOP_RIGHT,
-                    });
-                    localStorage.setItem('permissions_role', response.data.data.role);
-                    localStorage.setItem('token', response.data.token);
-                    localStorage.setItem('userId', response.data.data.id);
-                    localStorage.setItem('userClass', response.data.data.classId)
-                    localStorage.setItem('email', response.data.data.email)
-                    localStorage.setItem('userFullName', response.data.data.firstname + " " + response.data.data.lastname)
-                    if (response.data.data.role === "ROLE_ADMIN") {
-                        localStorage.setItem('establishmentId', response.data.data.establishmentId);
-                    }
-                    localStorage.setItem("isLoggedIn", "true");
-                    navigate('/workspaces');
-                }
-            })
-            .catch(function (error) {
-                if (error.response) {
-                    toast.error(error.response.data.message, {
-                        position: toast.POSITION.TOP_RIGHT
-                    });
-                }
-            })
-    }
 
     const validationSchema = Yup.object().shape({
         email: Yup.string()
@@ -71,7 +38,25 @@ const Login = () => {
     };
 
     const handleSubmit = async (values: { email: string; password: string; }) => {
-        await postLogin(values)
+        const apiService = new ApiService();
+        const response = await apiService.post('login', {
+                email: values.email,
+                password: values.password},
+            undefined)
+        const responseContent = JSON.parse(JSON.stringify(response.data)) as LoginUser
+        if(responseContent != null){
+            localStorage.setItem('permissions_role', responseContent.data.role);
+            localStorage.setItem('token', responseContent.token);
+            localStorage.setItem('userId', responseContent.data.id.toString());
+            localStorage.setItem('userClass', responseContent.data.classId.toString())
+            localStorage.setItem('email', responseContent.data.email)
+            localStorage.setItem('userFullName', responseContent.data.firstname + " " + responseContent.data.lastname)
+            if (responseContent.data.role === "ROLE_ADMIN") {
+                localStorage.setItem('establishmentId', responseContent.data.establishmentId.toString());
+            }
+            localStorage.setItem("isLoggedIn", "true");
+            navigate('/workspaces');
+        }
     };
     if (loading) {
         return <div>Loading...</div>

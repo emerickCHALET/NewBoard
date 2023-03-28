@@ -9,40 +9,11 @@ import {toast} from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import {useNavigate} from "react-router";
 import SideBar from "../components/SideBar";
-
-/**
- * Register a new User
- * @param values - all the values necessary for register the user
- */
-export async function postRegister(values: { lastname: string; firstname: string; email: string; password: string }): Promise<boolean> {
-    let payload = {
-        firstname: values.firstname,
-        lastname: values.lastname,
-        email: values.email,
-        password: values.password
-    };
-    let result = false;
-    await axios
-        .post(urlApi + 'users', payload)
-        .then((response) => {
-            if (response.status === 200) {
-                toast.success("Inscription réussite !", {
-                    position: toast.POSITION.TOP_RIGHT,
-                });
-                result = true
-            }
-        })
-        .catch(function (error) {
-            if (error.response) {
-                toast.error(error.response.data.message, {
-                    position: toast.POSITION.TOP_RIGHT
-                });
-            }
-        })
-    return result;
-}
+import Api from "../services/ApiService";
+import ApiService from "../services/ApiService";
 
 const InscriptionPage = () => {
+
     const validationSchema = Yup.object().shape({
         lastname: Yup.string()
             .min(2, "Trop petit")
@@ -68,8 +39,14 @@ const InscriptionPage = () => {
     };
     const navigate = useNavigate();
     const handleSubmit = async (values: { lastname: string; firstname: string; email: string; password: string }) => {
-        const result = await postRegister(values);
-        if (result) {
+        const apiService = new ApiService<void>();
+        const response = await apiService.post('users', {
+            firstname: values.firstname,
+            lastname: values.lastname,
+            email: values.email,
+            password: values.password },
+            undefined)
+        if(response != null){
             navigate('/login');
         }
     };
@@ -77,7 +54,6 @@ const InscriptionPage = () => {
     return (
         <div className="wrap">
             <SideBar/>
-            <label id="nom">nom</label>
             <Formik
                 initialValues={initialValues}
                 validationSchema={validationSchema}
@@ -104,10 +80,6 @@ const InscriptionPage = () => {
                                 className="text-danger"
                             />
                         </fieldset>
-
-
-
-
                         <fieldset className={"field-area"}>
                             <label htmlFor={"email"}>Email</label>
                             <Field name="email" id="email" className="form-control" type="email"/>

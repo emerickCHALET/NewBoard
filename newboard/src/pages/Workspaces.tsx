@@ -11,13 +11,15 @@ import axios from "axios";
 import {urlApi} from "../App";
 import {toast} from "react-toastify";
 import {useNavigate} from "react-router";
+import ApiService from "../services/ApiService";
 
 
+const token = localStorage.getItem('token');
 const config = {
     headers: {Authorization: `Bearer ${localStorage.getItem('token')}`}
 };
-
 const Workspaces = () => {
+    const apiService = new ApiService();
     let userId = localStorage.getItem("userId")
 
     /**
@@ -102,7 +104,6 @@ const Workspaces = () => {
     const handleShow = () => setShow(true);
     const handleSubmit = async (values: { name: string; }) => {
         await postWorkspace(values);
-        //handleClose()
     };
 
     const initialValues = {
@@ -123,24 +124,14 @@ const Workspaces = () => {
     /**
      * we get all workspaces that user has access to
      */
-    const getWorkspaces = () => {
-        axios
-            .get(urlApi + 'workspacesByUserId/' + userId, config)
-            .then((response) => {
-                if (response.status === 200) {
-                    setWorkspaces(response.data.data)
-                    setIsLoading(false);
-                }
-            })
-            .catch(function (error) {
-                if (error.response) {
-
-                }
-            })
-    }
-
     useEffect(() => {
-        getWorkspaces()
+        async function getWorkspaces(){
+            const response = await apiService.get('workspacesByUserId/' + userId,token!)
+            const responseContent = JSON.parse(JSON.stringify(response.data.data)) as Workspace[]
+            setWorkspaces(responseContent)
+            setIsLoading(false)
+        }
+        getWorkspaces();
     }, [])
 
     const navigate = useNavigate();

@@ -3,23 +3,23 @@
  */
 class Users {
     id: number;
-    firstName: string;
-    lastName: string;
+    firstname: string;
+    lastname: string;
     email: string;
     password: string;
-    roles: string;
+    role: string;
     classId: number;
     establishmentId: number;
     WorkspaceUserId: number;
     created: Date;
 
-    constructor(id: number, firstName: string, lastName: string, email: string, password: string, roles: string, classId: number, establishmentId: number, WorkspaceUserId: number, created: Date) {
+    constructor(id: number, firstname: string, lastname: string, email: string, password: string, role: string, classId: number, establishmentId: number, WorkspaceUserId: number, created: Date) {
         this.id = id;
-        this.firstName = firstName;
-        this.lastName = lastName;
+        this.firstname = firstname;
+        this.lastname = lastname;
         this.email = email;
         this.password = password;
-        this.roles = roles;
+        this.role = role;
         this.classId = classId;
         this.establishmentId = establishmentId;
         this.WorkspaceUserId = WorkspaceUserId;
