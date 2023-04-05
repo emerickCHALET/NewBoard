@@ -1,19 +1,10 @@
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import {urlApi} from "../App";
-import {useNavigate} from "react-router";
+import {NavigateFunction} from "react-router";
 
-export function useNavigateHook() {
-    const navigate = useNavigate();
 
-    function navigateTo(path: string) {
-        navigate(path);
-    }
-
-    return { navigate: navigateTo };
-}
 class ApiService {
-    private navigate = useNavigateHook().navigate;
     public async get(endpoint: string, token?: string) {
         const headers = token ? { Authorization: `Bearer ${token}` } : undefined;
         try {
@@ -28,7 +19,7 @@ class ApiService {
         }
     }
 
-    public async post(endpoint: string, body?: any, token?: string){
+    public async post(endpoint: string, body?: any, token?: string, navigate?: NavigateFunction){
         const headers = token ? { Authorization: `Bearer ${token}` } : undefined;
         try {
             const response = await axios.post(urlApi + endpoint, body, { headers: headers });
@@ -41,7 +32,9 @@ class ApiService {
             }
             if(error.response.data.disconnect === true){
                 localStorage.clear()
-                this.navigate('/login')
+                if (navigate) {
+                    navigate('/login')
+                }
             }
         }
     }

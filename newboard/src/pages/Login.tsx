@@ -42,7 +42,7 @@ const Login = () => {
         const response = await apiService.post('login', {
                 email: values.email,
                 password: values.password},
-            undefined)
+            undefined,navigate)
         if(response){
             localStorage.setItem('permissions_role', response.data.data.role);
             localStorage.setItem('token', response.data.token);
