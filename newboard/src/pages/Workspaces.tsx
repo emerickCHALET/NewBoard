@@ -28,51 +28,23 @@ const Workspaces = () => {
      * and then we create a workspaceUser to associate the user to the workspace
      * @param values
      */
-    async function postWorkspace(values: { name: string; }): Promise<boolean> {
+    async function postWorkspace(values: { name: string; }): Promise<number> {
         let payload = {name: values.name, roomId: 0};
-        let result = false;
+        let result = 0
         payload.roomId = await postRoom(payload)
-        await axios
-            .post(urlApi + 'workspaces', payload, config)
-            .then((response) => {
-                if (response.status === 200) {
-                    let payload2 = {userID: userId, workspaceID: response.data.data.id};
-                    axios
-                        .post(urlApi + 'workspacesUser', payload2, config)
-                        .then((response) => {
-                            if (response.status === 200) {
-                                result = true
-                                window.location.reload()
-                            }
-                        })
-                        .catch(function (error) {
-                            if (error.response) {
-                                toast.error(error.response.data.message, {
-                                    position: toast.POSITION.TOP_RIGHT
-                                });
-                                if(error.response.data.disconnect === true){
-                                    localStorage.clear()
-                                    navigate('/login');
-                                }
-                            }
-                        })
-                }
-            })
-            .catch(function (error) {
-                if (error.response) {
-                    toast.error(error.response.data.message, {
-                        position: toast.POSITION.TOP_RIGHT
-                    });
-                    if(error.response.data.disconnect === true){
-                        localStorage.clear()
-                        navigate('/login');
-                    }
-                }
-            })
-        return result;
+        const response = await apiService.post('workspaces', payload, token!)
+        if (response && response.status === 200) {
+            result = response.data.data.id
+            let payload2 = {userID: userId, workspaceID: response.data.data.id};
+            const response2 = await apiService.post('workspacesUser', payload2, token!)
+            if (response2 && response2.status === 200) {
+                result = response.data.data.id
+                window.location.reload()
+            }
+        }
+    return result
     }
 
-    //code dupliqué à refacto
     async function postRoom(values: { name: string; }): Promise<number>{
         let payload = {name: values.name}
         let result = 0

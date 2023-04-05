@@ -40,53 +40,23 @@ function Board(){
      * and then we create a boardUser to associate the user to the board
      * @param values
      */
-
-    async function postBoard(values: { name: string; }): Promise<boolean> {
+    async function postBoard(values: { name: string; }): Promise<number> {
         let payload = {name: values.name, workspaceID: workspaceId, roomId: 0};
+        let result = 0
         payload.roomId = await postRoom(payload)
-        let result = false;
-        await axios
-            .post(urlApi + 'boards',payload, config)
-            .then((response) => {
-                if(response.status === 200){
-                    let payload2 = { userID: localStorage.getItem('userId'), boardID: response.data.data.id};
-                    axios
-                        .post(urlApi + 'boardUsers', payload2, config)
-                        .then((response) => {
-                            if(response.status === 200) {
-                                toast.success("Board crée avec succès !", {
-                                    position: toast.POSITION.TOP_RIGHT,
-                                });
-                                result = true
-                                window.location.reload()
-                            }
-                        })
-                        .catch(function (error) {
-                            if(error.response) {
-                                toast.error(error.response.data.message,{
-                                    position: toast.POSITION.TOP_RIGHT
-                                });
-                                if(error.response.data.disconnect === true){
-                                    localStorage.clear()
-                                    navigate('/login');
-                                }
-                            }
-                        })
-                }
-            })
-            .catch(function (error) {
-                if(error.response) {
-                    toast.error(error.response.data.message,{
-                        position: toast.POSITION.TOP_RIGHT
-                    });
-                    if(error.response.data.disconnect === true){
-                        localStorage.clear()
-                        navigate('/login');
-                    }
-                }
-            })
-        return result;
+        const response = await apiService.post('boards', payload, token!)
+        if (response && response.status === 200) {
+            result = response.data.data.id
+            let payload2 = { userID: localStorage.getItem('userId'), boardID: response.data.data.id};
+            const response2 = await apiService.post('boardUsers', payload2, token!)
+            if (response2 && response2.status === 200) {
+                result = response.data.data.id
+                window.location.reload()
+            }
+        }
+        return result
     }
+
     async function postRoom(values: { name: string; }): Promise<number>{
         let payload = {name: values.name}
         let result = 0
