@@ -1,21 +1,19 @@
 import React, {useEffect, useState} from 'react';
 import * as io from "socket.io-client";
-import {toast} from "react-toastify";
 import SideBar from "../components/SideBar";
 import Footer from "../components/Footer";
 import { useNavigate, useParams} from "react-router";
 import "../Chat.css"
-import axios from "axios";
-import {urlApi, urlApiSocket} from "../App";
+import {urlApiSocket} from "../App";
 // @ts-ignore
 import ScrollToBottom from "react-scroll-to-bottom";
 import Messages from "../classes/Messages";
+import ApiService from "../services/ApiService";
 
 const ChatPage = () => {
     const {roomId} = useParams<{ roomId: string}>()
-    const config = {
-        headers: {Authorization: `Bearer ${localStorage.getItem('token')}`}
-    };
+    const token = localStorage.getItem('token');
+    const apiService = new ApiService();
     const navigate = useNavigate();
 
     let socket = io.connect(urlApiSocket);
@@ -26,26 +24,10 @@ const ChatPage = () => {
     const [messageList, setMessageList] = useState([]);
 
     async function getMessages() {
-        await axios
-            .get(urlApi + "messagesByRoomId/" + roomId, config)
-            .then((response) => {
-                if (response.status === 200) {
-                    setMessageList(response.data.data)
-                }
-            })
-            .catch(function (error) {
-                if (error.response) {
-                    toast.error(error.response.data.message.name + ". \nReconnexion requise", {
-                        position: toast.POSITION.TOP_RIGHT
-                    });
-                    if(error.response.data.disconnect === true){
-                        localStorage.clear()
-                        navigate('/login');
-                    }
-                }
-
-
-            })
+        const response = await apiService.get("messagesByRoomId/" + roomId, token!, navigate)
+        if (response){
+            setMessageList(response.data.data)
+        }
     }
 
     /**
