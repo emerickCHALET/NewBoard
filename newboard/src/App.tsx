@@ -12,6 +12,7 @@ import ResetPassword from "./pages/ResetPassword";
 import Board from "./pages/Board";
 import Management from "./pages/Management";
 import Chat from "./pages/Chat";
+import Vocal from "./pages/VocalRoomPage"
 import Kanban from "./pages/Kanban";
 import {useParams} from "react-router";
 import AttendanceSheet from "./pages/Attendance";
@@ -80,6 +81,7 @@ export default function App() {
                 <Route path="management" element={<Management/>}/>
                 <Route path="chat" element={<Chat/>}/>
                 <Route path="chat/:roomId" element={<Chat/>}/>
+                <Route path="vocal" element={<Vocal/>}/>
                 <Route path="attendance" element={<AttendanceSheet/>}/>
             </Routes>
         </BrowserRouter>
@@ -88,11 +90,11 @@ export default function App() {
 /**
  * url of the Production environment
  */
-export const urlApi = "https://api.newboard.fr/api/";
-export const urlApiSocket = "https://api.newboard.fr";
+// export const urlApi = "https://api.newboard.fr/api/";
+// export const urlApiSocket = "https://api.newboard.fr";
 
 /**
  * url of the Development environment
  */
-//export const urlApi = "http://localhost:3001/api/"
-//export const urlApiSocket = "http://localhost:3001";
+export const urlApi = "http://localhost:3001/api/"
+export const urlApiSocket = "http://localhost:3001";
