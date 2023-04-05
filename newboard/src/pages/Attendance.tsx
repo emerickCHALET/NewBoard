@@ -1,20 +1,15 @@
-import React, {useEffect, useState} from 'react';
-import {Form, Table, Button} from 'react-bootstrap';
+import React, {useMemo, useEffect, useState} from 'react';
+import {Form, Table, Button, Spinner} from 'react-bootstrap';
 import SideBar from '../components/SideBar';
 import {urlApi} from "../App";
 import axios from "axios";
 import {toast} from "react-toastify";
-import useProtectedPO from "../components/ProtectedPO";
 import {useNavigate} from "react-router";
 import Attendance from "../classes/Attendance";
 import Classroom from "../classes/Classroom";
+import Student from "../classes/Student";
+import '../Attendance.css';
 
-interface Student {
-    id: number;
-    firstname: string;
-    lastname: string;
-    present: boolean;
-}
 
 const config = {
     headers: {Authorization: `Bearer ${localStorage.getItem('token')}`}
@@ -25,60 +20,61 @@ const config = {
  */
 const AttendanceSheet: React.FC = () => {
     const navigate = useNavigate();
-    const {loading} = useProtectedPO()
+
+    /**
+     * useState is the hook to use state in a functional component
+     */
     const [selectedClassroomId, setSelectedClassroomId] = useState<number | null>(null);
-    const [selectedHistory, setSelectedHistory] = useState<string>('');
+    const [selectedHistoryId, setSelectedHistoryId] = useState<number | null>(null);
+    const [selectedStudents, setSelectedStudents] = useState<Student[]>([]);
+    const [selectedHistory, setSelectedHistory] = useState<Student[]>([]);
     const [classrooms, setClassrooms] = useState<Classroom[]>([]);
     const [history, setHistory] = useState<Attendance[]>([]);
-    const [selectedStudents, setSelectedStudents] = useState<Student[]>([]);
     const [isLoading, setIsLoading] = useState<boolean>(false);
+    const [isLateEnabled, setIsLateEnabled] = useState<boolean[]>([]);
+    const [lateDuration, setLateDuration] = useState(0);
+
+    /**
+     * toastError, toastWarning and toastSuccess are used to display a toast with a message
+     */
+    const toastError = (errorMessage: string) => {
+        toast.error(errorMessage, {position: toast.POSITION.TOP_RIGHT});
+    }
+    const toastWarning = (warningMessage: string) => {
+        toast.warning(warningMessage, {position: toast.POSITION.TOP_RIGHT});
+    }
+    const toastSuccess = (successMessage: string) => {
+        toast.success(successMessage, {position: toast.POSITION.TOP_RIGHT});
+    }
 
     /**
      * getClassrooms get all the classrooms when the page is loaded
      */
-    const getClassrooms = () => {
-        axios.get(urlApi + 'classrooms', config)
-            .then((response) => {
-                if (response.status === 200) {
-                    setClassrooms(response.data.data)
-                }
-            })
-            .catch(function (error) {
-                if (error.response) {
-                    toast.error(error.response.data.message.name + ". \nErreur Classroom", {
-                        position: toast.POSITION.TOP_RIGHT
-                    });
-                    if (error.response.data.disconnect === true) {
-                        localStorage.clear()
-                        navigate('/login');
-                    }
-                }
-            })
+
+    const getClassrooms = async () => {
+        try {
+            const response = await axios.get(urlApi + 'classrooms', config)
+            if (response.status === 200) {
+                setClassrooms(response.data.data)
+            }
+        } catch (error) {
+            toastError("Une erreur est survenue lors des classes. Veuillez réessayer plus tard.");
+        }
     }
 
     /**
      * getHistory get all attendance history of a class when getClassroom is called
      * @param classroomId
      */
-    const getHistory = () => {
-        axios.get(urlApi + 'attendanceHistory', config)
-            .then((response) => {
-                if (response.status === 200) {
-                    setHistory(response.data.data)
-                }
-            })
-            .catch(function (error) {
-                if (error.response) {
-                    toast.error(error.response.data.message.name + ". \nErreur History", {
-                        position: toast.POSITION.TOP_RIGHT
-                    });
-                    if (error.response.data.disconnect === true) {
-                        localStorage.clear()
-                        navigate('/login');
-                    }
-                }
-            })
-
+    const getHistory = async () => {
+        try {
+            const response = await axios.get(urlApi + 'attendancecall', config)
+            if (response.status === 200) {
+                setHistory(response.data.data)
+            }
+        } catch (error) {
+            toastError("Une erreur est survenue lors de la récupération de l'historique. Veuillez réessayer plus tard.")
+        }
     }
 
     /**
@@ -93,24 +89,39 @@ const AttendanceSheet: React.FC = () => {
      * getStudentByClass get all the students of a classroom when the user select a classroom
      * @param classroomId
      */
-    const getStudentByClass = (classroomId: string) => {
-        axios.get(urlApi + 'usersByClassroom/' + classroomId, config)
-            .then((response) => {
-                if (response.status === 200) {
-                    setSelectedStudents(response.data.data)
+    const getStudentByClass = async (classroomId: string) => {
+        try {
+            const response = await axios.get(urlApi + 'usersByClassroom/' + classroomId, config)
+            if (response.status === 200) {
+                if (response.data.data.length === 0) {
+                    toastWarning("Aucun élève n'est enregistré dans cette classe");
+                    setSelectedStudents([]);
+                } else {
+                    setSelectedStudents(response.data.data);
                 }
-            })
-            .catch(function (error) {
-                if (error.response) {
-                    toast.error("Erreur Users", {
-                        position: toast.POSITION.TOP_RIGHT
-                    });
-                    if (error.response.data.disconnect === true) {
-                        localStorage.clear()
-                        navigate('/login');
-                    }
+            }
+        } catch (error) {
+            toastError("Une erreur est survenue lors de la récupération des élèves. Veuillez réessayer plus tard.");
+        }
+    }
+
+    /**
+     * getStudentByHistory get all the students of a history when the user select a history
+     * @param selectedHistoryId
+     */
+    const getStudentByHistory = async (selectedHistoryId: number) => {
+        try {
+            const response = await axios.get(urlApi + 'attendancehisto/' + selectedHistoryId, config)
+            if (response.status === 200) {
+                if (response.data.data.length === 0) {
+                    toastWarning("Aucun élève n'est enregistré dans cette classe");
+                    setSelectedStudents([]);
                 }
-            })
+                setSelectedHistory(response.data.data)
+            }
+        } catch (error) {
+            toastError("Une erreur est survenue lors de la récupération des élèves. Veuillez réessayer plus tard.");
+        }
     }
 
     /**
@@ -119,15 +130,13 @@ const AttendanceSheet: React.FC = () => {
     const saveAttendance = () => {
 
         if (selectedStudents.length === 0) {
-            toast.error('Aucune donnée est présente', {
-                position: toast.POSITION.TOP_RIGHT
-            });
+            toastError('Aucune donnée est présente');
             return;
         }
 
         /**
-         * myData is the data that will be sent to the API
-         * @type {{classroomId: number | null, attendance: {id: number, firstname: string, lastname: string, present: boolean}[]}}
+         * myData is the data to send to the API
+         * @type {{classroomId: number, attendance: {id: number, firstname: string, lastname: string, present: boolean, late: boolean, lateDuration: number}[]}}
          */
         const myData = {
             classroomId: selectedClassroomId,
@@ -136,7 +145,9 @@ const AttendanceSheet: React.FC = () => {
                     id: student.id,
                     firstname: student.firstname,
                     lastname: student.lastname,
-                    present: student.present ? student.present : false
+                    present: student.present ? student.present : false,
+                    late: student.late ? student.late : false,
+                    ...(student.late && {lateDuration: student.lateDuration})
                 }
             })
         }
@@ -146,31 +157,60 @@ const AttendanceSheet: React.FC = () => {
                 setTimeout(() => {
                     setIsLoading(false);
                 }, 3000);
-                toast.success(response.data.message, {
-                    position: toast.POSITION.TOP_RIGHT
-                });
+                toastSuccess(response.data.message);
                 getHistory();
             })
             .catch((error) => {
                 setTimeout(() => {
                     setIsLoading(false);
                 }, 3000);
-                toast.error(error.response.data.message, {
-                    position: toast.POSITION.TOP_RIGHT
-                });
-                if (error.response.data.disconnect === true) {
-                    localStorage.clear()
-                    navigate('/login');
-                }
+                toastError(error.response.data.message);
             });
     };
 
     /**
-     * handleClassSelection is a function that is called when the user select a classroom in the select.
+     * updateAttendance update the attendance of the students in the database when the user click on the button "Enregistrer"
+     */
+    const updateAttendance = () => {
+
+        if (selectedHistory.length === 0) {
+            toastError('Aucune donnée est présente');
+            return;
+        }
+
+        const myData = {
+            attendance: selectedHistory.map(student => {
+                return {
+                    id: student.id,
+                    present: student.present ? student.present : false,
+                    late: student.late ? student.late : false,
+                    ...(student.late && {lateDuration: student.lateDuration})
+                }
+            })
+        }
+        setIsLoading(true);
+        axios.put(urlApi + 'attendance/' + selectedHistoryId, myData, config)
+            .then((response) => {
+                setTimeout(() => {
+                    setIsLoading(false);
+                }, 3000);
+                toastSuccess(response.data.message);
+                getHistory();
+            })
+            .catch((error) => {
+                setTimeout(() => {
+                    setIsLoading(false);
+                }, 3000);
+                toastError(error.response.data.message);
+            });
+    };
+
+    /**
+     * classSelection is a function that is called when the user select a classroom in the select.
      * It will update the state of the selectedClassroomId and call the function getStudentByClass to get all the students of the selected classroom.
      * @param event
      */
-    const handleClassSelection = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    const classSelection = (event: React.ChangeEvent<HTMLSelectElement>) => {
         const selectedValue = event.target.value;
         const selectedClassroom = classrooms.find((classroom) => classroom.id.toString() === selectedValue);
         const selectedClassroomId = selectedClassroom ? selectedClassroom.id : null;
@@ -179,25 +219,34 @@ const AttendanceSheet: React.FC = () => {
             getStudentByClass(selectedClassroomId);
         } else {
         }
-        setSelectedHistory('');
+        setSelectedHistoryId(null);
     }
 
     /**
-     * handleHistorySelection is a function that is called when the user select a history in the select.
+     * historySelection is a function that is called when the user select a history in the select.
+     * It will update the state of the selectedHistoryId and call the function getStudentByHistory to get all the students of the selected history.
      * @param event
      */
-    const handleHistorySelection = (event: React.ChangeEvent<HTMLSelectElement>) => {
-        setSelectedHistory(event.target.value);
+    const historySelection = (event: React.ChangeEvent<HTMLSelectElement>) => {
+        const selectedValue = event.target.value;
+        const selectedHistoryId = parseInt(selectedValue); // convertir en nombre entier
+        if (selectedHistoryId !== null) {
+            setSelectedHistoryId(selectedHistoryId);
+            getStudentByHistory(selectedHistoryId);
+        }
+        setSelectedHistoryId(selectedHistoryId);
         setSelectedClassroomId(null);
-    }
+
+    };
 
     /**
-     * handleTogglePresence is a function that is called when the user click on the button "Présent" or "Absent" of a student.
-     * It will update the state of the selectedStudents.
+     * togglePresence is a function that is called when the user click on the checkbox of a student.
+     * It will update the state of the selectedStudents or selectedHistory depending on the value of the history state.
      * @param index
+     * @param selectedData
      */
-    const handleTogglePresence = (index: number) => {
-        setSelectedStudents(prevState => prevState.map((student, i) => {
+    const togglePresence = (index: number, selectedData: any[]) => {
+        const updatedData = selectedData.map((student, i) => {
             if (i === index) {
                 return {
                     ...student,
@@ -205,11 +254,80 @@ const AttendanceSheet: React.FC = () => {
                 };
             }
             return student;
-        }));
+        });
+
+        if (selectedData === selectedStudents) {
+            setSelectedStudents(updatedData);
+        } else if (selectedData === selectedHistory) {
+            setSelectedHistory(updatedData);
+        }
     };
 
-    if (loading) {
-    }
+    /**
+     * toggleLate is a function that is called when the user click on the checkbox of a student.
+     * It will update the state of the selectedStudents or selectedHistory depending on the value of the history state.
+     * It will also update the state of the isLateEnabled and lateDuration.
+     * @param index
+     */
+    const toggleLate = (index: number) => {
+        setSelectedStudents(prevState => prevState.map((student, i) => {
+            if (i === index) {
+                return {
+                    ...student,
+                    late: !student.late,
+                    lateDuration: 0
+                };
+            }
+            return student;
+        }));
+
+        setSelectedHistory(prevState => prevState.map((history, i) => {
+            if (i === index) {
+                return {
+                    ...history,
+                    late: !history.late,
+                    lateDuration: 0
+                };
+            }
+            return history;
+        }));
+
+        setIsLateEnabled(prevState => {
+            const newState = [...prevState];
+            newState[index] = !prevState[index];
+            return newState;
+        });
+        setLateDuration(0);
+    };
+
+    /**
+     * lateDurationChange is a function that is called when the user change the value of the input of a student.
+     * It will update the state of the selectedStudents or selectedHistory depending on the value of the history state.
+     * It will also update the state of the lateDuration.
+     * @param index
+     * @param duration
+     */
+    const lateDurationChange = (index: number, duration: string | number) => {
+        const parsedDuration = parseInt(duration.toString());
+        setSelectedStudents(prevState => prevState.map((student, i) => {
+            if (i === index) {
+                return {
+                    ...student,
+                    lateDuration: isNaN(parsedDuration) ? 0 : parsedDuration
+                };
+            }
+            return student;
+        }));
+        setSelectedHistory(prevState => prevState.map((student, i) => {
+            if (i === index) {
+                return {
+                    ...student,
+                    lateDuration: isNaN(parsedDuration) ? 0 : parsedDuration
+                };
+            }
+            return student;
+        }));
+    };
 
     return (
         <div className="wrap">
@@ -219,10 +337,10 @@ const AttendanceSheet: React.FC = () => {
                 <div className="row">
                     <div className="col">
                         <Form.Group>
-                            <Form.Label>Classe</Form.Label>
-                            <Form.Select onChange={handleClassSelection} defaultValue="">
+                            <Form.Label htmlFor="Classe">Classe</Form.Label>
+                            <Form.Select id="Classe" onChange={classSelection} value={selectedClassroomId ?? ''}>
                                 <option value="" disabled>Choisissez une classe</option>
-                                {classrooms.map(classroom => (
+                                {classrooms && classrooms.map(classroom => (
                                     <option key={classroom.id} value={classroom.id}>
                                         {classroom.ClassroomName}
                                     </option>
@@ -233,10 +351,10 @@ const AttendanceSheet: React.FC = () => {
                     <div className="col">
                         <Form.Group>
                             <Form.Label>Historique</Form.Label>
-                            <Form.Select onChange={handleHistorySelection} value={selectedHistory} defaultValue="">
+                            <Form.Select onChange={historySelection} value={selectedHistoryId ?? ''}>
                                 <option value="" disabled>Choisissez un appel</option>
-                                {history && history.map((attendance) => {
-                                    const date = new Date(attendance.call_date);
+                                {history && history.map((Attendance) => {
+                                    const date = new Date(Attendance.call_date);
                                     const options: Intl.DateTimeFormatOptions = {
                                         year: 'numeric',
                                         month: 'long',
@@ -246,9 +364,9 @@ const AttendanceSheet: React.FC = () => {
                                         timeZone: 'Europe/Paris'
                                     };
                                     const newDate = date.toLocaleString('fr-FR', options);
-                                    const displayData = `Classe : ${attendance.classroomsId} le ${newDate}`;
+                                    const displayData = `Classe : ${Attendance.classroomName} le ${newDate}`;
                                     return (
-                                        <option key={attendance.call_date} value={attendance.call_date}>
+                                        <option key={Attendance.id} value={Attendance.id}>
                                             {displayData}
                                         </option>
                                     );
@@ -258,17 +376,22 @@ const AttendanceSheet: React.FC = () => {
                     </div>
                 </div>
             </Form>
-            {selectedClassroomId && (
-                <Table responsive bordered variant="light">
+
+            {/*     Tableau Appel      */}
+
+            {selectedClassroomId && selectedStudents.length > 0 && (
+                <Table itemID="StudentTable" responsive bordered variant="light" className="mx-auto Table rounded">
                     <thead>
                     <tr>
                         <th>Nom de l'étudiant</th>
                         <th>Prénom de l'étudiant</th>
                         <th>Présent / Absent</th>
+                        <th>Retard</th>
+                        <th>Durée du retard</th>
                     </tr>
                     </thead>
                     <tbody>
-                    {selectedStudents.map((users, index) => (
+                    {selectedStudents?.map((users, index) => (
                         <tr key={index}>
                             <td>{users.lastname}</td>
                             <td>{users.firstname}</td>
@@ -276,10 +399,29 @@ const AttendanceSheet: React.FC = () => {
                                 {users.present ? 'Présent' : 'Absent'}
                                 <Button
                                     variant="link"
-                                    onClick={() => handleTogglePresence(index)}
+                                    onClick={() => togglePresence(index, selectedStudents)}
                                 >
                                     Modifier
                                 </Button>
+                            </td>
+                            <td>
+                                <Form.Check
+                                    type="switch"
+                                    id={`late-switch-${index}`}
+                                    label=""
+                                    checked={history ? selectedHistory[index]?.late : selectedStudents[index]?.late}
+                                    onChange={() => toggleLate(index)}
+                                />
+
+                            </td>
+                            <td>
+                                <Form.Control
+                                    type="number"
+                                    value={selectedStudents[index].lateDuration || ''}
+                                    placeholder="Entrez la durée du retard"
+                                    onChange={(e) => lateDurationChange(index, parseInt(e.target.value))}
+                                    disabled={!isLateEnabled[index]}
+                                />
                             </td>
                         </tr>
                     ))}
@@ -290,49 +432,85 @@ const AttendanceSheet: React.FC = () => {
                         onClick={saveAttendance}
                         disabled={isLoading}
                     >
-                        {isLoading ? "Enregistrement en cours..." : "Sauvegarder"}
+                        {isLoading ? (
+                            <>
+                                Enregistrement en cours... <Spinner animation="border" size="sm"/>
+                            </>
+                        ) : (
+                            'Sauvegarder'
+                        )}
                     </Button>
 
                 </Table>
             )}
 
-            {/*    Tableau historique*/}
+            {/*     Tableau historique      */}
 
-            {selectedHistory && (
-                <Table responsive bordered variant="light">
-                    <thead>
-                    <tr>
-                        <th>Nom de l'étudiant</th>
-                        <th>Prénom de l'étudiant</th>
-                        <th>Présent / Absent</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {selectedStudents.map((users, index) => (
-                        <tr key={index}>
-                            <td>{users.lastname}</td>
-                            <td>{users.firstname}</td>
-                            <td>
-                                {users.present ? 'Présent' : 'Absent'}
-                                <Button
-                                    variant="link"
-                                    onClick={() => handleTogglePresence(index)}
-                                >
-                                    Modifier
-                                </Button>
-                            </td>
+            {selectedHistoryId && selectedHistory.length > 0 && (
+                <div className="table-container">
+                    <Table responsive bordered variant="light">
+                        <thead>
+                        <tr>
+                            <th>Nom de l'étudiant</th>
+                            <th>Prénom de l'étudiant</th>
+                            <th>Présent / Absent</th>
+                            <th>Retard</th>
+                            <th>Durée du retard</th>
                         </tr>
-                    ))}
-                    </tbody>
-                    <br/>
-                    <Button
-                        variant="light"
-                        disabled={isLoading}
-                    >
-                        {isLoading ? "Enregistrement en cours..." : "Mettre à jour"}
-                    </Button>
-
-                </Table>
+                        </thead>
+                        <tbody>
+                        {selectedHistory?.map((student, index) => (
+                            <tr key={index}>
+                                <td>{student.lastname}</td>
+                                <td>{student.firstname}</td>
+                                <td>
+                                    {student.present ? 'Présent' : 'Absent'}
+                                    <Button
+                                        variant="link"
+                                        onClick={() => togglePresence(index, selectedHistory)}
+                                    >
+                                        Modifier
+                                    </Button>
+                                </td>
+                                <td>
+                                    <Form.Check
+                                        type="switch"
+                                        id={`late-switch-${index}`}
+                                        label=""
+                                        checked={student.late}
+                                        onChange={() => toggleLate(index)}
+                                    />
+                                </td>
+                                <td>
+                                    <Form.Control
+                                        type="number"
+                                        placeholder="Entrez la durée du retard"
+                                        value={selectedHistory[index]?.lateDuration || ''}
+                                        onChange={(e) =>
+                                            lateDurationChange(index, parseInt(e.target.value))
+                                        }
+                                        disabled={!selectedHistory[index].late}
+                                    />
+                                </td>
+                            </tr>
+                        ))}
+                        </tbody>
+                        <br/>
+                        <Button
+                            variant="light"
+                            disabled={isLoading}
+                            onClick={updateAttendance}
+                        >
+                            {isLoading ? (
+                                <>
+                                    Enregistrement en cours... <Spinner animation="border" size="sm"/>
+                                </>
+                            ) : (
+                                'Mettre à jour'
+                            )}
+                        </Button>
+                    </Table>
+                </div>
             )}
         </div>
     );
