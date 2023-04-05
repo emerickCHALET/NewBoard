@@ -114,7 +114,7 @@ const Workspaces = () => {
      */
     useEffect(() => {
         async function getWorkspaces(){
-            const response = await apiService.get('workspacesByUserId/' + userId,token!)
+            const response = await apiService.get('workspacesByUserId/' + userId, token!, navigate)
             if (response){
                 const responseContent = JSON.parse(JSON.stringify(response.data.data)) as Workspace[]
                 setWorkspaces(responseContent)

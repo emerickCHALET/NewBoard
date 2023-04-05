@@ -5,7 +5,7 @@ import {NavigateFunction} from "react-router";
 
 
 class ApiService {
-    public async get(endpoint: string, token?: string) {
+    public async get(endpoint: string, token?: string, navigate?: NavigateFunction) {
         const headers = token ? { Authorization: `Bearer ${token}` } : undefined;
         try {
             const response = await axios.get(urlApi + endpoint, { headers: headers });
@@ -30,12 +30,12 @@ class ApiService {
                     position: toast.POSITION.TOP_RIGHT
                 });
             }
-            if(error.response.data.disconnect === true){
+            /*if(error.response.data.disconnect === true){
                 localStorage.clear()
                 if (navigate) {
                     navigate('/login')
                 }
-            }
+            }*/
         }
     }
 }

@@ -12,12 +12,15 @@ import Button from "react-bootstrap/Button";
 import Boards from "../classes/Board";
 import Users from "../classes/Users";
 import * as AiIcons from "react-icons/ai";
+import ApiService from "../services/ApiService";
 
+const token = localStorage.getItem('token');
 const config = {
     headers: {Authorization: `Bearer ${localStorage.getItem('token')}`}
 };
 
 function Board(){
+    const apiService = new ApiService();
     let userId = localStorage.getItem("userId")
     const [isLoading, setIsLoading] = useState<boolean>(true);
 
@@ -87,24 +90,12 @@ function Board(){
     async function postRoom(values: { name: string; }): Promise<number>{
         let payload = {name: values.name}
         let result = 0
-        await axios
-            .post(urlApi + 'rooms', payload,  config)
-            .then((response) => {
-                if (response.status === 200) {
-                    result = response.data.data.id
-                }
-            })
-            .catch(function (error) {
-                if (error.response) {
-                    toast.error(error.response.data.message, {
-                        position: toast.POSITION.TOP_RIGHT
-                    });
-                    if(error.response.data.disconnect === true){
-                        localStorage.clear()
-                        navigate('/login');
-                    }
-                }
-            })
+
+        const response = await apiService.post('rooms',payload,token!,navigate)
+        if (response && response.status === 200){
+            result = response.data.data.id
+        }
+
         return result
     }
 
@@ -112,29 +103,15 @@ function Board(){
     async function postWorkspaceUser(values: FormikValues): Promise<boolean> {
         let payload = {userID: values.userId, workspaceID: workspaceId};
         let result = false;
-        await axios
-            .post(urlApi + 'workspacesUser', payload, config)
-            .then((response) => {
-                if (response.status === 200) {
-                    if (response.status === 200) {
-                        toast.success("WorkspaceUser crée avec succès !", {
-                            position: toast.POSITION.TOP_RIGHT,
-                        });
-                        result = true
-                    }
-                }
-            })
-            .catch(function (error) {
-                if (error.response) {
-                    toast.error(error.response.data.message, {
-                        position: toast.POSITION.TOP_RIGHT
-                    });
-                    if(error.response.data.disconnect === true){
-                        localStorage.clear()
-                        navigate('/login');
-                    }
-                }
-            })
+
+        const response = await apiService.post('workspacesUser',payload,token!,navigate)
+        if (response && response.status === 200){
+            toast.success("WorkspaceUser crée avec succès !", {
+                position: toast.POSITION.TOP_RIGHT,
+            });
+            result = true
+        }
+
         return result;
     }
     
@@ -172,46 +149,23 @@ function Board(){
 
     const [boards, setBoards] = useState<Boards[]>([])
 
-    const getBoard = () => {
-        axios
-            .get(urlApi + "boardByWorkspaceIdAndUserId/" + workspaceId + "/" + userId, config)
-            .then((response) => {
-                if (response.status === 200) {
-                    setBoards(response.data.data)
-                    setIsLoading(false);
-                }
-            })
-            .catch(function (error) {
-                if (error.response) {
-                    toast.error(error.response.data.message.name + ". \nReconnexion requise", {
-                        position: toast.POSITION.TOP_RIGHT
-                    });
-                    if(error.response.data.disconnect === true){
-                        localStorage.clear()
-                        navigate('/login');
-                    }
-                }
-            })
+    const getBoard = async () => {
+
+        const response = await apiService.get('boardByWorkspaceIdAndUserId/' + workspaceId + "/" + userId, token!, navigate)
+        if (response && response.status === 200) {
+            setBoards(response.data.data)
+            setIsLoading(false);
+        }
     }
 
     const [users, setUsers] = useState<Users[]>([])
 
     const className = localStorage.getItem("userClass")
-    const getUsers = () => {
-        axios
-            .get(urlApi + "userByClassIdAndWorkspaceId/"+ className + "/" + workspaceId, config)
-            .then((response) => {
-                if (response.status === 200) {
-                    setUsers(response.data.data);
-                }
-            })
-            .catch(function (error) {
-                if (error.response) {
-                    toast.error(error.response.data.message.name + ". \nReconnexion requise", {
-                        position: toast.POSITION.TOP_RIGHT
-                    });
-                }
-            })
+    const getUsers = async () => {
+        const response = await apiService.get("userByClassIdAndWorkspaceId/" + className + "/" + workspaceId, token!, navigate)
+        if (response && response.status === 200) {
+            setUsers(response.data.data);
+        }
     }
 
     useEffect(() => {
