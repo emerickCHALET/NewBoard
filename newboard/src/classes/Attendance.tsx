@@ -1,21 +1,20 @@
 class Attendance {
-    id: string;
-    classroomsId: string;
-    firstname: string;
-    lastname: string;
-    userId: string;
+    id: number;
+    attendanceId: number;
+    classroomsId: number;
+    classroomName: string;
     present: boolean;
+    late: boolean;
     call_date: string;
-    updatedAt: Date;
-    constructor(id: string, classroomsId: string, firstname: string, lastname: string, userId: string, present: boolean, call_date: string, updatedAt: Date) {
+
+    constructor(id: number, attendanceId: number, classroomsId: number, classroomName: string,present: boolean, late: boolean, call_date: string) {
         this.id = id;
+        this.attendanceId = attendanceId;
         this.classroomsId = classroomsId;
-        this.firstname = firstname;
-        this.lastname = lastname;
-        this.userId = userId;
+        this.classroomName = classroomName;
         this.present = present;
+        this.late = late;
         this.call_date = call_date;
-        this.updatedAt = updatedAt;
     }
 }
 
