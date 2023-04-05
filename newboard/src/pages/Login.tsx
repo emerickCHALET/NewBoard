@@ -3,14 +3,11 @@ import Footer from "../components/Footer";
 import * as Yup from 'yup';
 import {Formik, ErrorMessage, Form, Field} from 'formik';
 import {useNavigate} from "react-router";
-import axios from "axios";
-import {urlApi} from "../App";
 import {toast} from "react-toastify";
 import SideBar from "../components/SideBar";
 import {Link} from "react-router-dom";
 import useProtectedLogin from "../components/ProtectedLogin";
 import ApiService from "../services/ApiService";
-import LoginUser from "../classes/LoginUser";
 
 const Login = () => {
     const navigate = useNavigate();

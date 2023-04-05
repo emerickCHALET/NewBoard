@@ -3,8 +3,6 @@ import Footer from "../components/Footer";
 import '../index.css';
 import * as Yup from 'yup';
 import {Formik, ErrorMessage, Form, Field} from 'formik';
-import axios from 'axios';
-import {urlApi} from "../App";
 import {toast} from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import {useNavigate} from "react-router";
@@ -20,7 +18,7 @@ const ResetPassword = () => {
         let route = '?check=';
         let result = false;
 
-        const response = await apiService.put('reset' + route + tokenAccess,data,tokenAccess!)
+        const response = await apiService.put('reset' + route + tokenAccess, data, tokenAccess!, navigate)
         if (response && response.status === 200){
             toast.success("Mot de passe modifié !", {
                 position: toast.POSITION.TOP_RIGHT,

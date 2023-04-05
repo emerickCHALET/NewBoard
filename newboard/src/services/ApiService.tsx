@@ -39,7 +39,7 @@ class ApiService {
         }
     }
 
-    public async put(endpoint: string, body?: any, token?: string) {
+    public async put(endpoint: string, body?: any, token?: string, navigate?: NavigateFunction) {
         const headers = token ? { Authorization: `Bearer ${token}` } : undefined;
         try {
             const response = await axios.put(urlApi + endpoint,body, { headers: headers });
@@ -50,6 +50,32 @@ class ApiService {
                     position: toast.POSITION.TOP_RIGHT
                 });
             }
+            /*if(error.response.data.disconnect === true){
+                localStorage.clear()
+                if (navigate) {
+                    navigate('/login')
+                }
+            }*/
+        }
+    }
+
+    public async delete(endpoint: string, token?: string, navigate?: NavigateFunction) {
+        const headers = token ? { Authorization: `Bearer ${token}` } : undefined;
+        try {
+            const response = await axios.put(urlApi + endpoint, { headers: headers });
+            return response;
+        } catch (error:any) {
+            if (error.response) {
+                toast.error(error.response.data.message, {
+                    position: toast.POSITION.TOP_RIGHT
+                });
+            }
+            /*if(error.response.data.disconnect === true){
+                localStorage.clear()
+                if (navigate) {
+                    navigate('/login')
+                }
+            }*/
         }
     }
 }

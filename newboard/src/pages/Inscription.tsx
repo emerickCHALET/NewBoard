@@ -3,13 +3,10 @@ import Footer from "../components/Footer";
 import '../index.css';
 import * as Yup from 'yup';
 import {Formik, ErrorMessage, Form, Field} from 'formik';
-import axios from 'axios';
-import {urlApi} from "../App";
 import {toast} from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import {useNavigate} from "react-router";
 import SideBar from "../components/SideBar";
-import Api from "../services/ApiService";
 import ApiService from "../services/ApiService";
 
 const InscriptionPage = () => {

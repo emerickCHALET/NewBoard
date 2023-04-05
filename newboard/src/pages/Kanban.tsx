@@ -17,7 +17,6 @@ import {
 } from "../components/utils/listUtils";
 import Column, { NewColumn } from "../components/column";
 import AddColumnButton from "../components/addColumnButton";
-
 import { Card, Column as ColumnInterface } from "../components/types";
 import Modal from "react-bootstrap/Modal";
 import {ErrorMessage, Field, Form, Formik, FormikValues} from "formik";
