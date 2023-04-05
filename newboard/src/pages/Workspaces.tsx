@@ -13,14 +13,19 @@ import {toast} from "react-toastify";
 import {useNavigate} from "react-router";
 import ApiService from "../services/ApiService";
 
-
-const token = localStorage.getItem('token');
 const config = {
     headers: {Authorization: `Bearer ${localStorage.getItem('token')}`}
 };
 const Workspaces = () => {
+    const [token, setToken] = useState<string | null>(null);
+
     const apiService = new ApiService();
     let userId = localStorage.getItem("userId")
+
+    useEffect(() => {
+        const tokenFromStorage = localStorage.getItem("token");
+        setToken(tokenFromStorage);
+    }, []);
 
     /**
      * when we create a new workspace, first we create a chat room, so we can associate its id to the workspace,
@@ -86,15 +91,17 @@ const Workspaces = () => {
      */
     useEffect(() => {
         async function getWorkspaces(){
-            const response = await apiService.get('workspacesByUserId/' + userId, token!, navigate)
-            if (response){
-                const responseContent = JSON.parse(JSON.stringify(response.data.data)) as Workspace[]
-                setWorkspaces(responseContent)
-                setIsLoading(false)
+            if(token !== null){
+                const response = await apiService.get('workspacesByUserId/' + userId, token!, navigate)
+                if (response){
+                    const responseContent = JSON.parse(JSON.stringify(response.data.data)) as Workspace[]
+                    setWorkspaces(responseContent)
+                    setIsLoading(false)
+                }
             }
         }
         getWorkspaces();
-    }, [])
+    }, [token])
 
     const navigate = useNavigate();
 
