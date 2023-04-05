@@ -30,12 +30,12 @@ class ApiService {
                     position: toast.POSITION.TOP_RIGHT
                 });
             }
-            /*if(error.response.data.disconnect === true){
+            if(error.response.data.disconnect === true){
                 localStorage.clear()
                 if (navigate) {
                     navigate('/login')
                 }
-            }*/
+            }
         }
     }
 
@@ -50,12 +50,12 @@ class ApiService {
                     position: toast.POSITION.TOP_RIGHT
                 });
             }
-            /*if(error.response.data.disconnect === true){
+            if(error.response.data.disconnect === true){
                 localStorage.clear()
                 if (navigate) {
                     navigate('/login')
                 }
-            }*/
+            }
         }
     }
 
@@ -70,12 +70,12 @@ class ApiService {
                     position: toast.POSITION.TOP_RIGHT
                 });
             }
-            /*if(error.response.data.disconnect === true){
+            if(error.response.data.disconnect === true){
                 localStorage.clear()
                 if (navigate) {
                     navigate('/login')
                 }
-            }*/
+            }
         }
     }
 }
