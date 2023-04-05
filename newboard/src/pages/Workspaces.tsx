@@ -76,24 +76,12 @@ const Workspaces = () => {
     async function postRoom(values: { name: string; }): Promise<number>{
         let payload = {name: values.name}
         let result = 0
-        await axios
-            .post(urlApi + 'rooms', payload,  config)
-            .then((response) => {
-                if (response.status === 200) {
-                    result = response.data.data.id
-                }
-            })
-            .catch(function (error) {
-                if (error.response) {
-                    toast.error(error.response.data.message, {
-                        position: toast.POSITION.TOP_RIGHT
-                    });
-                    if(error.response.data.disconnect === true){
-                        localStorage.clear()
-                        navigate('/login');
-                    }
-                }
-            })
+
+        const response = await apiService.post('rooms',payload,token!)
+        if (response && response.status === 200){
+            result = response.data.data.id
+        }
+        
         return result
     }
 
@@ -127,9 +115,11 @@ const Workspaces = () => {
     useEffect(() => {
         async function getWorkspaces(){
             const response = await apiService.get('workspacesByUserId/' + userId,token!)
-            const responseContent = JSON.parse(JSON.stringify(response.data.data)) as Workspace[]
-            setWorkspaces(responseContent)
-            setIsLoading(false)
+            if (response){
+                const responseContent = JSON.parse(JSON.stringify(response.data.data)) as Workspace[]
+                setWorkspaces(responseContent)
+                setIsLoading(false)
+            }
         }
         getWorkspaces();
     }, [])

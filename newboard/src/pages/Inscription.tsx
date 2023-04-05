@@ -39,7 +39,7 @@ const InscriptionPage = () => {
     };
     const navigate = useNavigate();
     const handleSubmit = async (values: { lastname: string; firstname: string; email: string; password: string }) => {
-        const apiService = new ApiService<void>();
+        const apiService = new ApiService();
         const response = await apiService.post('users', {
             firstname: values.firstname,
             lastname: values.lastname,
@@ -47,6 +47,9 @@ const InscriptionPage = () => {
             password: values.password },
             undefined)
         if(response != null){
+            toast.success(response.data.message, {
+                position: toast.POSITION.TOP_RIGHT,
+            });
             navigate('/login');
         }
     };

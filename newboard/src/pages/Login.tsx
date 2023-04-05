@@ -43,18 +43,22 @@ const Login = () => {
                 email: values.email,
                 password: values.password},
             undefined)
-        const responseContent = JSON.parse(JSON.stringify(response.data)) as LoginUser
-        if(responseContent != null){
-            localStorage.setItem('permissions_role', responseContent.data.role);
-            localStorage.setItem('token', responseContent.token);
-            localStorage.setItem('userId', responseContent.data.id.toString());
-            localStorage.setItem('userClass', responseContent.data.classId.toString())
-            localStorage.setItem('email', responseContent.data.email)
-            localStorage.setItem('userFullName', responseContent.data.firstname + " " + responseContent.data.lastname)
-            if (responseContent.data.role === "ROLE_ADMIN") {
-                localStorage.setItem('establishmentId', responseContent.data.establishmentId.toString());
+        if(response){
+            localStorage.setItem('permissions_role', response.data.data.role);
+            localStorage.setItem('token', response.data.token);
+            localStorage.setItem('userId', response.data.data.id.toString());
+            if (response.data.data.classId != null){
+                localStorage.setItem('userClass', response.data.data.classId.toString())
+            }
+            localStorage.setItem('email', response.data.data.email)
+            localStorage.setItem('userFullName', response.data.data.firstname + " " + response.data.data.lastname)
+            if (response.data.data.role === "ROLE_ADMIN") {
+                localStorage.setItem('establishmentId', response.data.data.establishmentId.toString());
             }
             localStorage.setItem("isLoggedIn", "true");
+            toast.success(response.data.message, {
+                position: toast.POSITION.TOP_RIGHT,
+            });
             navigate('/workspaces');
         }
     };
