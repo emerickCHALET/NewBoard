@@ -38,6 +38,20 @@ class ApiService {
             }*/
         }
     }
+
+    public async put(endpoint: string, body?: any, token?: string) {
+        const headers = token ? { Authorization: `Bearer ${token}` } : undefined;
+        try {
+            const response = await axios.put(urlApi + endpoint,body, { headers: headers });
+            return response;
+        } catch (error:any) {
+            if (error.response) {
+                toast.error(error.response.data.message, {
+                    position: toast.POSITION.TOP_RIGHT
+                });
+            }
+        }
+    }
 }
 
 export default ApiService;
