@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {Button} from "react-bootstrap";
 import {useNavigate} from "react-router-dom";
 
@@ -8,7 +8,11 @@ import {useNavigate} from "react-router-dom";
  */
 const Home = () => {
     const navigate = useNavigate();
-    const token = localStorage.getItem('token');
+    const [token, setToken] = useState<string | null>(null);
+    useEffect(() => {
+        const tokenFromStorage = localStorage.getItem("token");
+        setToken(tokenFromStorage);
+    }, []);
 
     return (
                 <div className="container-home">

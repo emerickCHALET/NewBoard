@@ -7,25 +7,18 @@ import Modal from "react-bootstrap/Modal";
 import {Formik, ErrorMessage, Form, Field} from 'formik';
 import * as Yup from "yup";
 import SideBar from "../components/SideBar";
-import axios from "axios";
-import {urlApi} from "../App";
-import {toast} from "react-toastify";
 import {useNavigate} from "react-router";
 import ApiService from "../services/ApiService";
 
-const config = {
-    headers: {Authorization: `Bearer ${localStorage.getItem('token')}`}
-};
 const Workspaces = () => {
     const [token, setToken] = useState<string | null>(null);
-
-    const apiService = new ApiService();
-    let userId = localStorage.getItem("userId")
-
     useEffect(() => {
         const tokenFromStorage = localStorage.getItem("token");
         setToken(tokenFromStorage);
     }, []);
+
+    const apiService = new ApiService();
+    let userId = localStorage.getItem("userId")
 
     /**
      * when we create a new workspace, first we create a chat room, so we can associate its id to the workspace,

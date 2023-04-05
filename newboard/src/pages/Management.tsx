@@ -13,15 +13,17 @@ import {useNavigate} from "react-router";
 import ApiService from "../services/ApiService";
 
 /**
- * const who created a headers with the token for authenticated a request to API
- */
-const token = localStorage.getItem('token');
-/**
  * const who get the establishmentId of a admin login
  */
 const establishmentId = parseInt(localStorage.getItem('establishmentId')!);
 
 const Management = () => {
+    const [token, setToken] = useState<string | null>(null);
+    useEffect(() => {
+        const tokenFromStorage = localStorage.getItem("token");
+        setToken(tokenFromStorage);
+    }, []);
+
     const navigate = useNavigate();
     const apiService = new ApiService();
 
@@ -150,10 +152,6 @@ const Management = () => {
         }
     }
 
-    useEffect(() => {
-        getClassroomsByEstablishmentId()
-    }, [])
-
     const [showSecond, setShowSecond] = useState(false);
     const handleCloseSecond = () => setShowSecond(false);
     const handleShowSecond = () => setShowSecond(true);
@@ -248,28 +246,21 @@ const Management = () => {
     //Affichage Table Users
     const [data, setData] = useState<any>([]);
 
-    useEffect( () => {
-        const getUsersByEstablishmentId = async () => {
-            const response = await apiService.get('usersByEstablishmentId/' + establishmentId, token!)
-            if (response && response.status === 200) {
-                setData(response.data.data);
-            }
-        };
-        getUsersByEstablishmentId()
-    }, []);
+    const getUsersByEstablishmentId = async () => {
+        const response = await apiService.get('usersByEstablishmentId/' + establishmentId, token!)
+        if (response && response.status === 200) {
+            setData(response.data.data);
+        }
+    };
 
     //Affichage Table Classroom
-    const [dataClassroom, setDataClassroom] = useState<any>([]);
 
     useEffect(() => {
-        const getClassroomsByEstablishmentId = async () => {
-            const response = await apiService.get('classroomsByEstablishmentId/' + establishmentId, token!)
-            if (response && response.status === 200) {
-                setDataClassroom(response.data.data);
-            }
-        };
-        getClassroomsByEstablishmentId()
-    }, []);
+        if (token !== null){
+            getClassroomsByEstablishmentId()
+            getUsersByEstablishmentId()
+        }
+    }, [token])
 
     return (
         <div className="wrap">
@@ -515,7 +506,7 @@ const Management = () => {
                     </tr>
                     </thead>
                     <tbody>
-                    {dataClassroom.map((items: { id: React.Key | null | undefined; ClassroomName: string | number | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | React.ReactFragment | React.ReactPortal | null | undefined;}, index: number) => (
+                    {classrooms.map((items: { id: React.Key | null | undefined; ClassroomName: string | number | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | React.ReactFragment | React.ReactPortal | null | undefined;}, index: number) => (
                         <tr key={items.id}>
                             <td>{index + 1}</td>
                             <td>{items.ClassroomName}</td>

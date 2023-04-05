@@ -11,8 +11,12 @@ import Messages from "../classes/Messages";
 import ApiService from "../services/ApiService";
 
 const ChatPage = () => {
+    const [token, setToken] = useState<string | null>(null);
+    useEffect(() => {
+        const tokenFromStorage = localStorage.getItem("token");
+        setToken(tokenFromStorage);
+    }, []);
     const {roomId} = useParams<{ roomId: string}>()
-    const token = localStorage.getItem('token');
     const apiService = new ApiService();
     const navigate = useNavigate();
 
@@ -44,9 +48,11 @@ const ChatPage = () => {
      * When we arrive at the page, we notify that we joined the room and get all messages in DB
      */
     useEffect(() => {
-        socket.emit("join_room", roomId)
-        getMessages()
-    },[])
+        if(token !== null){
+            socket.emit("join_room", roomId)
+            getMessages()
+        }
+    },[token])
 
 
     /**

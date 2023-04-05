@@ -37,13 +37,14 @@ interface AddNewColumnProps {
 }
 
 /**
- * Header of API Request
- */
-const token = localStorage.getItem('token');
-/**
  * Kanban Page Contructor
  */
 const Kanban = () => {
+    const [token, setToken] = useState<string | null>(null);
+    useEffect(() => {
+        const tokenFromStorage = localStorage.getItem("token");
+        setToken(tokenFromStorage);
+    }, []);
     const apiService = new ApiService();
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const location = useLocation()
@@ -267,12 +268,11 @@ const Kanban = () => {
     },[sendKanban])
 
     useEffect(() => {
-        getUsers()
-    }, [])
-
-    useEffect(() => {
-        getBoard()
-    },[])
+        if (token !== null){
+            getUsers()
+            getBoard()
+        }
+    }, [token])
 
     const navigate = useNavigate();
     useEffect(() => {

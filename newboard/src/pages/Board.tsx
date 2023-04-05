@@ -2,8 +2,6 @@ import React, {useEffect, useState} from 'react';
 import SideBar from "../components/SideBar";
 import Footer from "../components/Footer";
 import {useLocation, useNavigate, useParams} from "react-router";
-import axios from "axios";
-import {urlApi} from "../App";
 import {toast} from "react-toastify";
 import * as Yup from "yup";
 import Modal from "react-bootstrap/Modal";
@@ -14,12 +12,13 @@ import Users from "../classes/Users";
 import * as AiIcons from "react-icons/ai";
 import ApiService from "../services/ApiService";
 
-const token = localStorage.getItem('token');
-const config = {
-    headers: {Authorization: `Bearer ${localStorage.getItem('token')}`}
-};
-
 function Board(){
+    const [token, setToken] = useState<string | null>(null);
+    useEffect(() => {
+        const tokenFromStorage = localStorage.getItem("token");
+        setToken(tokenFromStorage);
+    }, []);
+
     const apiService = new ApiService();
     let userId = localStorage.getItem("userId")
     const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -120,7 +119,6 @@ function Board(){
     const [boards, setBoards] = useState<Boards[]>([])
 
     const getBoard = async () => {
-
         const response = await apiService.get('boardByWorkspaceIdAndUserId/' + workspaceId + "/" + userId, token!, navigate)
         if (response && response.status === 200) {
             setBoards(response.data.data)
@@ -139,9 +137,11 @@ function Board(){
     }
 
     useEffect(() => {
-        getBoard()
-        getUsers()
-    }, [])
+        if(token !== null){
+            getBoard()
+            getUsers()
+        }
+    }, [token])
 
     const navigate = useNavigate();
 
