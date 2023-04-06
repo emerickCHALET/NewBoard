@@ -17,18 +17,16 @@ import {
 } from "../components/utils/listUtils";
 import Column, { NewColumn } from "../components/column";
 import AddColumnButton from "../components/addColumnButton";
-
 import { Card, Column as ColumnInterface } from "../components/types";
 import Modal from "react-bootstrap/Modal";
 import {ErrorMessage, Field, Form, Formik, FormikValues} from "formik";
 import Button from "react-bootstrap/Button";
-import axios from "axios";
-import {urlApi, urlApiSocket} from "../App";
-import {toast} from "react-toastify";
+import {urlApiSocket} from "../App";
 import {useLocation, useNavigate, useParams} from "react-router";
 import Users from "../classes/Users";
 import io from 'socket.io-client';
 import * as AiIcons from "react-icons/ai";
+import ApiService from "../services/ApiService";
 
 /**
  * Props of new column
@@ -39,17 +37,15 @@ interface AddNewColumnProps {
 }
 
 /**
- * Header of API Request
- */
-const config = {
-    headers: {Authorization: `Bearer ${localStorage.getItem('token')}`}
-};
-
-/**
  * Kanban Page Contructor
  */
 const Kanban = () => {
-
+    const [token, setToken] = useState<string | null>(null);
+    useEffect(() => {
+        const tokenFromStorage = localStorage.getItem("token");
+        setToken(tokenFromStorage);
+    }, []);
+    const apiService = new ApiService();
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const location = useLocation()
     // Initialize boardId here because the app crashes when we click on menu button, location.state.boardId would be null ??
@@ -67,24 +63,12 @@ const Kanban = () => {
     async function postBoardUser(userId: number): Promise<boolean> {
         let payload = {userID: userId, boardID: boardId};
         let result = false;
-        await axios
-            .post(urlApi + 'boardUsers', payload, config)
-            .then((response) => {
-                if (response.status === 200) {
-                    result = true
-                }
-            })
-            .catch(function (error) {
-                if (error.response) {
-                    toast.error(error.response.data.message, {
-                        position: toast.POSITION.TOP_RIGHT
-                    });
-                    if(error.response.data.disconnect === true){
-                        localStorage.clear()
-                        navigate('/login');
-                    }
-                }
-            })
+
+        const response = await apiService.post("boardUsers",payload, token!, navigate)
+        if (response && response.status === 200) {
+            result = true
+        }
+
         return result;
     }
 
@@ -94,7 +78,7 @@ const Kanban = () => {
      * @param values
      */
     const forceSelectOnlyOption = (options: Users[], values: FormikValues): void => {
-        if (options.length == 1) {
+        if (options.length === 1) {
             values.userId = options[0].id;
         }
         handleSubmit(values)
@@ -107,25 +91,11 @@ const Kanban = () => {
     /**
      * Request who get Users who can be assigned to a board
      */
-    const getUsers = () => {
-        axios
-            .get(urlApi + "boardByClassIdAndBoardId/"+ className + "/" + boardId, config)
-            .then((response) => {
-                if (response.status === 200) {
-                    setUsers(response.data.data);
-                }
-            })
-            .catch(function (error) {
-                if (error.response) {
-                    toast.error(error.response.data.message.name + ". \nReconnexion requise", {
-                        position: toast.POSITION.TOP_RIGHT
-                    });
-                    if(error.response.data.disconnect === true){
-                        localStorage.clear()
-                        navigate('/login');
-                    }
-                }
-            })
+    const getUsers = async () => {
+        const response = await apiService.get("boardByClassIdAndBoardId/" + className + "/" + boardId, token!, navigate)
+        if (response && response.status === 200) {
+            setUsers(response.data.data);
+        }
     }
 
     const [show, setShow] = useState(false);
@@ -146,28 +116,14 @@ const Kanban = () => {
     /**
      * Request who get the content of a board where the page is initialized
      */
-    const getBoard = () => {
-        axios
-            .get(urlApi + "boards/"+ boardId, config)
-            .then((response) => {
-                if (response.status === 200) {
-                    if(response.data.data.content != null){
-                        setColumns(JSON.parse(response.data.data.content))
-                    }
-                    setIsLoading(false)
-                }
-            })
-            .catch(function (error) {
-                if (error.response) {
-                    toast.error(error.response.data.message.name + ". \nReconnexion requise", {
-                        position: toast.POSITION.TOP_RIGHT
-                    });
-                    if(error.response.data.disconnect === true){
-                        localStorage.clear()
-                        navigate('/login');
-                    }
-                }
-            })
+    const getBoard = async () => {
+        const response = await apiService.get("boards/" + boardId, token!, navigate)
+        if (response && response.status === 200) {
+            if (response.data.data.content != null) {
+                setColumns(JSON.parse(response.data.data.content))
+            }
+            setIsLoading(false)
+        }
     }
 
     const socket = io(urlApiSocket);
@@ -312,12 +268,11 @@ const Kanban = () => {
     },[sendKanban])
 
     useEffect(() => {
-        getUsers()
-    }, [])
-
-    useEffect(() => {
-        getBoard()
-    },[])
+        if (token !== null){
+            getUsers()
+            getBoard()
+        }
+    }, [token])
 
     const navigate = useNavigate();
     useEffect(() => {

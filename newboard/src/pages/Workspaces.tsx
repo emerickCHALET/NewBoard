@@ -7,17 +7,17 @@ import Modal from "react-bootstrap/Modal";
 import {Formik, ErrorMessage, Form, Field} from 'formik';
 import * as Yup from "yup";
 import SideBar from "../components/SideBar";
-import axios from "axios";
-import {urlApi} from "../App";
-import {toast} from "react-toastify";
 import {useNavigate} from "react-router";
-
-
-const config = {
-    headers: {Authorization: `Bearer ${localStorage.getItem('token')}`}
-};
+import ApiService from "../services/ApiService";
 
 const Workspaces = () => {
+    const [token, setToken] = useState<string | null>(null);
+    useEffect(() => {
+        const tokenFromStorage = localStorage.getItem("token");
+        setToken(tokenFromStorage);
+    }, []);
+
+    const apiService = new ApiService();
     let userId = localStorage.getItem("userId")
 
     /**
@@ -26,72 +26,32 @@ const Workspaces = () => {
      * and then we create a workspaceUser to associate the user to the workspace
      * @param values
      */
-    async function postWorkspace(values: { name: string; }): Promise<boolean> {
+    async function postWorkspace(values: { name: string; }): Promise<number> {
         let payload = {name: values.name, roomId: 0};
-        let result = false;
+        let result = 0
         payload.roomId = await postRoom(payload)
-        await axios
-            .post(urlApi + 'workspaces', payload, config)
-            .then((response) => {
-                if (response.status === 200) {
-                    let payload2 = {userID: userId, workspaceID: response.data.data.id};
-                    axios
-                        .post(urlApi + 'workspacesUser', payload2, config)
-                        .then((response) => {
-                            if (response.status === 200) {
-                                result = true
-                                window.location.reload()
-                            }
-                        })
-                        .catch(function (error) {
-                            if (error.response) {
-                                toast.error(error.response.data.message, {
-                                    position: toast.POSITION.TOP_RIGHT
-                                });
-                                if(error.response.data.disconnect === true){
-                                    localStorage.clear()
-                                    navigate('/login');
-                                }
-                            }
-                        })
-                }
-            })
-            .catch(function (error) {
-                if (error.response) {
-                    toast.error(error.response.data.message, {
-                        position: toast.POSITION.TOP_RIGHT
-                    });
-                    if(error.response.data.disconnect === true){
-                        localStorage.clear()
-                        navigate('/login');
-                    }
-                }
-            })
-        return result;
+        const response = await apiService.post('workspaces', payload, token!)
+        if (response && response.status === 200) {
+            result = response.data.data.id
+            let payload2 = {userID: userId, workspaceID: response.data.data.id};
+            const response2 = await apiService.post('workspacesUser', payload2, token!)
+            if (response2 && response2.status === 200) {
+                result = response.data.data.id
+                window.location.reload()
+            }
+        }
+    return result
     }
 
-    //code dupliqué à refacto
     async function postRoom(values: { name: string; }): Promise<number>{
         let payload = {name: values.name}
         let result = 0
-        await axios
-            .post(urlApi + 'rooms', payload,  config)
-            .then((response) => {
-                if (response.status === 200) {
-                    result = response.data.data.id
-                }
-            })
-            .catch(function (error) {
-                if (error.response) {
-                    toast.error(error.response.data.message, {
-                        position: toast.POSITION.TOP_RIGHT
-                    });
-                    if(error.response.data.disconnect === true){
-                        localStorage.clear()
-                        navigate('/login');
-                    }
-                }
-            })
+
+        const response = await apiService.post('rooms',payload,token!)
+        if (response && response.status === 200){
+            result = response.data.data.id
+        }
+        
         return result
     }
 
@@ -102,7 +62,6 @@ const Workspaces = () => {
     const handleShow = () => setShow(true);
     const handleSubmit = async (values: { name: string; }) => {
         await postWorkspace(values);
-        //handleClose()
     };
 
     const initialValues = {
@@ -123,25 +82,19 @@ const Workspaces = () => {
     /**
      * we get all workspaces that user has access to
      */
-    const getWorkspaces = () => {
-        axios
-            .get(urlApi + 'workspacesByUserId/' + userId, config)
-            .then((response) => {
-                if (response.status === 200) {
-                    setWorkspaces(response.data.data)
-                    setIsLoading(false);
-                }
-            })
-            .catch(function (error) {
-                if (error.response) {
-
-                }
-            })
-    }
-
     useEffect(() => {
-        getWorkspaces()
-    }, [])
+        async function getWorkspaces(){
+            if(token !== null){
+                const response = await apiService.get('workspacesByUserId/' + userId, token!, navigate)
+                if (response){
+                    const responseContent = JSON.parse(JSON.stringify(response.data.data)) as Workspace[]
+                    setWorkspaces(responseContent)
+                    setIsLoading(false)
+                }
+            }
+        }
+        getWorkspaces();
+    }, [token])
 
     const navigate = useNavigate();
 

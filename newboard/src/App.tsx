@@ -1,6 +1,6 @@
 import React, {useEffect} from 'react';
 import Footer from "./components/Footer";
-import Home from "./components/Home";
+import Home from "./pages/Home";
 import {BrowserRouter, Route, Routes} from "react-router-dom";
 import InscriptionPage from "./pages/Inscription";
 import ErrorPage from "./pages/Error";
@@ -90,8 +90,8 @@ export default function App() {
 /**
  * url of the Production environment
  */
-// export const urlApi = "https://api.newboard.fr/api/";
-// export const urlApiSocket = "https://api.newboard.fr";
+//export const urlApi = "https://api.newboard.fr/api/";
+//export const urlApiSocket = "https://api.newboard.fr";
 
 /**
  * url of the Development environment

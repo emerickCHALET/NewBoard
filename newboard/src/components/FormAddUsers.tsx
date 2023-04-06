@@ -91,7 +91,7 @@ const FormAddUsers = () => {
                             <option value="default" disabled hidden>
                                 Choisissez une classe
                             </option>
-                            {users.map((user) => { return <option key={user.firstName.toString()} className={"workspace-item"} value={user.firstName} > {user.firstName} </option>; })}
+                            {users.map((user) => { return <option key={user.firstname.toString()} className={"workspace-item"} value={user.firstname} > {user.firstname} </option>; })}
                         </select>
                         <Modal.Footer>
                             <Button variant="secondary" onClick={handleClose}>

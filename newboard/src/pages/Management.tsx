@@ -3,29 +3,29 @@ import Footer from "../components/Footer";
 import SideBar from "../components/SideBar";
 import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
-import {ErrorMessage, Field, Form, Formik, FormikValues} from "formik";
+import {ErrorMessage, Field, Form, Formik} from "formik";
 import * as Yup from "yup";
-import axios from "axios";
-import {urlApi} from "../App";
 import {toast} from "react-toastify";
 import Papa from "papaparse";
 import { Table } from 'react-bootstrap';
 import * as AiIcons from "react-icons/ai";
 import {useNavigate} from "react-router";
+import ApiService from "../services/ApiService";
 
-/**
- * const who created a headers with the token for authenticated a request to API
- */
-const config = {
-    headers: {Authorization: `Bearer ${localStorage.getItem('token')}`}
-};
 /**
  * const who get the establishmentId of a admin login
  */
 const establishmentId = parseInt(localStorage.getItem('establishmentId')!);
 
 const Management = () => {
+    const [token, setToken] = useState<string | null>(null);
+    useEffect(() => {
+        const tokenFromStorage = localStorage.getItem("token");
+        setToken(tokenFromStorage);
+    }, []);
+
     const navigate = useNavigate();
+    const apiService = new ApiService();
 
     /**
      * Register a new User
@@ -33,54 +33,28 @@ const Management = () => {
      */
     async function postRegister(values: { lastname: string; firstname: string; email: string; password: string, class: string }): Promise<any> {
         let payload = { firstname: values.firstname, lastname: values.lastname, email: values.email, password: values.password, class: values.class, establishmentId: establishmentId };
-        await axios
-            .post(urlApi + 'users',payload)
-            .then((response) => {
-                if(response.status === 200){
-                    toast.success("Elève ajouter avec succès !", {
-                        position: toast.POSITION.TOP_RIGHT,
-                    });
-                }
-            })
-            .catch(function (error) {
-                if(error.response) {
-                    toast.error(error.response.data.message,{
-                        position: toast.POSITION.TOP_RIGHT
-                    });
-                    if(error.response.data.disconnect === true){
-                        localStorage.clear()
-                        navigate('/login');
-                    }
-                }
-            })
+
+        const response = await apiService.post("users",payload,undefined, navigate)
+        if (response && response.status === 200) {
+            toast.success("Elève ajouter avec succès !", {
+                position: toast.POSITION.TOP_RIGHT,
+            });
+        }
     }
 
     /**
      * Register a new classroom who is assigned to the establishment ID of the admin connected
      * @param values necessary for register a new classroom
      */
-    async function postClassrom(values: { ClassroomName: string; }): Promise<any> {
+    async function postClassroom(values: { ClassroomName: string; }): Promise<any> {
         let payload = { ClassroomName: values.ClassroomName , EstablishmentId: establishmentId};
-        await axios
-            .post(urlApi + 'classroom',payload,config)
-            .then((response) => {
-                if(response.status === 200){
-                    toast.success("Classe crée avec succès !", {
-                        position: toast.POSITION.TOP_RIGHT,
-                    });
-                }
-            })
-            .catch(function (error) {
-                if(error.response) {
-                    toast.error(error.response.data.message,{
-                        position: toast.POSITION.TOP_RIGHT
-                    });
-                    if(error.response.data.disconnect === true){
-                        localStorage.clear()
-                        navigate('/login');
-                    }
-                }
-            })
+
+        const response = await apiService.post("classroom",payload,token!, navigate)
+        if (response && response.status === 200) {
+            toast.success("Classe crée avec succès !", {
+                position: toast.POSITION.TOP_RIGHT,
+            });
+        }
     }
 
     /**
@@ -89,26 +63,13 @@ const Management = () => {
      */
     async function putUser(values: {id:string; lastname: string; firstname: string; email: string; class: string }): Promise<any> {
         let payload = { firstname: values.firstname, lastname: values.lastname, email: values.email, class: values.class };
-        await axios
-            .put(urlApi + 'studentUpdateByAdmin/' + values.id,payload,config)
-            .then((response) => {
-                if(response.status === 200){
-                    toast.success("Elève mis a jour avec succès !", {
-                        position: toast.POSITION.TOP_RIGHT,
-                    });
-                }
-            })
-            .catch(function (error) {
-                if(error.response) {
-                    toast.error(error.response.data.message,{
-                        position: toast.POSITION.TOP_RIGHT
-                    });
-                    if(error.response.data.disconnect === true){
-                        localStorage.clear()
-                        navigate('/login');
-                    }
-                }
-            })
+
+        const response = await apiService.put('studentUpdateByAdmin/' + values.id,payload,token!, navigate)
+        if (response && response.status === 200) {
+            toast.success("Elève mis a jour avec succès !", {
+                position: toast.POSITION.TOP_RIGHT,
+            });
+        }
     }
 
     /**
@@ -117,26 +78,13 @@ const Management = () => {
      * @constructor
      */
     async function DeleteStudent(values: { idStudent: string}): Promise<void> {
-        await axios
-            .delete(urlApi + 'users/' + values.idStudent,config)
-            .then((response) => {
-                if(response.status === 200){
-                    toast.success("Etudiant supprimé !", {
-                        position: toast.POSITION.TOP_RIGHT,
-                    });
-                }
-            })
-            .catch(function (error) {
-                if(error.response) {
-                    toast.error(error.response.data.message,{
-                        position: toast.POSITION.TOP_RIGHT
-                    });
-                    if(error.response.data.disconnect === true){
-                        localStorage.clear()
-                        navigate('/login');
-                    }
-                }
-            })
+
+        const response = await apiService.delete('users/' + values.idStudent,token!, navigate)
+        if (response && response.status === 200) {
+            toast.success("Etudiant supprimé !", {
+                position: toast.POSITION.TOP_RIGHT,
+            });
+        }
     }
 
     /**
@@ -145,26 +93,13 @@ const Management = () => {
      * @constructor
      */
     async function DeleteClassroom(values: { idClassroom: string}): Promise<void> {
-        await axios
-            .delete(urlApi + 'classroom/' + values.idClassroom,config)
-            .then((response) => {
-                if(response.status === 200){
-                    toast.success("Classe supprimée !", {
-                        position: toast.POSITION.TOP_RIGHT,
-                    });
-                }
-            })
-            .catch(function (error) {
-                if(error.response) {
-                    toast.error(error.response.data.message,{
-                        position: toast.POSITION.TOP_RIGHT
-                    });
-                    if(error.response.data.disconnect === true){
-                        localStorage.clear()
-                        navigate('/login');
-                    }
-                }
-            })
+
+        const response = await apiService.delete('classroom/' + values.idClassroom,token!, navigate)
+        if (response && response.status === 200) {
+            toast.success("Classe supprimée !", {
+                position: toast.POSITION.TOP_RIGHT,
+            });
+        }
     }
 
     //Ajout en masse via CSV
@@ -196,26 +131,13 @@ const Management = () => {
             encoding: 'UTF-8', // Spécifiez que le fichier doit être encodé en UTF-8
             header: true,
             complete: async (results) => { // La fonction complete sera appelée une fois que le fichier a été lu
-                await axios
-                    .post(urlApi + 'usersByFile', results.data, config)
-                    .then((response) => {
-                        if (response.status === 200) {
-                            toast.success("Etudiants créer!", {
-                                position: toast.POSITION.TOP_RIGHT,
-                            });
-                        }
-                    })
-                    .catch(function (error) {
-                        if (error.response) {
-                            toast.error(error.response.data.message, {
-                                position: toast.POSITION.TOP_RIGHT
-                            });
-                            if(error.response.data.disconnect === true){
-                                localStorage.clear()
-                                navigate('/login');
-                            }
-                        }
-                    })
+
+                const response = await apiService.post('usersByFile',results.data,token!, navigate)
+                if (response && response.status === 200) {
+                    toast.success("Etudiants créer!", {
+                        position: toast.POSITION.TOP_RIGHT,
+                    });
+                }
             }
         });
     };
@@ -223,30 +145,12 @@ const Management = () => {
     //Ajout d'un élève
     const [classrooms, setClassrooms] = useState<any[]>([]);
 
-    const getClassroomsByEstablishmentId = () => {
-        axios
-            .get(urlApi + 'classroomsByEstablishmentId/' + establishmentId, config)
-            .then((response) => {
-                if (response.status === 200) {
-                    setClassrooms(response.data.data)
-                }
-            })
-            .catch(function (error) {
-                if (error.response) {
-                    toast.error(error.response.data.message.name + ". \nReconnexion requise", {
-                        position: toast.POSITION.TOP_RIGHT
-                    });
-                    if(error.response.data.disconnect === true){
-                        localStorage.clear()
-                        navigate('/login');
-                    }
-                }
-            })
+    const getClassroomsByEstablishmentId = async () => {
+        const response = await apiService.get('classroomsByEstablishmentId/' + establishmentId, token!, navigate)
+        if (response && response.status === 200) {
+            setClassrooms(response.data.data)
+        }
     }
-
-    useEffect(() => {
-        getClassroomsByEstablishmentId()
-    }, [])
 
     const [showSecond, setShowSecond] = useState(false);
     const handleCloseSecond = () => setShowSecond(false);
@@ -301,7 +205,7 @@ const Management = () => {
         ClassroomName: ""
     };
     const handleSubmitThird = async (values: { ClassroomName: string;}) => {
-        await postClassrom(values);
+        await postClassroom(values);
         handleCloseThird();
         window.location.reload()
     };
@@ -342,42 +246,21 @@ const Management = () => {
     //Affichage Table Users
     const [data, setData] = useState<any>([]);
 
-    useEffect(() => {
-        axios
-            .get(urlApi + 'usersByEstablishmentId/' + establishmentId,config)
-            .then((response) => {
-                if (response.status === 200) {
-                    setData(response.data.data);
-                }
-            })
-            .catch(function (error) {
-                if (error.response) {
-                    toast.error(error.response.data.message.name, {
-                        position: toast.POSITION.TOP_RIGHT
-                    });
-                }
-            })
-    }, []);
+    const getUsersByEstablishmentId = async () => {
+        const response = await apiService.get('usersByEstablishmentId/' + establishmentId, token!)
+        if (response && response.status === 200) {
+            setData(response.data.data);
+        }
+    };
 
     //Affichage Table Classroom
-    const [dataClassroom, setDataClassroom] = useState<any>([]);
 
     useEffect(() => {
-        axios
-            .get(urlApi + 'classroomsByEstablishmentId/' + establishmentId,config)
-            .then((response) => {
-                if (response.status === 200) {
-                    setDataClassroom(response.data.data);
-                }
-            })
-            .catch(function (error) {
-                if (error.response) {
-                    toast.error(error.response.data.message.name, {
-                        position: toast.POSITION.TOP_RIGHT
-                    });
-                }
-            })
-    }, []);
+        if (token !== null){
+            getClassroomsByEstablishmentId()
+            getUsersByEstablishmentId()
+        }
+    }, [token])
 
     return (
         <div className="wrap">
@@ -623,7 +506,7 @@ const Management = () => {
                     </tr>
                     </thead>
                     <tbody>
-                    {dataClassroom.map((items: { id: React.Key | null | undefined; ClassroomName: string | number | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | React.ReactFragment | React.ReactPortal | null | undefined;}, index: number) => (
+                    {classrooms.map((items: { id: React.Key | null | undefined; ClassroomName: string | number | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | React.ReactFragment | React.ReactPortal | null | undefined;}, index: number) => (
                         <tr key={items.id}>
                             <td>{index + 1}</td>
                             <td>{items.ClassroomName}</td>

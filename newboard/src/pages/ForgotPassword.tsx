@@ -7,31 +7,11 @@ import axios from "axios";
 import {urlApi} from "../App";
 import {toast} from "react-toastify";
 import SideBar from "../components/SideBar";
-
-async function postForgot(values: { email: string }): Promise<boolean> {
-    let data = {email: values.email};
-    let result = false;
-    await axios
-        .post(urlApi + 'forgot', data)
-        .then((response) => {
-            if (response.status === 200) {
-                toast.success("Un email vous à été envoyé !", {
-                    position: toast.POSITION.TOP_RIGHT,
-                });
-                result = true
-            }
-        })
-        .catch(function (error) {
-            if (error.response) {
-                toast.error(error.response.data.message, {
-                    position: toast.POSITION.TOP_RIGHT
-                });
-            }
-        })
-    return result;
-}
+import Workspace from "../classes/Workspace";
+import ApiService from "../services/ApiService";
 
 const ForgotPassword = () => {
+    const apiService = new ApiService();
     const [isLoading, setIsLoading] = useState<boolean>(false);
 
     const validationSchema = Yup.object().shape({
@@ -39,6 +19,20 @@ const ForgotPassword = () => {
             .email("Email invalide")
             .required("L'email est obligatoire")
     });
+
+    async function postForgot(values: { email: string }): Promise<boolean> {
+        let data = {email: values.email};
+        let result = false;
+
+        const response = await apiService.post('forgot/',data, undefined)
+        if (response && response.status === 200){
+            toast.success("Un email vous à été envoyé !", {
+                position: toast.POSITION.TOP_RIGHT,
+            });
+            result = true
+        }
+        return result;
+    }
 
     const initialValues = {
         email: ""
