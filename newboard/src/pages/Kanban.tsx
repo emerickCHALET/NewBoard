@@ -24,7 +24,7 @@ import Button from "react-bootstrap/Button";
 import {urlApiSocket} from "../App";
 import {useLocation, useNavigate, useParams} from "react-router";
 import Users from "../classes/Users";
-import io from 'socket.io-client';
+import * as io from "socket.io-client";
 import * as AiIcons from "react-icons/ai";
 import ApiService from "../services/ApiService";
 
@@ -117,25 +117,28 @@ const Kanban = () => {
      * Request who get the content of a board where the page is initialized
      */
     const getBoard = async () => {
-        const response = await apiService.get("boards/" + boardId, token!, navigate)
-        if (response && response.status === 200) {
-            if (response.data.data.content != null) {
-                setColumns(JSON.parse(response.data.data.content))
+        if(token !== null){
+            const response = await apiService.get("boards/" + boardId, token!, navigate)
+            if (response && response.status === 200) {
+                if (response.data.data.content != null) {
+                    setColumns(JSON.parse(response.data.data.content))
+                }
+                setIsLoading(false)
             }
-            setIsLoading(false)
         }
     }
 
-    const socket = io(urlApiSocket);
+    const socket = io.connect(urlApiSocket);
 
     let [columns, setColumns] = useState<ColumnInterface[]>([]);
 
     /**
      * Send via socket io a changement of the content of the board to the others users
      */
-    const SendKanbanToSocket = () => {
-        let json = JSON.stringify(columns)
-        socket.emit("kanban message", json, boardId, { exceptSelf: true });
+    const SendKanbanToSocket = async () => {
+        let json = await JSON.stringify(columns)
+        console.log(json)
+        socket.emit('kanban', json, boardId);
     }
 
     /**
@@ -275,13 +278,13 @@ const Kanban = () => {
     }, [token])
 
     const navigate = useNavigate();
+
     useEffect(() => {
-        socket.on('connection', (msg: string) => {
-        });
+        socket.emit('joinRoomBoard', boardId);
     }, []);
 
-    socket.on('kanban message', (message: string) => {
-        getBoard()
+    socket.on('messageKanban', (data) => {
+        setColumns(JSON.parse(data))
     });
 
     /**
@@ -292,7 +295,7 @@ const Kanban = () => {
             <SideBar/>
             <div className={"workspacePresentation"}>
                 <div className={"workspace-container"}>
-                    <img alt={"loading"} className={'iconLoading'} src={"./loading.gif"}/>
+                    <img alt={"loading"} className={'iconLoading'} src={"../loading.gif"}/>
                 </div>
             </div>
             <Footer/>
@@ -303,7 +306,6 @@ const Kanban = () => {
 
         <div className="wrap">
             <SideBar/>
-
             <Modal show={show} onHide={handleClose}>
                 <Modal.Header closeButton>
                     <Modal.Title>Ajouter un élève au board</Modal.Title>
@@ -388,7 +390,6 @@ const Kanban = () => {
                     </div>
                 </DragDropContext>
             </div>
-
             <Footer/>
         </div>
     );
