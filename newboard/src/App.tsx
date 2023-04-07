@@ -12,7 +12,7 @@ import ResetPassword from "./pages/ResetPassword";
 import Board from "./pages/Board";
 import Management from "./pages/Management";
 import Chat from "./pages/Chat";
-import Vocal from "./pages/VocalRoomPage"
+import Vocal from "./pages/VocalRoom"
 import Kanban from "./pages/Kanban";
 import {useParams} from "react-router";
 import AttendanceSheet from "./pages/Attendance";
@@ -82,6 +82,7 @@ export default function App() {
                 <Route path="chat" element={<Chat/>}/>
                 <Route path="chat/:roomId" element={<Chat/>}/>
                 <Route path="vocal" element={<Vocal/>}/>
+                <Route path="vocal/:roomId" element={<Vocal/>}/>
                 <Route path="attendance" element={<AttendanceSheet/>}/>
             </Routes>
         </BrowserRouter>

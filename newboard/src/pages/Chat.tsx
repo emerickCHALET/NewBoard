@@ -9,6 +9,7 @@ import {urlApiSocket} from "../App";
 import ScrollToBottom from "react-scroll-to-bottom";
 import Messages from "../classes/Messages";
 import ApiService from "../services/ApiService";
+import Button from "react-bootstrap/Button";
 
 const ChatPage = () => {
     const [token, setToken] = useState<string | null>(null);
@@ -23,6 +24,8 @@ const ChatPage = () => {
     let socket = io.connect(urlApiSocket);
     let userId = localStorage.getItem("userId")
     let userFullName = localStorage.getItem("userFullName")
+
+
 
     const [currentMessage, setCurrentMessage] = useState("");
     const [messageList, setMessageList] = useState([]);
@@ -74,8 +77,9 @@ const ChatPage = () => {
             <SideBar/>
             <div className="chat-window">
                 <div className="chat-header">
-                    <p>Live Chat</p>
+                    <p>Live Chat</p><br/>
                 </div>
+
                 <div className="chat-body">
                     <ScrollToBottom className="message-container">
                         {messageList.map((message: Messages) => {
@@ -116,7 +120,11 @@ const ChatPage = () => {
                     <button onClick={submitMessage} aria-label="Send">&#9658;</button>
                 </div>
             </div>
-
+            <Button className={"workspace-item workspace-item-add"} variant="primary" onClick={() => {
+                navigate(`/vocal/${roomId}`)
+            }}>
+                Vocal
+            </Button>
         <Footer/>
         </div>
 
