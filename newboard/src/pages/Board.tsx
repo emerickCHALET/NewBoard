@@ -83,7 +83,7 @@ function Board(){
 
         return result;
     }
-    
+
     const [show, setShow] = useState(false);
     const [showAddUser, setShowAddUser] = useState(false);
 
@@ -173,113 +173,114 @@ function Board(){
 
         <div className="wrap">
             <SideBar/>
+            <div className={"Content-Board-Page"} style={{height : '100%'}}>
+            <div>
+                <Modal show={show} onHide={handleClose}>
+                    <Modal.Header closeButton>
+                        <Modal.Title>Créer un tableau</Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>
+                        <Formik
+                            initialValues={initialValues}
+                            validationSchema={validationSchema}
+                            onSubmit={(values) => handleSubmit(values)}
+                        >
+                            <Form>
+                                <fieldset className={"field-area"}>
+                                    <label htmlFor="name">Name:</label>
+                                    <Field name="name" className="form-control" type="text"/>
+                                    <ErrorMessage
+                                        name="name"
+                                        component="small"
+                                        className="text-danger"
+                                    />
+                                </fieldset>
+                                <Modal.Footer>
+                                    <Button variant="secondary" onClick={handleClose}>
+                                        Fermer
+                                    </Button>
+                                    <Button variant="primary" type={"submit"}>
+                                        Créer
+                                    </Button>
+                                </Modal.Footer>
+                            </Form>
+                        </Formik>
+                    </Modal.Body>
 
-            {/* See how to get the modal out and create a component */}
-
-            <Modal show={show} onHide={handleClose}>
-                <Modal.Header closeButton>
-                    <Modal.Title>Créer un tableau</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                    <Formik
-                        initialValues={initialValues}
-                        validationSchema={validationSchema}
-                        onSubmit={(values) => handleSubmit(values)}
-                    >
-                        <Form>
-                            <fieldset className={"field-area"}>
-                                <label htmlFor="name">Name:</label>
-                                <Field name="name" className="form-control" type="text"/>
-                                <ErrorMessage
-                                    name="name"
-                                    component="small"
-                                    className="text-danger"
-                                />
-                            </fieldset>
-                            <Modal.Footer>
-                                <Button variant="secondary" onClick={handleClose}>
-                                    Fermer
-                                </Button>
-                                <Button variant="primary" type={"submit"}>
-                                    Créer
-                                </Button>
-                            </Modal.Footer>
-                        </Form>
-                    </Formik>
-                </Modal.Body>
-
-            </Modal>
-            <Modal show={showAddUser} onHide={handleCloseAddUser}>
-                <Modal.Header closeButton>
-                    <Modal.Title>Ajouter un élève au Workspace</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                    <Formik
-                        initialValues={{userId: 'null'}}
-                        onSubmit={(values) => forceSelectOnlyOption(users, values)}
-                        validateOnBlur={false}
-                        validateOnChange={false}
-                    >
-                        <Form>
-                            <fieldset className={"field-area"}>
-                                <label htmlFor="name">User:</label>
-                                <Field as="select" name="userId" className="form-control" type="userId">
-                                    <option value="" disabled>Choisissez un Elève</option>
-                                    {users.map((user, index) => (
-                                        <option key={index} value={user.id}>
-                                            {user.email}
-                                        </option>
-                                    ))}
-                                </Field>
-                                <ErrorMessage
-                                    name="name"
-                                    component="small"
-                                    className="text-danger"
-                                />
-                            </fieldset>
-                            <Modal.Footer>
-                                <Button variant="secondary" onClick={handleCloseAddUser}>
-                                    Fermer
-                                </Button>
-                                <Button variant="primary" type={"submit"}>
-                                    Ajouter
-                                </Button>
-                            </Modal.Footer>
-                        </Form>
-                    </Formik>
-                </Modal.Body>
-            </Modal>
-            <div className={"addUser-item-div"}>
-                <Button type={"button"} className={"btn-light btn-outline-primary"}  onClick={() => {
-                    handleShowAddUser()
-                }}>
-                    <AiIcons.AiOutlineUserAdd /> Partager
-                </Button>
-            </div>
-            <h2>Tableaux</h2>
-            <Button className={"workspace-item workspace-item-add"} variant="primary" onClick={() => {
-                navigate(`/chat/${roomId}`)
-            }}>
-                Chat
-            </Button>
-            <div className={"workspace-container"}>
-                <div className={"workspace-list"}>
-                    {/* eslint-disable-next-line @typescript-eslint/no-unused-expressions */}
-                    <Button className={"workspace-item workspace-item-add"} variant="primary" onClick={() => {
-                        handleShow()
+                </Modal>
+                <Modal show={showAddUser} onHide={handleCloseAddUser}>
+                    <Modal.Header closeButton>
+                        <Modal.Title>Ajouter un élève au Workspace</Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>
+                        <Formik
+                            initialValues={{userId: 'null'}}
+                            onSubmit={(values) => forceSelectOnlyOption(users, values)}
+                            validateOnBlur={false}
+                            validateOnChange={false}
+                        >
+                            <Form>
+                                <fieldset className={"field-area"}>
+                                    <label htmlFor="name">User:</label>
+                                    <Field as="select" name="userId" className="form-control" type="userId">
+                                        <option value="" disabled>Choisissez un Elève</option>
+                                        {users.map((user, index) => (
+                                            <option key={index} value={user.id}>
+                                                {user.email}
+                                            </option>
+                                        ))}
+                                    </Field>
+                                    <ErrorMessage
+                                        name="name"
+                                        component="small"
+                                        className="text-danger"
+                                    />
+                                </fieldset>
+                                <Modal.Footer>
+                                    <Button variant="secondary" onClick={handleCloseAddUser}>
+                                        Fermer
+                                    </Button>
+                                    <Button variant="primary" type={"submit"}>
+                                        Ajouter
+                                    </Button>
+                                </Modal.Footer>
+                            </Form>
+                        </Formik>
+                    </Modal.Body>
+                </Modal>
+                <div className={"addUser-item-div"}>
+                    <Button type={"button"} className={"btn-light btn-outline-primary"}  onClick={() => {
+                        handleShowAddUser()
                     }}>
-                        +
+                        <AiIcons.AiOutlineUserAdd /> Partager
                     </Button>
-                    {boards.map((board) => {
-                        return <div key={board.name.toString()} className={"workspace-item"} onClick={() => {
-                            const boardId = board.id.toString()
-                            navigate(`/kanban/${boardId}`,
-                                {state: {
-                                        roomId: board.roomId
-                            }})
-                        }}> {board.name} </div>;
-                    })}
                 </div>
+                <h2>Tableaux</h2>
+                <Button className={"workspace-item workspace-item-add"} variant="primary" onClick={() => {
+                    navigate(`/chat/${roomId}`)
+                }}>
+                    Chat
+                </Button>
+                <div className={"workspace-container"}>
+                    <div className={"workspace-list"}>
+                        {/* eslint-disable-next-line @typescript-eslint/no-unused-expressions */}
+                        <Button className={"workspace-item workspace-item-add"} variant="primary" onClick={() => {
+                            handleShow()
+                        }}>
+                            +
+                        </Button>
+                        {boards.map((board) => {
+                            return <div key={board.name.toString()} className={"workspace-item"} onClick={() => {
+                                const boardId = board.id.toString()
+                                navigate(`/kanban/${boardId}`,
+                                    {state: {
+                                            roomId: board.roomId
+                                        }})
+                            }}> {board.name} </div>;
+                        })}
+                    </div>
+                </div>
+            </div>
             </div>
             <Footer/>
         </div>
