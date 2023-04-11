@@ -8,7 +8,9 @@ import {useNavigate} from "react-router";
 import Attendance from "../classes/Attendance";
 import Classroom from "../classes/Classroom";
 import Student from "../classes/Student";
-import '../Attendance.css';
+import '../styles/Attendance.css';
+import OnlineUser from "../components/modal/OnlineUser";
+import HistoryUser from "../components/modal/HistoryUser";
 
 
 const config = {
@@ -50,15 +52,14 @@ const AttendanceSheet: React.FC = () => {
     /**
      * getClassrooms get all the classrooms when the page is loaded
      */
-
     const getClassrooms = async () => {
         try {
             const response = await axios.get(urlApi + 'classrooms', config)
             if (response.status === 200) {
                 setClassrooms(response.data.data)
             }
-        } catch (error) {
-            toastError("Une erreur est survenue lors des classes. Veuillez réessayer plus tard.");
+        } catch (error: any) {
+            toastError(error.response.data.message);
         }
     }
 
@@ -72,8 +73,8 @@ const AttendanceSheet: React.FC = () => {
             if (response.status === 200) {
                 setHistory(response.data.data)
             }
-        } catch (error) {
-            toastError("Une erreur est survenue lors de la récupération de l'historique. Veuillez réessayer plus tard.")
+        } catch (error: any) {
+            toastError(error.response.data.message);
         }
     }
 
@@ -100,8 +101,8 @@ const AttendanceSheet: React.FC = () => {
                     setSelectedStudents(response.data.data);
                 }
             }
-        } catch (error) {
-            toastError("Une erreur est survenue lors de la récupération des élèves. Veuillez réessayer plus tard.");
+        } catch (error: any) {
+            toastError(error.response.data.message);
         }
     }
 
@@ -119,15 +120,15 @@ const AttendanceSheet: React.FC = () => {
                 }
                 setSelectedHistory(response.data.data)
             }
-        } catch (error) {
-            toastError("Une erreur est survenue lors de la récupération des élèves. Veuillez réessayer plus tard.");
+        } catch (error: any) {
+            toastError(error.response.data.message);
         }
     }
 
     /**
      * saveAttendance save the attendance of the students in the database when the user click on the button "Enregistrer"
      */
-    const saveAttendance = () => {
+    const saveAttendance = async () => {
 
         if (selectedStudents.length === 0) {
             toastError('Aucune donnée est présente');
@@ -152,26 +153,28 @@ const AttendanceSheet: React.FC = () => {
             })
         }
         setIsLoading(true);
-        axios.post(urlApi + 'attendance', myData, config)
-            .then((response) => {
+
+        try {
+            const response = await axios.post(urlApi + 'attendance', myData, config)
+            if (response.status === 200) {
                 setTimeout(() => {
                     setIsLoading(false);
                 }, 3000);
                 toastSuccess(response.data.message);
                 getHistory();
-            })
-            .catch((error) => {
-                setTimeout(() => {
-                    setIsLoading(false);
-                }, 3000);
-                toastError(error.response.data.message);
-            });
+            }
+        } catch (error: any) {
+            setTimeout(() => {
+                setIsLoading(false);
+            }, 3000);
+            toastError(error.response.data.message);
+        }
     };
 
     /**
      * updateAttendance update the attendance of the students in the database when the user click on the button "Enregistrer"
      */
-    const updateAttendance = () => {
+    const updateAttendance = async () => {
 
         if (selectedHistory.length === 0) {
             toastError('Aucune donnée est présente');
@@ -189,20 +192,22 @@ const AttendanceSheet: React.FC = () => {
             })
         }
         setIsLoading(true);
-        axios.put(urlApi + 'attendance/' + selectedHistoryId, myData, config)
-            .then((response) => {
+
+        try {
+            const response = await axios.put(urlApi + 'attendance/' + selectedHistoryId, myData, config)
+            if (response.status === 200) {
                 setTimeout(() => {
                     setIsLoading(false);
                 }, 3000);
                 toastSuccess(response.data.message);
                 getHistory();
-            })
-            .catch((error) => {
-                setTimeout(() => {
-                    setIsLoading(false);
-                }, 3000);
-                toastError(error.response.data.message);
-            });
+            }
+        } catch (error: any) {
+            setTimeout(() => {
+                setIsLoading(false);
+            }, 3000);
+            toastError(error.response.data.message);
+        }
     };
 
     /**
@@ -333,13 +338,14 @@ const AttendanceSheet: React.FC = () => {
     return (
         <div className="wrap">
             <SideBar/>
-            <h1 className="text-center my-5">Feuille d'appel</h1>
+            <h1 className="text-center mt-0">Feuille d'appel</h1>
             <Form>
-                <div className="row">
-                    <div className="col">
-                        <Form.Group>
+                <div className="row d-flex align-items-center">
+                    <div className="col-md-5">
+                        <Form.Group className="w-100">
                             <Form.Label htmlFor="Classe">Classe</Form.Label>
-                            <Form.Select id="Classe" onChange={classSelection} value={selectedClassroomId ?? ''}>
+                            <Form.Select className="select-classroom" id="Classe" onChange={classSelection}
+                                         value={selectedClassroomId ?? ''}>
                                 <option value="" disabled>Choisissez une classe</option>
                                 {classrooms && classrooms.map(classroom => (
                                     <option key={classroom.id} value={classroom.id}>
@@ -349,10 +355,11 @@ const AttendanceSheet: React.FC = () => {
                             </Form.Select>
                         </Form.Group>
                     </div>
-                    <div className="col">
-                        <Form.Group>
+                    <div className="col-md-5">
+                        <Form.Group className="w-100">
                             <Form.Label>Historique</Form.Label>
-                            <Form.Select onChange={historySelection} value={selectedHistoryId ?? ''}>
+                            <Form.Select className="select-history" onChange={historySelection}
+                                         value={selectedHistoryId ?? ''}>
                                 <option value="" disabled>Choisissez un appel</option>
                                 {history && history.map((Attendance) => {
                                     const date = new Date(Attendance.call_date);
@@ -375,6 +382,10 @@ const AttendanceSheet: React.FC = () => {
                             </Form.Select>
                         </Form.Group>
                     </div>
+                    <div className="col-md-2 Custom-Component">
+                        <OnlineUser/>
+                        <HistoryUser/>
+                    </div>
                 </div>
             </Form>
 
@@ -386,7 +397,7 @@ const AttendanceSheet: React.FC = () => {
                     <tr>
                         <th>Nom de l'étudiant</th>
                         <th>Prénom de l'étudiant</th>
-                        <th>Présent / Absent</th>
+                        <th>Présence</th>
                         <th>Retard</th>
                         <th>Durée du retard</th>
                     </tr>
@@ -422,6 +433,7 @@ const AttendanceSheet: React.FC = () => {
                                     placeholder="Entrez la durée du retard"
                                     onChange={(e) => lateDurationChange(index, parseInt(e.target.value))}
                                     disabled={!isLateEnabled[index]}
+                                    min="1"
                                 />
                             </td>
                         </tr>
@@ -441,7 +453,6 @@ const AttendanceSheet: React.FC = () => {
                             'Sauvegarder'
                         )}
                     </Button>
-
                 </Table>
             )}
 
@@ -454,7 +465,7 @@ const AttendanceSheet: React.FC = () => {
                         <tr>
                             <th>Nom de l'étudiant</th>
                             <th>Prénom de l'étudiant</th>
-                            <th>Présent / Absent</th>
+                            <th>Présence</th>
                             <th>Retard</th>
                             <th>Durée du retard</th>
                         </tr>
@@ -491,6 +502,7 @@ const AttendanceSheet: React.FC = () => {
                                             lateDurationChange(index, parseInt(e.target.value))
                                         }
                                         disabled={!selectedHistory[index].late}
+                                        min="1"
                                     />
                                 </td>
                             </tr>

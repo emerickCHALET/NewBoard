@@ -40,7 +40,8 @@ const Login = () => {
                     localStorage.setItem('userId', response.data.data.id);
                     localStorage.setItem('userClass', response.data.data.class)
                     localStorage.setItem('email', response.data.data.email)
-                    localStorage.setItem('userFullName', response.data.data.firstname + " " + response.data.data.lastname)
+                    localStorage.setItem('userFirstName', response.data.data.firstname)
+                    localStorage.setItem('userLastName', response.data.data.lastname)
                     if (response.data.data.role === "ROLE_ADMIN") {
                         localStorage.setItem('establishmentId', response.data.data.establishmentId);
                     }
