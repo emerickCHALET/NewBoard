@@ -22,7 +22,9 @@ const ChatPage = () => {
 
     let socket = io.connect(urlApiSocket);
     let userId = localStorage.getItem("userId")
-    let userFullName = localStorage.getItem("userFullName")
+    let userFirstName = localStorage.getItem("userFirstName")
+    let userLastName = localStorage.getItem("userLastName")
+    let userFullName = userFirstName + " " + userLastName
 
     const [currentMessage, setCurrentMessage] = useState("");
     const [messageList, setMessageList] = useState([]);

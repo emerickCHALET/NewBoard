@@ -1,7 +1,11 @@
+/*.wrap {*/
+/*    display: flex;*/
+/*    flex-direction: column;*/
+/*    min-height: 100vh;*/
+/*}*/
 .wrap {
     display: flex;
     flex-direction: column;
-    min-height: 100vh;
 }
 
 .sidebar {
@@ -86,3 +90,20 @@ table tbody td:nth-child(4) {
 table tbody td:nth-child(5) {
     background-color: rgb(239, 172, 34);
 }
+
+.Custom-Component {
+    display: flex;
+    align-items: center;
+}
+
+.Custom-Component > *:not(:last-child) {
+    margin-right: 10px;
+}
+
+/*.select-classroom {*/
+/*    width: 400px;*/
+/*}*/
+
+/*.select-history {*/
+/*    width: 400px;*/
+/*}*/

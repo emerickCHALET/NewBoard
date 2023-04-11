@@ -1,0 +1,36 @@
+.containerModalHistory {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 10px;
+}
+
+.formGroupHistoryClass {
+    margin-bottom: 15px;
+}
+
+
+.labelHistoryClass {
+    width: 100%;
+}
+
+.formGroupHistoryStudent{
+    margin-bottom: 15px;
+}
+
+.mapModalReleverTitle{
+    font-size: 1.2rem;
+    font-weight: bold;
+}
+
+.mapModalReleverPresence{
+    font-weight: bold;
+}
+
+.mapModalReleverSuccess{
+    color: green;
+}
+
+.mapModalReleverFailed{
+    color: red;
+}

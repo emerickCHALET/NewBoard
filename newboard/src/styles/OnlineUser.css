@@ -1,0 +1,22 @@
+.containerModal{
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 10px;
+}
+
+.mapModal{
+    display: inline-block;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.mapModalOption{
+    display: inline-block;
+    margin: 0 10px;
+}
+
+.mapModalData{
+    font-weight: bold;
+}
