@@ -142,3 +142,53 @@ span {
 .iconLoading{
     width: 40%;
 }
+
+.content-Board-Page{
+    display: flex;
+    height: 100%;
+}
+
+.board-access{
+    width: 80%;
+    margin-top: 50vh;
+    transform: translateY(-50%);
+}
+
+.board-users{
+    width: 20%;
+    background-color: rgb(46, 46, 46);
+}
+
+.nav-text-user{
+    font-weight: bold;
+    width: 95%;
+    color: white;
+    border-radius: 10px;
+}
+
+.nav-text-user:hover{
+    font-weight: bold;
+    width: 95%;
+    background-color: dodgerblue;
+    color: white;
+    border-radius: 10px;
+}
+
+.profile-list-users{
+    width: 30px;
+    height: 30px;
+}
+
+.nav-text-user-information{
+    position: absolute;
+    right: 20%; /* ajuster cette valeur pour définir la distance horizontale entre les deux éléments */
+    top: 10%;
+}
+
+.informations-users{
+    font-weight: bold;
+    width: 95%;
+    background-color: #41464b;
+    color: white;
+    border-radius: 10px;
+}

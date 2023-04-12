@@ -13,7 +13,6 @@ import Board from "./pages/Board";
 import Management from "./pages/Management";
 import Chat from "./pages/Chat";
 import Kanban from "./pages/Kanban";
-import {useParams} from "react-router";
 import AttendanceSheet from "./pages/Attendance";
 import {toast} from "react-toastify";
 

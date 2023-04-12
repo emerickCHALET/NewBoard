@@ -11,6 +11,7 @@ import Boards from "../classes/Board";
 import Users from "../classes/Users";
 import * as AiIcons from "react-icons/ai";
 import ApiService from "../services/ApiService";
+import BoardUsers from "./BoardUsers";
 
 function Board(){
     const [token, setToken] = useState<string | null>(null);
@@ -68,39 +69,13 @@ function Board(){
         return result
     }
 
-
-    async function postWorkspaceUser(values: FormikValues): Promise<boolean> {
-        let payload = {userID: values.userId, workspaceID: workspaceId};
-        let result = false;
-
-        const response = await apiService.post('workspacesUser',payload,token!,navigate)
-        if (response && response.status === 200){
-            toast.success("WorkspaceUser crée avec succès !", {
-                position: toast.POSITION.TOP_RIGHT,
-            });
-            result = true
-        }
-
-        return result;
-    }
-
     const [show, setShow] = useState(false);
-    const [showAddUser, setShowAddUser] = useState(false);
 
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
-    const handleShowAddUser = () => setShowAddUser(true);
-    const handleCloseAddUser = () => setShowAddUser(false)
 
     const handleSubmit = async (values: { name: string; }) => {
         await postBoard(values);
-    };
-
-    const handleSubmitAddUsers = async (values: FormikValues) => {
-        const result = await postWorkspaceUser(values);
-        if (result) {
-            window.location.reload()
-        }
     };
 
     const initialValues = {
@@ -126,20 +101,19 @@ function Board(){
         }
     }
 
-    const [users, setUsers] = useState<Users[]>([])
-
-    const className = localStorage.getItem("userClass")
-    const getUsers = async () => {
-        const response = await apiService.get("userByClassIdAndWorkspaceId/" + className + "/" + workspaceId, token!, navigate)
+    const [usersWorkspace, setUsersWorkspace] = useState<Users[]>([])
+    const getUsersFromWorkspaceId = async () => {
+        const response = await apiService.get("userByWorkspaceId/" + workspaceId, token!, navigate)
         if (response && response.status === 200) {
-            setUsers(response.data.data);
+            setUsersWorkspace(response.data.data);
         }
     }
+
 
     useEffect(() => {
         if(token !== null){
             getBoard()
-            getUsers()
+            getUsersFromWorkspaceId()
         }
     }, [token])
 
@@ -157,24 +131,12 @@ function Board(){
         </div>;
     }
 
-    /**
-     * forceSelectOnlyOption is used to avoid a bug when our select only has 1 option and would take initial values instead of the only option available
-     * @param options
-     * @param values
-     */
-    const forceSelectOnlyOption = (options: Users[], values: FormikValues): void => {
-        if (options.length == 1) {
-            values.userId = options[0].id;
-        }
-        handleSubmitAddUsers(values)
-    };
-
     return (
 
-        <div className="wrap">
+        <div className={"wrap"}>
             <SideBar/>
-            <div className={"Content-Board-Page"} style={{height : '100%'}}>
-            <div>
+            <div className={"content-Board-Page"} >
+            <div className={"board-access"}>
                 <Modal show={show} onHide={handleClose}>
                     <Modal.Header closeButton>
                         <Modal.Title>Créer un tableau</Modal.Title>
@@ -208,59 +170,9 @@ function Board(){
                     </Modal.Body>
 
                 </Modal>
-                <Modal show={showAddUser} onHide={handleCloseAddUser}>
-                    <Modal.Header closeButton>
-                        <Modal.Title>Ajouter un élève au Workspace</Modal.Title>
-                    </Modal.Header>
-                    <Modal.Body>
-                        <Formik
-                            initialValues={{userId: 'null'}}
-                            onSubmit={(values) => forceSelectOnlyOption(users, values)}
-                            validateOnBlur={false}
-                            validateOnChange={false}
-                        >
-                            <Form>
-                                <fieldset className={"field-area"}>
-                                    <label htmlFor="name">User:</label>
-                                    <Field as="select" name="userId" className="form-control" type="userId">
-                                        <option value="" disabled>Choisissez un Elève</option>
-                                        {users.map((user, index) => (
-                                            <option key={index} value={user.id}>
-                                                {user.email}
-                                            </option>
-                                        ))}
-                                    </Field>
-                                    <ErrorMessage
-                                        name="name"
-                                        component="small"
-                                        className="text-danger"
-                                    />
-                                </fieldset>
-                                <Modal.Footer>
-                                    <Button variant="secondary" onClick={handleCloseAddUser}>
-                                        Fermer
-                                    </Button>
-                                    <Button variant="primary" type={"submit"}>
-                                        Ajouter
-                                    </Button>
-                                </Modal.Footer>
-                            </Form>
-                        </Formik>
-                    </Modal.Body>
-                </Modal>
-                <div className={"addUser-item-div"}>
-                    <Button type={"button"} className={"btn-light btn-outline-primary"}  onClick={() => {
-                        handleShowAddUser()
-                    }}>
-                        <AiIcons.AiOutlineUserAdd /> Partager
-                    </Button>
-                </div>
+
                 <h2>Tableaux</h2>
-                <Button className={"workspace-item workspace-item-add"} variant="primary" onClick={() => {
-                    navigate(`/chat/${roomId}`)
-                }}>
-                    Chat
-                </Button>
+                <br/>
                 <div className={"workspace-container"}>
                     <div className={"workspace-list"}>
                         {/* eslint-disable-next-line @typescript-eslint/no-unused-expressions */}
@@ -281,12 +193,13 @@ function Board(){
                     </div>
                 </div>
             </div>
+            <div className={"board-users"}>
+                <BoardUsers usersWorkspace={usersWorkspace}/>
+            </div>
             </div>
             <Footer/>
         </div>
     )
-
-
 }
 
 export default Board;
