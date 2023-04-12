@@ -52,7 +52,7 @@ const ChatPage = () => {
      */
     useEffect(() => {
         if(token !== null){
-            socket.emit("join_room", roomId)
+            socket.emit("join_room", roomId, userId)
             getMessages()
         }
     },[token])
@@ -120,11 +120,7 @@ const ChatPage = () => {
                     <button onClick={submitMessage} aria-label="Send">&#9658;</button>
                 </div>
             </div>
-            <Button className={"workspace-item workspace-item-add"} variant="primary" onClick={() => {
-                navigate(`/vocal/${roomId}`)
-            }}>
-                Vocal
-            </Button>
+
         <Footer/>
         </div>
 

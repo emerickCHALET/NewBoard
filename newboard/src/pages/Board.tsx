@@ -262,6 +262,11 @@ function Board(){
             }}>
                 Chat
             </Button>
+            <Button className={"workspace-item workspace-item-add"} variant="primary" onClick={() => {
+                navigate(`/vocal/${roomId}`)
+            }}>
+                Vocal
+            </Button>
             <div className={"workspace-container"}>
                 <div className={"workspace-list"}>
                     {/* eslint-disable-next-line @typescript-eslint/no-unused-expressions */}
