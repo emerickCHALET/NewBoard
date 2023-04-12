@@ -77,7 +77,7 @@ const ModalOnline = () => {
         setSelectedClassId(event.target.value);
     };
 
-    const userFilter = userList.filter((user) => user.classId.toString() === selectedClassId);
+    const userFilter = userList.filter((user) => user.classId && user.classId.toString() === selectedClassId);
 
     useEffect(() => {
         if (selectedClassId !== '' && userFilter.length === 0) {
