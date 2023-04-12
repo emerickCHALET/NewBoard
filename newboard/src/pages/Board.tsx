@@ -11,7 +11,7 @@ import Boards from "../classes/Board";
 import Users from "../classes/Users";
 import * as AiIcons from "react-icons/ai";
 import ApiService from "../services/ApiService";
-import BoardUsers from "./BoardUsers";
+import BoardUsers from "../components/BoardUsers";
 
 function Board(){
     const [token, setToken] = useState<string | null>(null);
@@ -186,7 +186,8 @@ function Board(){
                                 const boardId = board.id.toString()
                                 navigate(`/kanban/${boardId}`,
                                     {state: {
-                                            roomId: board.roomId
+                                            roomId: board.roomId,
+                                            roomName: board.name
                                         }})
                             }}> {board.name} </div>;
                         })}

@@ -1,5 +1,4 @@
 import * as React from "react";
-import { FunctionComponent } from "react";
 import Users from "../../classes/Users";
 
 export const UserCard = ({ user }: { user: Users }) => (

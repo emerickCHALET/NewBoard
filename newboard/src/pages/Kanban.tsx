@@ -27,6 +27,9 @@ import Users from "../classes/Users";
 import * as io from "socket.io-client";
 import * as AiIcons from "react-icons/ai";
 import ApiService from "../services/ApiService";
+import Container from 'react-bootstrap/Container';
+import Navbar from 'react-bootstrap/Navbar';
+import Facepile from "../components/Facepile";
 
 /**
  * Props of new column
@@ -50,10 +53,12 @@ const Kanban = () => {
     const location = useLocation()
     // Initialize boardId here because the app crashes when we click on menu button, location.state.boardId would be null ??
     let roomId = 0
+    let kanbanName = ""
     const {boardId} = useParams<{ boardId: string}>()
 
     if(location.state != null){
         roomId = location.state.roomId
+        kanbanName = location.state.roomName
     }
 
     /**
@@ -262,6 +267,17 @@ const Kanban = () => {
 
     let [sendKanban, isSentToSocket] = useState<boolean>(true);
 
+    const [usersBoard, setUsersBoard] = useState<Users[]>([])
+    /**
+     * Request who get Users who can be assigned to a board
+     */
+    const getUsersFromBoard = async () => {
+        const response = await apiService.get("userByBoardId/" + boardId, token!, navigate)
+        if (response && response.status === 200) {
+            setUsersBoard(response.data.data);
+        }
+    }
+
     useEffect( () => {
         if(!sendKanban){
             SendKanbanToSocket()
@@ -274,6 +290,7 @@ const Kanban = () => {
         if (token !== null){
             getUsers()
             getBoard()
+            getUsersFromBoard()
         }
     }, [token])
 
@@ -303,7 +320,6 @@ const Kanban = () => {
     }
 
     return (
-
         <div className="wrap">
             <SideBar/>
             <Modal show={show} onHide={handleClose}>
@@ -343,19 +359,29 @@ const Kanban = () => {
                     </Formik>
                 </Modal.Body>
             </Modal>
+            <Navbar bg="transparent" expand="lg" className={"navbar-blur"}>
+                <Container fluid>
+                    <Container>
+                        <Navbar.Brand className={"kanban-Name"}>{kanbanName}</Navbar.Brand>
+                    </Container>
+                    <Navbar.Toggle />
+                    <Navbar.Collapse >
+                        <Button variant="secondary" className={"ml-auto btn btn-light btn-outline-primary btn-block d-flex justify-content-center align-items-center"} onClick={() => {handleShow()}}>
+                            <AiIcons.AiOutlineUserAdd />
+                            Partager
+                        </Button>
+                    </Navbar.Collapse>
+                    <Navbar.Collapse>
+                        <Facepile users={usersBoard}/>
+                    </Navbar.Collapse>
+                    <Navbar.Collapse className={"m-lg-2"}>
+                        <Button variant="primary" className={"btn btn-block"} onClick={() => {
+                            navigate(`/chat/${roomId}`)
+                        }}>Chat</Button>
+                    </Navbar.Collapse>
+                </Container>
+            </Navbar>
             <br/>
-            <div className={"addUser-item-div"}>
-                <Button type={"button"} className={"btn-light btn-outline-primary"}  onClick={() => {
-                    handleShow()
-                }}>
-                    <AiIcons.AiOutlineUserAdd /> Partager
-                </Button>
-            </div>
-            <Button className={"workspace-item workspace-item-add"} variant="primary" onClick={() => {
-                navigate(`/chat/${roomId}`)
-            }}>
-                Chat
-            </Button>
             <div className="App">
                 <DragDropContext onDragEnd={onDragEnd}>
                     <Droppable

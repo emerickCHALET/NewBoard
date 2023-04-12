@@ -192,3 +192,19 @@ span {
     color: white;
     border-radius: 10px;
 }
+
+.navbar-blur {
+    backdrop-filter: blur(10000px);
+}
+
+.kanban-Name{
+    color: white;
+    font-weight: bold;
+    font-size: x-large;
+}
+
+.position-userCardNav{
+    position: absolute;
+    right: 10%; /* ajuster cette valeur pour définir la distance horizontale entre les deux éléments */
+    top: 100%;
+}

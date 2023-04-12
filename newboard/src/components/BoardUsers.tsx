@@ -1,6 +1,6 @@
 import React, {useEffect, useRef, useState} from 'react';
 import Users from "../classes/Users";
-import {UserCard} from "../components/user-card/UserCard";
+import {UserCard} from "./user-card/UserCard";
 import Button from "react-bootstrap/Button";
 import * as AiIcons from "react-icons/ai";
 import Modal from "react-bootstrap/Modal";
