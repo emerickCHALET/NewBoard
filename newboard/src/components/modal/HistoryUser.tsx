@@ -16,9 +16,9 @@ const config = {
 };
 const HistoryUser: React.FC = () => {
 
-    const [classes, setClasses] = useState<Classroom[]>([]); // state pour les données du select
-    const [userRelever, setUserRelever] = useState<Student[]>([]); // state pour les données du select
-    const [releverByUser, setReleverByUser] = useState<Attendance[]>([]); // state pour les données du select
+    const [classes, setClasses] = useState<Classroom[]>([]);
+    const [userRelever, setUserRelever] = useState<Student[]>([]);
+    const [releverByUser, setReleverByUser] = useState<Attendance[]>([]);
     const [selectedClassId, setSelectedClassId] = useState<number | null>(null);
     const [selectedUserId, setSelectedUserId] = useState<number | null>(null);
     const [showRelever, setShowRelever] = useState(false);
@@ -35,6 +35,11 @@ const HistoryUser: React.FC = () => {
 
     }, []);
 
+    /**
+     * classSelection is a function that is called when the user select a classroom in the select.
+     * It will update the state of the selectedClassId and call the function getStudentByClass to get all the students of the selected classroom.
+     * @param event
+     */
     const classSelection = (event: React.ChangeEvent<HTMLSelectElement>) => {
         const selectedValue = event.target.value;
         const selectedClassId = parseInt(selectedValue);
@@ -50,6 +55,12 @@ const HistoryUser: React.FC = () => {
 
     };
 
+
+    /**
+     * studentSelection is a function that is called when the user select a student in the select.
+     * It will update the state of the selectedUserId and call the function getReleverByUser to get all the present history of the student selected.
+     * @param event
+     */
     const studentSelection = (event: React.ChangeEvent<HTMLSelectElement>) => {
         const selectedValue = event.target.value;
         const selectedUserId = parseInt(selectedValue);
@@ -60,7 +71,9 @@ const HistoryUser: React.FC = () => {
         setSelectedUserId(selectedUserId);
     };
 
-
+    /**
+     * getClassrooms get all the classrooms when the page is loaded
+     */
     const getClassrooms = async () => {
         try {
             const response = await axios.get(urlApi + 'classrooms', config)
@@ -72,6 +85,10 @@ const HistoryUser: React.FC = () => {
         }
     }
 
+    /**
+     * getStudentByClass get all the students of a classroom when the user select a classroom
+     * @param selectedClassId
+     */
     const getStudentByClass = async (selectedClassId: number) => {
         try {
             const response = await axios.get(urlApi + 'usersByClassroom/' + selectedClassId, config)
@@ -92,6 +109,10 @@ const HistoryUser: React.FC = () => {
         }
     }
 
+    /**
+     * getReleverByUser get all the present history of a student when the user select a student
+     * @param selectedUserId
+     */
     const getReleverByUser = async (selectedUserId: number) => {
         try {
             const response = await axios.get(urlApi + 'attendanceByUser/' + selectedUserId, config)
