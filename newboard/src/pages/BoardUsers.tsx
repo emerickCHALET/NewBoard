@@ -148,18 +148,22 @@ const BoardUsers: React.FC<UserListProps> = ({ usersWorkspace }) => {
                     </div>
                 </div>
             )}
-            <div className={"addUser-item-div"}>
-                <Button type={"button"} className={"btn-light btn-outline-primary"}  onClick={() => {
-                    handleShowAddUser()
-                }}>
-                    <AiIcons.AiOutlineUserAdd /> Partager
-                </Button>
+            <div className={"nav-menu-items bottom-fixed"}>
+                <div className={"addUser-item-div"}>
+                    <Button type={"button"} className={"btn-light btn-outline-primary informations-users"}  onClick={() => {
+                        handleShowAddUser()
+                    }}>
+                        <AiIcons.AiOutlineUserAdd /> Partager
+                    </Button>
+                    <br/>
+                    <br/>
+                    <Button className={"btn-light btn-outline-primary informations-users"} variant="primary" onClick={() => {
+                        navigate(`/chat/${roomId}`)
+                    }}>
+                        Chat
+                    </Button>
+                </div>
             </div>
-            <Button className={"workspace-item workspace-item-add"} variant="primary" onClick={() => {
-                navigate(`/chat/${roomId}`)
-            }}>
-                Chat
-            </Button>
         </div>
     )
 }
