@@ -74,7 +74,6 @@ const Workspaces = () => {
             .min(2, "Trop petit")
             .max(25, "Trop long!")
             .required("Ce champ est obligatoire"),
-
     });
 
     const [workspaces, setWorkspaces] = useState<Workspace[]>([])

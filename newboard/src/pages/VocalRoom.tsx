@@ -7,7 +7,7 @@ import {useParams} from "react-router";
 import {urlApi, urlApiSocket} from "../App";
 import {Stream} from "stream";
 import * as io from "socket.io-client";
-import PeerProvider, {usePeer} from "../components/Peer";
+import PeerProvider from "../components/Peer";
 
 
 const VocalRoom = () => {
@@ -16,50 +16,36 @@ const VocalRoom = () => {
     let socket = io.connect(urlApiSocket);
     const {roomId} = useParams<{ roomId: string}>()
     const videoGrid = document.getElementById('video-grid');
-    // @ts-ignore
-    const { peer, createOffer} = usePeer()
 
-    const handleNewUserJoined = useCallback(async (data: { userId: string; }) => {
-        const {userId} = data
-        const offer = await createOffer()
-        socket.emit('call-user', { userId, offer })
-    }, [createOffer, socket])
-
-    const handleIncomingCall = useCallback((data: { from: any; offer: any; }) => {
-        const {from, offer} = data
-        console.log(`incoming call from ${from}, ${offer}`)
-    }, [])
-
-
-    useEffect(() => {
-        socket.on("user-connected", handleNewUserJoined)
-        socket.on('incoming-call', handleIncomingCall)
-    }, [handleNewUserJoined, socket])
-
-    useEffect(() => {
-        const myVideo = document.createElement('video')
-        navigator.mediaDevices.getUserMedia({
-            video: true,
-            audio: true
-        }).then(stream => {
-
-            myVideo.srcObject = stream
-            socket.emit('join_room', roomId, myUserId)
-            if(videoGrid !== null){
-                videoGrid.append(myVideo)
+    async function playVideoFromCamera() {
+        try {
+            const constraints = {'video': true, 'audio': true};
+            const stream = await navigator.mediaDevices.getUserMedia(constraints);
+            // @ts-ignore
+            const videoElement: HTMLVideoElement = document.querySelector('video#localVideo');
+            if(videoElement !== null){
+                videoElement.srcObject = stream;
+                console.log(videoElement.srcObject)
+                videoElement.muted = true
             }
 
-        })
+        } catch(error) {
+            console.error('Error opening video camera.', error);
+        }
+    }
+
+    useEffect(() => {
+        playVideoFromCamera()
     }, [])
-
-
 
     return (
 
         <div className="wrap">
             <SideBar/>
             <PeerProvider>
-            <div id={"video-grid"}></div>
+                <div id={"video-grid"}>
+                    <video id={"localVideo"} autoPlay={true} playsInline={true} controls={false} />
+                </div>
             </PeerProvider>
             <Footer/>
         </div>
