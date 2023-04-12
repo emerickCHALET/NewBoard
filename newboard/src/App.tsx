@@ -1,7 +1,7 @@
 import React, {useEffect} from 'react';
 import Footer from "./components/Footer";
 import Home from "./pages/Home";
-import {BrowserRouter, Route, Routes} from "react-router-dom";
+import {HashRouter, Route, Routes} from "react-router-dom";
 import InscriptionPage from "./pages/Inscription";
 import ErrorPage from "./pages/Error";
 import Login from "./pages/Login";
@@ -63,7 +63,7 @@ export default function App() {
     }, []);
 
     return (
-        <BrowserRouter>
+        <HashRouter>
             <Routes>
                 <Route path="/" element={<MainPage/>}/>
                 <Route path="login" element={<Login/>}/>
@@ -81,7 +81,7 @@ export default function App() {
                 <Route path="chat/:roomId" element={<Chat/>}/>
                 <Route path="attendance" element={<AttendanceSheet/>}/>
             </Routes>
-        </BrowserRouter>
+        </HashRouter>
     );
 }
 /**
