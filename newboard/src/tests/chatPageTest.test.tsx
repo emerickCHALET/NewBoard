@@ -1,80 +1,69 @@
 import React from 'react';
-import { render, screen, fireEvent, act ,waitFor  } from '@testing-library/react';
-import '@testing-library/jest-dom/extend-expect';
-import ChatPage from '../pages/Chat';
-import Messages from '../classes/Messages';
-import { BrowserRouter } from 'react-router-dom';
-import axios from 'axios';
-import { io, Socket } from 'socket.io-client';
+import { render, fireEvent, screen, waitFor } from '@testing-library/react';
+import {BrowserRouter, MemoryRouter, Route, Routes} from 'react-router-dom';
+import { io, Socket } from "socket.io-client";
+import '@testing-library/jest-dom';
+import Chat from "../pages/Chat";
+import mocked = jest.mocked;
 
-jest.mock('axios');
-jest.mock('socket.io-client', () => {
-    const original = jest.requireActual('socket.io-client');
 
-    return {
-        ...original,
-        default: jest.fn().mockImplementation((...args) => {
-            const mockedSocket = original.default(...args) as jest.Mocked<Socket>;
-            mockedSocket.on = jest.fn();
-            mockedSocket.emit = jest.fn();
-            return mockedSocket;
-        }),
+jest.mock("socket.io-client");
+
+const mockedIO = mocked(io);
+
+const setup = () => {
+    const mockedSocket: Partial<Socket> = {
+        emit: jest.fn(),
+        on: jest.fn(),
     };
-});
+    mockedIO.mockReturnValue(mockedSocket as Socket);
+    render(
+        <MemoryRouter initialEntries={["/chat/1"]}>
+            <Routes>
+                <Route path="/chat/:roomId" element={<Chat />} />
+            </Routes>
+        </MemoryRouter>
+    );
 
-const mockedAxios = axios as jest.Mocked<typeof axios>;
-const mockedIO = io as jest.MockedFunction<typeof io>;
-const mockedSocket = mockedIO() as jest.Mocked<Socket>;
+    return { mockedSocket };
+};
 
-
-
-// ... Rest of your test code
-
-describe('ChatPage', () => {
-    beforeEach(() => {
-        mockedAxios.get.mockReset();
-        mockedSocket.emit = jest.fn(); // Reset the emit mock manually
-        mockedSocket.on = jest.fn(); // Reset the on mock manually
+describe("ChatPage", () => {
+    afterEach(() => {
+        jest.clearAllMocks();
     });
 
-    test('affiche le titre Live Chat', async () => {
-        mockedAxios.get.mockResolvedValue({ status: 200, data: { data: [] } });
-
-        // eslint-disable-next-line testing-library/no-unnecessary-act
-        await act(async () => {
-            render(
-                <BrowserRouter>
-                    <ChatPage />
-                </BrowserRouter>
-            );
-        });
-
-        const titre = screen.getByText('Live Chat');
-        expect(titre).toBeInTheDocument();
+    it("should render chat page", () => {
+        setup();
+        expect(screen.getByText("Live Chat")).toBeInTheDocument();
+        expect(screen.getByPlaceholderText("Type your message...")).toBeInTheDocument();
+        expect(screen.getByLabelText("Send")).toBeInTheDocument();
     });
 
-    test("envoie un message lorsque l'utilisateur tape un message et appuie sur le bouton d'envoi", async () => {
-        mockedAxios.get.mockResolvedValue({ status: 200, data: { data: [] } });
-
-        // eslint-disable-next-line testing-library/no-unnecessary-act
-        await act(async () => {
-            render(
-                <BrowserRouter>
-                    <ChatPage />
-                </BrowserRouter>
-            );
-        });
-
-        const messageInput = screen.getByPlaceholderText('Type your message...');
-        const message = 'Hello!';
-        fireEvent.change(messageInput, { target: { value: message } });
-
-
-        const sendButton = screen.getByRole('button', { name: 'Send' });
-        fireEvent.submit(sendButton);
-
+    it("should join the room on mount", () => {
+        const { mockedSocket } = setup();
+        expect(mockedSocket.emit).toHaveBeenCalledWith("join_room", "1");
     });
 
 
 
+    it("should display received messages", async () => {
+        const { mockedSocket     } = setup();
+        const message = {
+            id: "1",
+            sentBy: "123",
+            fullNameSender: "John Doe",
+            message: "Test message",
+            created: "2023-03-28",
+            roomId: "1",
+        };
+
+        // Simulate receiving a new message
+        (mockedSocket.on as jest.Mock).mock.calls[0][1](message);
+
+        await waitFor(() => screen.getByText("Test message"));
+        expect(screen.getByText("Test message")).toBeInTheDocument();
+        expect(screen.getByText("John Doe")).toBeInTheDocument();
+        expect(screen.getByText("2023-03-28")).toBeInTheDocument();
+    });
 });
