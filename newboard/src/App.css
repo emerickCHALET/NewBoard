@@ -195,6 +195,7 @@ span {
 
 .navbar-blur {
     backdrop-filter: blur(10000px);
+    z-index: 1;
 }
 
 .kanban-Name{

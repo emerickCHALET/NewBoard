@@ -53,12 +53,10 @@ const Kanban = () => {
     const location = useLocation()
     // Initialize boardId here because the app crashes when we click on menu button, location.state.boardId would be null ??
     let roomId = 0
-    let kanbanName = ""
     const {boardId} = useParams<{ boardId: string}>()
 
     if(location.state != null){
         roomId = location.state.roomId
-        kanbanName = location.state.roomName
     }
 
     /**
@@ -127,6 +125,7 @@ const Kanban = () => {
             if (response && response.status === 200) {
                 if (response.data.data.content != null) {
                     setColumns(JSON.parse(response.data.data.content))
+                    setBoardName(response.data.data.name)
                 }
                 setIsLoading(false)
             }
@@ -135,6 +134,7 @@ const Kanban = () => {
 
     const socket = io.connect(urlApiSocket);
 
+    let [boardName,setBoardName] = useState<string>("")
     let [columns, setColumns] = useState<ColumnInterface[]>([]);
 
     /**
@@ -362,7 +362,7 @@ const Kanban = () => {
             <Navbar bg="transparent" expand="lg" className={"navbar-blur"}>
                 <Container fluid>
                     <Container>
-                        <Navbar.Brand className={"kanban-Name"}>{kanbanName}</Navbar.Brand>
+                        <Navbar.Brand className={"kanban-Name"}>{boardName}</Navbar.Brand>
                     </Container>
                     <Navbar.Toggle />
                     <Navbar.Collapse >

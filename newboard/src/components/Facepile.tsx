@@ -11,6 +11,11 @@ interface FacepileProps {
 const Facepile: FC<FacepileProps> = ({ users, maxCount = 5 }) => {
     const visibleUsers = users.slice(0, maxCount);
     const [selectedUser, setSelectedUser] = useState<Users | null>(null);
+    const [showCard, setShowCard] = useState(false);
+    const handleShowCard = (user: Users) => {
+        setShowCard(true);
+        setSelectedUser(user)
+    };
 
     return (
         <>
@@ -22,7 +27,9 @@ const Facepile: FC<FacepileProps> = ({ users, maxCount = 5 }) => {
                         alt={user.firstname}
                         className="rounded-circle me-2"
                         style={{ width: '30px', height: '30px' }}
-                        onClick={() => setSelectedUser(user)}
+                        onClick={() => {
+                            handleShowCard(user)
+                        }}
                     />
                 </Nav.Link>
             ))}
@@ -32,7 +39,7 @@ const Facepile: FC<FacepileProps> = ({ users, maxCount = 5 }) => {
         </Nav>
             {selectedUser && (
                 <div className={"position-userCardNav"}>
-                    <UserCardNav user={selectedUser}/>
+                    {showCard && <UserCardNav user={selectedUser} setShowCard={setShowCard} />}
                 </div>
             )}
         </>

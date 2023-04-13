@@ -1,18 +1,30 @@
-import * as React from "react";
+import React from "react";
 import Users from "../../classes/Users";
 
-export const UserCardNav = ({ user }: { user: Users }) => (
+type Props = {
+    user: Users;
+    setShowCard: (showCard: boolean) => void;
+};
 
+export const UserCardNav = ({ user, setShowCard }: Props) => {
+    const handleCloseCard = () => {
+        setShowCard(false);
+    };
+
+    return (
         <div className="content">
             <div className="card">
-                <div className="firstinfo"><img src="https://bootdey.com/img/Content/avatar/avatar6.png"/>
+                <div className="firstinfo">
+                    <img src="/profile.png" />
                     <div className="profileinfo">
-                        <h1>John Doe</h1>
-                        <h3>Swift developer</h3>
-                        <p className="bio">Lived all my life on the top of mount Fuji, learning the way to be a Ninja
-                            Dev.</p>
+                        <h1>
+                            {user.firstname} {user.lastname}
+                        </h1>
+                        <h3 className={"color-email"}>{user.email}</h3>
                     </div>
                 </div>
+                <button onClick={handleCloseCard}>Fermer</button>
             </div>
         </div>
-);
+    );
+};

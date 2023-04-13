@@ -187,7 +187,6 @@ function Board(){
                                 navigate(`/kanban/${boardId}`,
                                     {state: {
                                             roomId: board.roomId,
-                                            roomName: board.name
                                         }})
                             }}> {board.name} </div>;
                         })}
