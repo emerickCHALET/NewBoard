@@ -382,8 +382,8 @@ const AttendanceSheet: React.FC = () => {
                         </Form.Group>
                     </div>
                     <div className="col-md-2 Custom-Component">
-                        <OnlineUser/>
-                        <HistoryUser/>
+                        <OnlineUser classrooms={classrooms}/>
+                        <HistoryUser classrooms={classrooms}/>
                     </div>
                 </div>
             </Form>
