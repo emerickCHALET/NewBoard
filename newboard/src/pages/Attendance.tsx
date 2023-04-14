@@ -441,7 +441,7 @@ const AttendanceSheet: React.FC = () => {
                     </tbody>
                     <br/>
                     <Button
-                        variant="light"
+                        variant="success"
                         onClick={saveAttendance}
                         disabled={isLoading}
                     >
@@ -510,7 +510,7 @@ const AttendanceSheet: React.FC = () => {
                         </tbody>
                         <br/>
                         <Button
-                            variant="light"
+                            variant="success"
                             disabled={isLoading}
                             onClick={updateAttendance}
                         >
