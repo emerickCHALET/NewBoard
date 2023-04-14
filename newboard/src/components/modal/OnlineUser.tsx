@@ -1,7 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import io from 'socket.io-client';
-import {Button, Form, Spinner} from "react-bootstrap";
-import Modal from "react-bootstrap/Modal";
+import {Button, Form, Modal, Spinner} from "react-bootstrap";
 import axios from "axios";
 import * as AiIcons from "react-icons/ai";
 import {toast} from "react-toastify";
@@ -9,6 +8,7 @@ import {urlApi} from "../../App";
 import Classroom from "../../classes/Classroom";
 import UsersStatus from "../../classes/UsersStatus";
 import "../../styles/OnlineUser.css"
+import CallTimer from "./CallTimer";
 
 const socket = io('http://localhost:3001');
 
@@ -16,14 +16,14 @@ const config = {
     headers: {Authorization: `Bearer ${localStorage.getItem('token')}`}
 };
 
-const ModalOnline = () => {
+const ModalOnline: React.FC = () => {
     const [userList, setUserList] = useState<UsersStatus[]>([]);
     const [classes, setClasses] = useState<Classroom[]>([]);
     const storageId = localStorage.getItem('userId');
     const userFirstName = localStorage.getItem('userFirstName') || 'Unknown';
     const userLastName = localStorage.getItem('userLastName') || 'Unknown';
     const userId = storageId ? Number(storageId) : Number(socket.id);
-    const [showOnline, setShowOnline] = useState(false);
+    const [showOnline, setShowOnline] = useState<boolean>(false);
     const [selectedClassId, setSelectedClassId] = useState('');
     const [isLoading, setIsLoading] = useState<boolean>(false);
 
@@ -53,10 +53,10 @@ const ModalOnline = () => {
             classId: Number(localStorage.getItem('userClass') || 0),
             lastActive: new Date()
         };
-        // Ajouter l'utilisateur à la liste des utilisateurs connectés
+        // Ajoute l'utilisateur à la liste des utilisateurs connectés
         socket.emit('addUser', user);
 
-        // Recuperer la liste des utilisateurs connectés du serveur
+        // Recupere la liste des utilisateurs connectés du serveur
         socket.on('userList', (users: UsersStatus[]) => {
             const userFilter = users.filter((u) => u.id !== user.id); // Filter out current user
             setUserList(userFilter);
@@ -94,7 +94,7 @@ const ModalOnline = () => {
             if (response.status === 200) {
                 setClasses(response.data.data)
             }
-        } catch (error:any) {
+        } catch (error: any) {
             toastError(error.response.data.message);
         }
     }
@@ -103,6 +103,10 @@ const ModalOnline = () => {
      * saveAutoAttendance save the attendance of the students who are connected
      */
     const saveAutoAttendance = () => {
+        if (!selectedClassId) {
+            toastWarning('Veuillez sélectionner une classe avant de sauvegarder.');
+            return;
+        }
         const myData = {
             classroomId: selectedClassId,
             attendance: userFilter.map((user) => {
@@ -148,9 +152,9 @@ const ModalOnline = () => {
                             <Form.Label>Filtrer par classe</Form.Label>
                             <Form.Select
                                 onChange={classSelection}
-                                value={selectedClassId}
+                                value={selectedClassId ?? ''}
                             >
-                                <option value="">Toutes les classes</option>
+                                <option value="" disabled={true}>Choix de la classe</option>
                                 {classes && classes.map((classe) => (
                                     <option key={classe.id} value={classe.id}>
                                         {classe.ClassroomName}
@@ -181,7 +185,7 @@ const ModalOnline = () => {
                         Fermer
                     </Button>
                     <Button
-                        variant="primary"
+                        variant="success"
                         onClick={saveAutoAttendance}
                         disabled={isLoading}
                     >
@@ -193,6 +197,7 @@ const ModalOnline = () => {
                             'Sauvegarder'
                         )}
                     </Button>
+                    <CallTimer/>
                 </Modal.Footer>
             </Modal>
         </div>

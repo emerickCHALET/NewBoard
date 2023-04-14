@@ -1,13 +1,12 @@
 import React, {useEffect, useState} from 'react';
-import {Button, Form} from "react-bootstrap";
-import Modal from "react-bootstrap/Modal";
+import {Button, Form, Modal} from "react-bootstrap";
 import axios from "axios";
 import * as AiIcons from "react-icons/ai";
 import {toast} from "react-toastify";
-import Student from "../../classes/Student";
 import {urlApi} from "../../App";
-import Classroom from "../../classes/Classroom";
 import Attendance from "../../classes/Attendance";
+import Classroom from "../../classes/Classroom";
+import Student from "../../classes/Student";
 import "../../styles/HistoryUser.css"
 
 
@@ -21,8 +20,8 @@ const HistoryUser: React.FC = () => {
     const [releverByUser, setReleverByUser] = useState<Attendance[]>([]);
     const [selectedClassId, setSelectedClassId] = useState<number | null>(null);
     const [selectedUserId, setSelectedUserId] = useState<number | null>(null);
-    const [showRelever, setShowRelever] = useState(false);
-    const [isDisabled, setIsDisabled] = useState(true);
+    const [showRelever, setShowRelever] = useState<boolean>(false);
+    const [isDisabled, setIsDisabled] = useState<boolean>(true);
     const showModal = () => setShowRelever(true);
     const closeModal = () => setShowRelever(false);
 
