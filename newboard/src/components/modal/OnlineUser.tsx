@@ -10,15 +10,18 @@ import UsersStatus from "../../classes/UsersStatus";
 import "../../styles/OnlineUser.css"
 import CallTimer from "./CallTimer";
 
+interface OnlineProps {
+    classrooms: Classroom[];
+}
+
 const socket = io('http://localhost:3001');
 
 const config = {
     headers: {Authorization: `Bearer ${localStorage.getItem('token')}`}
 };
 
-const ModalOnline: React.FC = () => {
+const ModalOnline: React.FC<OnlineProps> = ({classrooms}) => {
     const [userList, setUserList] = useState<UsersStatus[]>([]);
-    const [classes, setClasses] = useState<Classroom[]>([]);
     const storageId = localStorage.getItem('userId');
     const userFirstName = localStorage.getItem('userFirstName') || 'Unknown';
     const userLastName = localStorage.getItem('userLastName') || 'Unknown';
@@ -69,10 +72,6 @@ const ModalOnline: React.FC = () => {
 
     }, [userId, userLastName, userFirstName]);
 
-    useEffect(() => {
-        getClassrooms();
-
-    }, []);
     const classSelection = (event: React.ChangeEvent<HTMLSelectElement>) => {
         setSelectedClassId(event.target.value);
     };
@@ -84,20 +83,6 @@ const ModalOnline: React.FC = () => {
             toastWarning("Aucun élève est actif dans la classe sélectionnée.")
         }
     }, [selectedClassId]);
-
-    /**
-     * getClassrooms get all the classrooms when the page is loaded
-     */
-    const getClassrooms = async () => {
-        try {
-            const response = await axios.get(urlApi + 'classrooms', config)
-            if (response.status === 200) {
-                setClasses(response.data.data)
-            }
-        } catch (error: any) {
-            toastError(error.response.data.message);
-        }
-    }
 
     /**
      * saveAutoAttendance save the attendance of the students who are connected
@@ -155,7 +140,7 @@ const ModalOnline: React.FC = () => {
                                 value={selectedClassId ?? ''}
                             >
                                 <option value="" disabled={true}>Choix de la classe</option>
-                                {classes && classes.map((classe) => (
+                                {classrooms && classrooms.map((classe) => (
                                     <option key={classe.id} value={classe.id}>
                                         {classe.ClassroomName}
                                     </option>
@@ -197,7 +182,7 @@ const ModalOnline: React.FC = () => {
                             'Sauvegarder'
                         )}
                     </Button>
-                    <CallTimer/>
+                    <CallTimer classrooms={classrooms}/>
                 </Modal.Footer>
             </Modal>
         </div>

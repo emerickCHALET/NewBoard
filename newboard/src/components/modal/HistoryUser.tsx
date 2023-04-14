@@ -9,13 +9,15 @@ import Classroom from "../../classes/Classroom";
 import Student from "../../classes/Student";
 import "../../styles/HistoryUser.css"
 
+interface HistoryProps {
+    classrooms: Classroom[];
+}
 
 const config = {
     headers: {Authorization: `Bearer ${localStorage.getItem('token')}`}
 };
-const HistoryUser: React.FC = () => {
+const HistoryUser: React.FC<HistoryProps> = ({classrooms}) => {
 
-    const [classes, setClasses] = useState<Classroom[]>([]);
     const [userRelever, setUserRelever] = useState<Student[]>([]);
     const [releverByUser, setReleverByUser] = useState<Attendance[]>([]);
     const [selectedClassId, setSelectedClassId] = useState<number | null>(null);
@@ -28,11 +30,6 @@ const HistoryUser: React.FC = () => {
     const toastError = (errorMessage: string) => {
         toast.error(errorMessage, {position: toast.POSITION.TOP_RIGHT});
     }
-
-    useEffect(() => {
-        getClassrooms();
-
-    }, []);
 
     /**
      * classSelection is a function that is called when the user select a classroom in the select.
@@ -71,20 +68,6 @@ const HistoryUser: React.FC = () => {
     };
 
     /**
-     * getClassrooms get all the classrooms when the page is loaded
-     */
-    const getClassrooms = async () => {
-        try {
-            const response = await axios.get(urlApi + 'classrooms', config)
-            if (response.status === 200) {
-                setClasses(response.data.data)
-            }
-        } catch (error:any) {
-            toastError(error.response.data.message);
-        }
-    }
-
-    /**
      * getStudentByClass get all the students of a classroom when the user select a classroom
      * @param selectedClassId
      */
@@ -103,7 +86,7 @@ const HistoryUser: React.FC = () => {
                     setIsDisabled(false)
                 }
             }
-        } catch (error:any) {
+        } catch (error: any) {
             toastError(error.response.data.message);
         }
     }
@@ -122,7 +105,7 @@ const HistoryUser: React.FC = () => {
                 }
                 setReleverByUser(response.data.data)
             }
-        } catch (error:any) {
+        } catch (error: any) {
             toastError(error.response.data.message);
         }
     }
@@ -146,7 +129,7 @@ const HistoryUser: React.FC = () => {
                                 value={selectedClassId ?? ''}
                             >
                                 <option value="" disabled={true}>Choix de la classe</option>
-                                {classes && classes.map((classe) => (
+                                {classrooms && classrooms.map((classe) => (
                                     <option key={classe.id} value={classe.id}>
                                         {classe.ClassroomName}
                                     </option>

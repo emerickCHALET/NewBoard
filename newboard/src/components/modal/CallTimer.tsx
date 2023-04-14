@@ -6,12 +6,15 @@ import {toast} from "react-toastify";
 import {urlApi} from "../../App";
 import Classroom from "../../classes/Classroom";
 
+interface CallTimerProps {
+    classrooms: Classroom[];
+}
+
 const config = {
     headers: {Authorization: `Bearer ${localStorage.getItem('token')}`}
 };
 
-const CallTimer: React.FC = () => {
-    const [classes, setClasses] = useState<Classroom[]>([]);
+const CallTimer: React.FC<CallTimerProps> = ({classrooms}) => {
     const [selectedClassId, setSelectedClassId] = useState('');
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [showTimer, setShowTimer] = useState<boolean>(false);
@@ -34,25 +37,6 @@ const CallTimer: React.FC = () => {
     }
     const toastSuccess = (successMessage: string) => {
         toast.success(successMessage, {position: toast.POSITION.TOP_RIGHT});
-    }
-
-    useEffect(() => {
-        getClassrooms();
-
-    }, []);
-
-    /**
-     * getClassrooms get all the classrooms when the page is loaded
-     */
-    const getClassrooms = async () => {
-        try {
-            const response = await axios.get(urlApi + 'classrooms', config)
-            if (response.status === 200) {
-                setClasses(response.data.data)
-            }
-        } catch (error: any) {
-            toastError(error.response.data.message);
-        }
     }
 
     /**
@@ -103,7 +87,7 @@ const CallTimer: React.FC = () => {
                             required={true}
                         >
                             <option value="" disabled={true}>Choix de la classe</option>
-                            {classes && classes.map((classe) => (
+                            {classrooms && classrooms.map((classe) => (
                                 <option key={classe.id} value={classe.id}>
                                     {classe.ClassroomName}
                                 </option>
