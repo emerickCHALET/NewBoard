@@ -1,23 +1,29 @@
 import React, {useEffect, useState} from 'react';
 import {Button, Form, Modal} from "react-bootstrap";
-import axios from "axios";
 import * as AiIcons from "react-icons/ai";
 import {toast} from "react-toastify";
-import {urlApi} from "../../App";
 import Attendance from "../../classes/Attendance";
 import Classroom from "../../classes/Classroom";
 import Student from "../../classes/Student";
 import "../../styles/HistoryUser.css"
+import ApiService from "../../services/ApiService";
+import {useNavigate} from "react-router";
 
 interface HistoryProps {
     classrooms: Classroom[];
 }
 
-const config = {
-    headers: {Authorization: `Bearer ${localStorage.getItem('token')}`}
-};
 const HistoryUser: React.FC<HistoryProps> = ({classrooms}) => {
+    // Global const
+    const apiService = new ApiService();
+    const navigate = useNavigate();
+    const [token, setToken] = useState<string | null>(null);
+    useEffect(() => {
+        const tokenFromStorage = localStorage.getItem("token");
+        setToken(tokenFromStorage);
+    }, []);
 
+    // Component const
     const [userRelever, setUserRelever] = useState<Student[]>([]);
     const [releverByUser, setReleverByUser] = useState<Attendance[]>([]);
     const [selectedClassId, setSelectedClassId] = useState<number | null>(null);
@@ -73,8 +79,8 @@ const HistoryUser: React.FC<HistoryProps> = ({classrooms}) => {
      */
     const getStudentByClass = async (selectedClassId: number) => {
         try {
-            const response = await axios.get(urlApi + 'usersByClassroom/' + selectedClassId, config)
-            if (response.status === 200) {
+            const response = await apiService.get('usersByClassroom/' + selectedClassId, token!, navigate);
+            if (response && response.status === 200) {
                 if (response.data.data.length === 0) {
                     toastError("Aucun élève n'est enregistré dans cette classe")
                     setUserRelever([])
@@ -97,8 +103,8 @@ const HistoryUser: React.FC<HistoryProps> = ({classrooms}) => {
      */
     const getReleverByUser = async (selectedUserId: number) => {
         try {
-            const response = await axios.get(urlApi + 'attendanceByUser/' + selectedUserId, config)
-            if (response.status === 200) {
+            const response = await apiService.get('attendanceByUser/' + selectedUserId, token!, navigate);
+            if (response && response.status === 200) {
                 if (response.data && response.data.message === "L'élève n'est dans aucune fiche d'appel.") {
                     toastError(response.data.message);
                     setReleverByUser([])

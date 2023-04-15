@@ -1,14 +1,14 @@
 import React, {useEffect, useState} from 'react';
 import io from 'socket.io-client';
 import {Button, Form, Modal, Spinner} from "react-bootstrap";
-import axios from "axios";
 import * as AiIcons from "react-icons/ai";
 import {toast} from "react-toastify";
-import {urlApi} from "../../App";
 import Classroom from "../../classes/Classroom";
 import UsersStatus from "../../classes/UsersStatus";
 import "../../styles/OnlineUser.css"
 import CallTimer from "./CallTimer";
+import ApiService from "../../services/ApiService";
+import {useNavigate} from "react-router";
 
 interface OnlineProps {
     classrooms: Classroom[];
@@ -16,11 +16,18 @@ interface OnlineProps {
 
 const socket = io('http://localhost:3001');
 
-const config = {
-    headers: {Authorization: `Bearer ${localStorage.getItem('token')}`}
-};
 
 const ModalOnline: React.FC<OnlineProps> = ({classrooms}) => {
+    // Global const
+    const apiService = new ApiService();
+    const navigate = useNavigate();
+    const [token, setToken] = useState<string | null>(null);
+    useEffect(() => {
+        const tokenFromStorage = localStorage.getItem("token");
+        setToken(tokenFromStorage);
+    }, []);
+
+    // Component const
     const [userList, setUserList] = useState<UsersStatus[]>([]);
     const storageId = localStorage.getItem('userId');
     const userFirstName = localStorage.getItem('userFirstName') || 'Unknown';
@@ -87,7 +94,7 @@ const ModalOnline: React.FC<OnlineProps> = ({classrooms}) => {
     /**
      * saveAutoAttendance save the attendance of the students who are connected
      */
-    const saveAutoAttendance = () => {
+    const saveAutoAttendance = async () => {
         if (!selectedClassId) {
             toastWarning('Veuillez sélectionner une classe avant de sauvegarder.');
             return;
@@ -105,21 +112,20 @@ const ModalOnline: React.FC<OnlineProps> = ({classrooms}) => {
             })
         }
         setIsLoading(true);
-        axios.post(urlApi + 'attendance', myData, config)
-            .then((response) => {
-                setTimeout(() => {
-                    setIsLoading(false);
-                }, 3000);
-                if (response.status === 200) {
-                    toastSuccess(response.data.message)
-                }
-            })
-            .catch((error) => {
-                setTimeout(() => {
-                    setIsLoading(false);
-                }, 3000);
-                toastError(error.response.data.message)
-            });
+        try {
+            const response = await apiService.post('attendance', myData, token!, navigate);
+            setTimeout(() => {
+                setIsLoading(false);
+            }, 3000);
+            if (response && response.status === 200) {
+                toastSuccess(response.data.message)
+            }
+        } catch (error: any) {
+            setTimeout(() => {
+                setIsLoading(false);
+            }, 3000);
+            toastError(error.response.data.message)
+        }
     }
 
     return (

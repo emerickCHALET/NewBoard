@@ -1,8 +1,6 @@
 import React, {useMemo, useEffect, useState} from 'react';
 import {Form, Table, Button, Spinner} from 'react-bootstrap';
 import SideBar from '../components/SideBar';
-import {urlApi} from "../App";
-import axios from "axios";
 import {toast} from "react-toastify";
 import {useNavigate} from "react-router";
 import Attendance from "../classes/Attendance";
@@ -11,18 +9,23 @@ import Student from "../classes/Student";
 import '../styles/Attendance.css';
 import OnlineUser from "../components/modal/OnlineUser";
 import HistoryUser from "../components/modal/HistoryUser";
+import ApiService from "../services/ApiService";
 
-
-const config = {
-    headers: {Authorization: `Bearer ${localStorage.getItem('token')}`}
-};
 
 /**
  * AttendanceSheet is the page where the PO can see the attendance of a classroom
  */
 const AttendanceSheet: React.FC = () => {
+    // Global const
+    const apiService = new ApiService();
     const navigate = useNavigate();
+    const [token, setToken] = useState<string | null>(null);
+    useEffect(() => {
+        const tokenFromStorage = localStorage.getItem("token");
+        setToken(tokenFromStorage);
+    }, []);
 
+    // Component const
     /**
      * useState is the hook to use state in a functional component
      */
@@ -54,8 +57,8 @@ const AttendanceSheet: React.FC = () => {
      */
     const getClassrooms = async () => {
         try {
-            const response = await axios.get(urlApi + 'classrooms', config)
-            if (response.status === 200) {
+            const response = await apiService.get('classrooms', token!, navigate);
+            if (response && response.status === 200) {
                 setClassrooms(response.data.data)
             }
         } catch (error: any) {
@@ -69,8 +72,8 @@ const AttendanceSheet: React.FC = () => {
      */
     const getHistory = async () => {
         try {
-            const response = await axios.get(urlApi + 'attendancecall', config)
-            if (response.status === 200) {
+            const response = await apiService.get('attendancecall', token!, navigate);
+            if (response && response.status === 200) {
                 setHistory(response.data.data)
             }
         } catch (error: any) {
@@ -92,8 +95,8 @@ const AttendanceSheet: React.FC = () => {
      */
     const getStudentByClass = async (classroomId: string) => {
         try {
-            const response = await axios.get(urlApi + 'usersByClassroom/' + classroomId, config)
-            if (response.status === 200) {
+            const response = await apiService.get('usersByClassroom/' + classroomId, token!, navigate);
+            if (response && response.status === 200) {
                 if (response.data.data.length === 0) {
                     toastWarning("Aucun élève n'est enregistré dans cette classe");
                     setSelectedStudents([]);
@@ -112,8 +115,8 @@ const AttendanceSheet: React.FC = () => {
      */
     const getStudentByHistory = async (selectedHistoryId: number) => {
         try {
-            const response = await axios.get(urlApi + 'attendancehisto/' + selectedHistoryId, config)
-            if (response.status === 200) {
+            const response = await apiService.get('attendancehisto/' + selectedHistoryId, token!, navigate);
+            if (response && response.status === 200) {
                 if (response.data.data.length === 0) {
                     toastWarning("Aucun élève n'est enregistré dans cette classe");
                     setSelectedStudents([]);
@@ -155,13 +158,13 @@ const AttendanceSheet: React.FC = () => {
         setIsLoading(true);
 
         try {
-            const response = await axios.post(urlApi + 'attendance', myData, config)
-            if (response.status === 200) {
-                setTimeout(() => {
-                    setIsLoading(false);
-                }, 3000);
-                toastSuccess(response.data.message);
-                getHistory();
+            const response = await apiService.post('attendance', myData, token!, navigate);
+            setTimeout(() => {
+                setIsLoading(false);
+            }, 3000);
+            if (response && response.status === 200) {
+                toastSuccess(response.data.message)
+                await getHistory();
             }
         } catch (error: any) {
             setTimeout(() => {
@@ -187,20 +190,21 @@ const AttendanceSheet: React.FC = () => {
                     id: student.id,
                     present: student.present ? student.present : false,
                     late: student.late ? student.late : false,
-                    ...(student.late && {lateDuration: student.lateDuration})
+                    ...(student.late && {lateDuration: student.lateDuration}),
+                    ...((!student.late && {lateDuration: null}))
                 }
             })
         }
         setIsLoading(true);
 
         try {
-            const response = await axios.put(urlApi + 'attendance/' + selectedHistoryId, myData, config)
-            if (response.status === 200) {
-                setTimeout(() => {
-                    setIsLoading(false);
-                }, 3000);
+            const response = await apiService.put('attendance/' + selectedHistoryId, myData, token!, navigate);
+            setTimeout(() => {
+                setIsLoading(false);
+            }, 3000);
+            if (response && response.status === 200) {
                 toastSuccess(response.data.message);
-                getHistory();
+                await getHistory();
             }
         } catch (error: any) {
             setTimeout(() => {

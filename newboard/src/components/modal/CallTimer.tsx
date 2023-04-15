@@ -1,20 +1,26 @@
 import React, {useEffect, useState} from 'react';
 import {Button, Form, Modal, Spinner} from "react-bootstrap";
-import axios from "axios";
 import * as AiIcons from "react-icons/ai";
 import {toast} from "react-toastify";
-import {urlApi} from "../../App";
 import Classroom from "../../classes/Classroom";
+import ApiService from "../../services/ApiService";
+import {useNavigate} from "react-router";
 
 interface CallTimerProps {
     classrooms: Classroom[];
 }
 
-const config = {
-    headers: {Authorization: `Bearer ${localStorage.getItem('token')}`}
-};
-
 const CallTimer: React.FC<CallTimerProps> = ({classrooms}) => {
+    // Global const
+    const apiService = new ApiService();
+    const navigate = useNavigate();
+    const [token, setToken] = useState<string | null>(null);
+    useEffect(() => {
+        const tokenFromStorage = localStorage.getItem("token");
+        setToken(tokenFromStorage);
+    }, []);
+
+    // Component const
     const [selectedClassId, setSelectedClassId] = useState('');
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [showTimer, setShowTimer] = useState<boolean>(false);
@@ -42,7 +48,7 @@ const CallTimer: React.FC<CallTimerProps> = ({classrooms}) => {
     /**
      * savePredictAttendance save the predicted attendance
      */
-    const savePredictAttendance = () => {
+    const savePredictAttendance = async () => {
         if (!selectedClassId || !selectedTime) {
             toastWarning('Veuillez sélectionner une classe et une heure avant de sauvegarder.');
             return;
@@ -52,21 +58,20 @@ const CallTimer: React.FC<CallTimerProps> = ({classrooms}) => {
             call_date: selectedTime,
         }
         setIsLoading(true);
-        axios.post(urlApi + 'attendancetimer', myData, config)
-            .then((response) => {
-                setTimeout(() => {
-                    setIsLoading(false);
-                }, 3000);
-                if (response.status === 200) {
-                    toastSuccess(response.data.message)
-                }
-            })
-            .catch((error) => {
-                setTimeout(() => {
-                    setIsLoading(false);
-                }, 3000);
-                toastError(error.response.data.message)
-            });
+        try {
+            const response = await apiService.post('attendancetimer', myData, token!, navigate);
+            setTimeout(() => {
+                setIsLoading(false);
+            }, 3000);
+            if (response && response.status === 200) {
+                toastSuccess(response.data.message)
+            }
+        } catch (error: any) {
+            setTimeout(() => {
+                setIsLoading(false);
+            }, 3000);
+            toastError(error.response.data.message)
+        }
     }
 
     return (
