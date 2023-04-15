@@ -57,7 +57,6 @@ const HistoryUser: React.FC<HistoryProps> = ({classrooms}) => {
 
     };
 
-
     /**
      * studentSelection is a function that is called when the user select a student in the select.
      * It will update the state of the selectedUserId and call the function getReleverByUser to get all the present history of the student selected.
@@ -173,7 +172,7 @@ const HistoryUser: React.FC<HistoryProps> = ({classrooms}) => {
                                     <span className="mapModalReleverSuccess">Présent</span> :
                                     <span className="mapModalReleverFailed">Absent</span>}</p>
 
-                                <p className="mapModalReleverPresence">Retard : {user.late ?
+                                <p className="mapModalReleverRetard">Retard : {user.late ?
                                     <span className="mapModalReleverFailed">Oui</span> :
                                     <span className="mapModalReleverSuccess">Non</span>}</p>
                             </li>

@@ -1,4 +1,4 @@
-import React, {useMemo, useEffect, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {Form, Table, Button, Spinner} from 'react-bootstrap';
 import SideBar from '../components/SideBar';
 import {toast} from "react-toastify";
@@ -10,6 +10,7 @@ import '../styles/Attendance.css';
 import OnlineUser from "../components/modal/OnlineUser";
 import HistoryUser from "../components/modal/HistoryUser";
 import ApiService from "../services/ApiService";
+import useProtectedPO from "../components/ProtectedPO";
 
 
 /**
@@ -19,6 +20,7 @@ const AttendanceSheet: React.FC = () => {
     // Global const
     const apiService = new ApiService();
     const navigate = useNavigate();
+    const {loading} = useProtectedPO()
     const [token, setToken] = useState<string | null>(null);
     useEffect(() => {
         const tokenFromStorage = localStorage.getItem("token");
@@ -337,6 +339,9 @@ const AttendanceSheet: React.FC = () => {
             return student;
         }));
     };
+    if (loading) {
+        return <div><Spinner animation="border" size="sm"/></div>;
+    }
 
     return (
         <div className="wrap">
