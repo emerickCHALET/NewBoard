@@ -366,7 +366,7 @@ const Kanban = () => {
                     </Container>
                     <Navbar.Toggle />
                     <Navbar.Collapse >
-                        <Button variant="secondary" className={"ml-auto btn btn-light btn-outline-primary btn-block d-flex justify-content-center align-items-center"} onClick={() => {handleShow()}}>
+                        <Button variant={"light"} className={"ml-auto btn btn-outline-primary btn-block d-flex justify-content-center align-items-center"} onClick={() => {handleShow()}}>
                             <AiIcons.AiOutlineUserAdd />
                             Partager
                         </Button>
@@ -375,9 +375,9 @@ const Kanban = () => {
                         <Facepile users={usersBoard}/>
                     </Navbar.Collapse>
                     <Navbar.Collapse className={"m-lg-2"}>
-                        <Button variant="primary" className={"btn btn-block"} onClick={() => {
+                        <Button variant={"light"} className={"ml-auto btn btn-outline-primary btn-block d-flex justify-content-center align-items-center"} onClick={() => {
                             navigate(`/chat/${roomId}`)
-                        }}>Chat</Button>
+                        }}><AiIcons.AiFillWechat /> Chat</Button>
                     </Navbar.Collapse>
                 </Container>
             </Navbar>

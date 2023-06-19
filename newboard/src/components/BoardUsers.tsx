@@ -150,17 +150,17 @@ const BoardUsers: React.FC<UserListProps> = ({ usersWorkspace }) => {
             )}
             <div className={"nav-menu-items bottom-fixed"}>
                 <div className={"addUser-item-div"}>
-                    <Button type={"button"} className={"btn-light btn-outline-primary informations-users"}  onClick={() => {
+                    <Button type={"button"} className={"btn-outline-primary informations-users"}  onClick={() => {
                         handleShowAddUser()
                     }}>
                         <AiIcons.AiOutlineUserAdd /> Partager
                     </Button>
                     <br/>
                     <br/>
-                    <Button className={"btn-light btn-outline-primary informations-users"} variant="primary" onClick={() => {
+                    <Button className={"btn-outline-primary informations-users"} variant="primary" onClick={() => {
                         navigate(`/chat/${roomId}`)
                     }}>
-                        Chat
+                       <AiIcons.AiFillWechat /> Chat
                     </Button>
                 </div>
             </div>
