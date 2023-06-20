@@ -11,8 +11,9 @@ import user from "../components/connectedUsers/User";
 
 const VocalRoom = () => {
     let myUserId = localStorage.getItem("userId")
-    let myStream: MediaStream
-    const peer = new Peer( {
+    const peers = {}
+    // @ts-ignore
+    const peer = new Peer( undefined, {
         host: '/',
         port: 9000
     })
@@ -27,71 +28,61 @@ const VocalRoom = () => {
     const {roomId} = useParams<{ roomId: string}>()
     const videoGrid = document.getElementById('video-grid');
     const myVideo = document.createElement('video')
+    const [me, setMe] = useState<Peer>()
+    const [stream, setStream] = useState<MediaStream>()
     myVideo.muted = true
-
-
-
-
-    async function playVideoFromCamera() {
-        try {
-            const constraints = {'video': true, 'audio': true};
-            const stream = await navigator.mediaDevices.getUserMedia(constraints);
-            myVideo.srcObject = stream;
-            addVideoStream(myVideo, stream)
-            myStream = stream
-        } catch(error) {
-            console.error('Error opening video camera.', error);
-        }
-    }
-
+    navigator.mediaDevices.getUserMedia({
+        video: true,
+        audio: true
+    }).then(stream => {
+        setStream(stream)
+        addVideoStream(myVideo, stream)
+    })
 
     useEffect(() => {
-        peer.on('open', id=>{
-            socket.emit('join_room', roomId, id)
-            console.log(roomId)
-        })
+        if(!me) return;
+        if(!stream) return;
 
         peer.on('call', call => {
-            call.answer(myStream)
+            call.answer(stream)
             const video = document.createElement('video')
             call.on('stream', userVideoStream => {
                 addVideoStream(video, userVideoStream)
             })
         })
 
-        socket.on('user-connected', userId =>{
-            connectToNewUser(userId, myStream)
-            console.log("connected")
+        socket.on('user-connected', userId => {
+            connectToNewUser(userId, stream)
         })
+    }, [me ,stream])
 
-        playVideoFromCamera().then(r => {
-            console.log(r)
-        })
-    }, [])
+    socket.on('user-disconnected', userId => {
+        console.log('disconnected')
+        // @ts-ignore
+        if(peers[userId]) peers[userId].close()
+    })
 
-    useEffect(() => {
-        socket.on('user_disconnected', userId => {
-            console.log('disconnected')
-            console.log(userId)
-        })
-    }, [socket])
-
-
-
-    function connectToNewUser(userId: string, stream: MediaStream){
-        console.log(stream)
+    peer.on('open', id => {
+        socket.emit('join_room', roomId, id)
+    })
+    // @ts-ignore
+    function connectToNewUser(userId, stream) {
+        console.log("user " + userId + " connected")
         const call = peer.call(userId, stream)
         const video = document.createElement('video')
-
         call.on('stream', userVideoStream => {
             addVideoStream(video, userVideoStream)
         })
-        call.on('close', () =>{
+        call.on('close', () => {
             video.remove()
         })
+
+        // @ts-ignore
+        peers[userId] = call
     }
 
-    function addVideoStream(video: HTMLVideoElement, stream: MediaStream){
+    // @ts-ignore
+    function addVideoStream(video, stream) {
         video.srcObject = stream
         video.addEventListener('loadedmetadata', () => {
             video.play()
@@ -111,8 +102,6 @@ const VocalRoom = () => {
             document.body.removeChild(script);
         }
     }, []);
-
-
 
     return (
 
