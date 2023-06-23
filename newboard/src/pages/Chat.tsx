@@ -3,7 +3,7 @@ import * as io from "socket.io-client";
 import SideBar from "../components/SideBar";
 import Footer from "../components/Footer";
 import { useNavigate, useParams} from "react-router";
-import "../Chat.css"
+import "../styles/Chat.css"
 import {urlApiSocket} from "../App";
 // @ts-ignore
 import ScrollToBottom from "react-scroll-to-bottom";
@@ -41,6 +41,7 @@ const ChatPage = () => {
      */
     const submitMessage = () => {
         if (userId !== null && currentMessage != "") {
+            setCurrentMessage("")
             // @ts-ignore
             socket.emit("send_message", new Messages(null, userId, userFullName, currentMessage, roomId.toString()))
         }
@@ -75,9 +76,6 @@ const ChatPage = () => {
         <div className="wrap">
             <SideBar/>
             <div className="chat-window">
-                <div className="chat-header">
-                    <p>Live Chat</p>
-                </div>
                 <div className="chat-body">
                     <ScrollToBottom className="message-container">
                         {messageList.map((message: Messages) => {
@@ -94,7 +92,7 @@ const ChatPage = () => {
                                             <p>{message.message}</p>
                                         </div>
                                         <div className="message-meta">
-                                            <p id="time">{message.created}</p>
+                                            {/*<p id="time">{message.created}</p>*/}
                                             <p id="author">{message.fullNameSender}</p>
                                         </div>
                                     </div>
@@ -105,6 +103,7 @@ const ChatPage = () => {
                 </div>
                 <div className="chat-footer">
                     <input
+                        className="chat-input"
                         type="text"
                         value={currentMessage}
                         placeholder="Type your message..."
@@ -113,9 +112,10 @@ const ChatPage = () => {
                         }}
                         onKeyPress={(event) => {
                             event.key === "Enter" && submitMessage();
+
                         }}
                     />
-                    <button onClick={submitMessage} aria-label="Send">&#9658;</button>
+                    <button className="chat-button" onClick={submitMessage} aria-label="Send">SEND</button>
                 </div>
             </div>
 
