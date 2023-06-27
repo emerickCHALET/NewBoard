@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import io from 'socket.io-client';
+import *  as io from 'socket.io-client';
 import {Button, Form, Modal, Spinner} from "react-bootstrap";
 import * as AiIcons from "react-icons/ai";
 import {toast} from "react-toastify";
@@ -9,15 +9,14 @@ import "../../styles/OnlineUser.css"
 import CallTimer from "./CallTimer";
 import ApiService from "../../services/ApiService";
 import {useNavigate} from "react-router";
+import {urlApiSocket} from "../../App";
 
 interface OnlineProps {
     classrooms: Classroom[];
 }
 
-const socket = io('http://localhost:3001');
-
-
 const ModalOnline: React.FC<OnlineProps> = ({classrooms}) => {
+    const socket = io.connect(urlApiSocket);
     // Global const
     const apiService = new ApiService();
     const navigate = useNavigate();
@@ -73,7 +72,6 @@ const ModalOnline: React.FC<OnlineProps> = ({classrooms}) => {
         });
 
         socket.on('disconnect', () => {
-            console.log('disconnected');
             socket.emit('disconnect', {id: user.id});
         });
 

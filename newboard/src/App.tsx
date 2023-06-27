@@ -87,11 +87,11 @@ export default function App() {
 /**
  * url of the Production environment
  */
-//export const urlApi = "https://api.newboard.fr/api/";
-//export const urlApiSocket = "https://api.newboard.fr";
+export const urlApi = "https://api.newboard.fr/api/";
+export const urlApiSocket = "https://api.newboard.fr";
 
 /**
  * url of the Development environment
  */
-export const urlApi = "http://localhost:3001/api/"
-export const urlApiSocket = "http://localhost:3001";
+//export const urlApi = "http://localhost:3001/api/"
+//export const urlApiSocket = "http://localhost:3001";

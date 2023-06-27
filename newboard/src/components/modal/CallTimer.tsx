@@ -33,7 +33,6 @@ const CallTimer: React.FC<CallTimerProps> = ({classrooms}) => {
     };
     const timeSelection = (event: { target: { value: React.SetStateAction<string>; }; }) => {
         setSelectedTime(event.target.value);
-        console.log(selectedTime);
     }
     const toastError = (errorMessage: string) => {
         toast.error(errorMessage, {position: toast.POSITION.TOP_RIGHT});

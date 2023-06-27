@@ -142,7 +142,6 @@ const Kanban = () => {
      */
     const SendKanbanToSocket = async () => {
         let json = await JSON.stringify(columns)
-        console.log(json)
         socket.emit('kanban', json, boardId);
     }
 
