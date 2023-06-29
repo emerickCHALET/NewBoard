@@ -84,7 +84,7 @@ th {
 
 /*Tempo*/
 table tbody td:nth-child(4) {
-    background-color: rgb(239, 172, 34);
+    background-color: #f8f9fa;
 }
 
 table tbody td:nth-child(5) {
