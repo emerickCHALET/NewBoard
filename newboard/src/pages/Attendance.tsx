@@ -7,10 +7,10 @@ import Attendance from "../classes/Attendance";
 import Classroom from "../classes/Classroom";
 import Student from "../classes/Student";
 import '../styles/Attendance.css';
-import OnlineUser from "../components/modal/OnlineUser";
 import HistoryUser from "../components/modal/HistoryUser";
 import ApiService from "../services/ApiService";
 import useProtectedPO from "../components/ProtectedPO";
+import CallTimer from "../components/modal/CallTimer";
 
 
 /**
@@ -391,7 +391,7 @@ const AttendanceSheet: React.FC = () => {
                         </Form.Group>
                     </div>
                     <div className="col-md-2 Custom-Component">
-                        <OnlineUser classrooms={classrooms}/>
+                        <CallTimer classrooms={classrooms}/>
                         <HistoryUser classrooms={classrooms}/>
                     </div>
                 </div>
